@@ -44,12 +44,14 @@
 //#define DEBUG(...)	DebugPrintF(__VA_ARGS__)
 #define DEBUG(...)
 
-static BOOL
-RemapMemory( struct PUHData* pd );
 
+#ifdef RemapMemory
+#undef RemapMemory
+#endif
 
-static BOOL
-RestoreMemory( struct PUHData* pd );
+static BOOL RemapMemory( struct PUHData* pd );
+
+static BOOL RestoreMemory( struct PUHData* pd );
 
 static UWORD
 PUHRead( UWORD            reg,
@@ -427,8 +429,7 @@ UninstallPUH( struct PUHData* pd )
 
 STATIC BOOL PUH_ON = FALSE;
 
-BOOL
-ActivatePUH( struct PUHData* pd )
+BOOL ActivatePUH( struct PUHData* pd )
 {
   PUH_ON = TRUE;
   return TRUE;
@@ -439,8 +440,7 @@ ActivatePUH( struct PUHData* pd )
 ** Deactivate PUH *************************************************************
 ******************************************************************************/
 
-void
-DeactivatePUH( struct PUHData* pd )
+void DeactivatePUH( struct PUHData* pd )
 {
   PUH_ON = FALSE;
 }
@@ -450,8 +450,7 @@ DeactivatePUH( struct PUHData* pd )
 ** Activate MMU ***************************************************************
 ******************************************************************************/
 
-static BOOL
-RemapMemory( struct PUHData* pd )
+static BOOL RemapMemory( struct PUHData* pd )
 {
   return TRUE;
 }
@@ -465,8 +464,7 @@ RemapMemory( struct PUHData* pd )
 // pd->m_CustomDirect, since the patched instructions in application code
 // needs it even after Nalle PUH has terminated.
 
-static BOOL
-RestoreMemory( struct PUHData* pd )
+static BOOL RestoreMemory( struct PUHData* pd )
 {
   return TRUE;
 }
