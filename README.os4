@@ -1,0 +1,22 @@
+
+NallePUH for OS4 -
+port done by Stephan Rupprecht <mail@stephan-rupprecht.de>
+
+The program can only be started from a shell, unlike the original
+68k version it does not feature a GUI. When starting the program
+it expects two arguments, the first one the audio ID of the AHI
+mode to use and the 2nd one the mixing frequency. Eg.
+
+nallepuh 0x340002 48000
+
+It can be aborted at any time by pressing CTRL-C.
+
+In order to use the program, you should have the prerelease update
+installed as well as the latest AHI version and drivers. If you
+experience problems when reseting your machine while this program
+is running, you should make sure that you really have the latest
+driver for you audio board installed.
+
+With this archive you should have received the binary of the
+program, the source code and a copy of the GPL license. In case
+anything is missing, you can reach me via email (see above).

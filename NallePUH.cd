@@ -1,0 +1,35 @@
+; *** catalog description file of "NallePUH.res"
+;
+msgPatchROM (256//)
+Patch _ROM
+;
+msgPatchApplications (257//)
+Patch a_pplications
+;
+msgAudioMode (258//)
+Audio _mode...
+;
+msgInstall (259//)
+_Install
+;
+msgUninstall (260//)
+_Uninstall
+;
+msgActivate (261//)
+_Activate
+;
+msgDeactivate (262//)
+_Deactivate
+;
+msgNallePUH (263//)
+Nalle PUH version 0.3 ©2001 Martin Blom <martin@blom.org>
+;
+msgTest (264//)
+_Test
+;
+msgToggleLed (265//)
+Toggle _led on exceptions
+;
+msgActivityLog (266//)
+[Activity log area]
+;

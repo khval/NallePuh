@@ -1,0 +1,100 @@
+Short:    Redirects any (hw-banging) sound program to AHI
+Uploader: Martin Blom <martin@blom.org>
+Author:   Martin Blom <martin@blom.org>
+Type:     mus/misc
+Requires: An MMU, 68020+, AHI v4, OS 3.5 for GUI mode
+Version:  0.3
+
+Q: What is "Nalle Puh"?
+A: It's the Swedish name for Winnie the Pooh.
+
+Q: Really?
+A: Yup.
+
+Q: But... Ehm. What does this program, "Nalle PUH", do?
+A: It's a hack that intercepts some custom chip register accesses and
+   turns them into AHI function calls.
+
+Q: How?
+A: By using the MMU to mark the page at $dff000 as invalid.
+
+Q: Invalid? Doesn't that mean you will get an exception each time the OS
+   or an application touches the registers?
+A: Exactly.
+
+Q: Isn't that kind of... slow?
+A: You bet.
+
+Q: How slow?
+A: Unbearable.
+
+Q: So the program is useless, then?
+A: Not quite. It can be instructed to patch the OS and all applications that
+   read or write to the custom chip registers, so that next time the 
+   instruction is executed, no exception will be generated.
+
+Q: How?
+A: A new chip register area is created at $80dff000.  For the kickstart ROM,
+   all modules except audio.device will be patched to access this address
+   instead of $dff000. For applications, I simply guess when it's ok to
+   patch the instructions.
+
+Q: Is that fool-proof?
+A: Of course not. It's a hack. A proof of concept. Nothing more.
+
+Q: Alright then. So what programs can be redirected?
+A: I've tried the following programs, and they seem to work:
+
+   * audio.device
+   * Digibooster 1.7
+   * Musicline Editor 1.5
+   * Octamed Soundstudio 1.03c
+   * Protracker (version 2.3 and 4.0)
+   * THX Sound System 2.3d.
+
+   I've also tried the following, and they don't:
+   
+   * Delitracker 2.32
+   * Newtracker
+   * PlaySID
+
+   (Note that Protracker disables multitasking and cannot be used with AHI
+   drivers that are not interrupt based.)
+
+   Previously, I wrote that Sid4Amiga also could be redirected, which is just
+   plain stupid, since Sid4Amiga already uses AHI. Duh! Sorry, Paul.
+
+Q: Will you extend Nalle PUH so the all of those program work?
+A: Unlikely.
+
+Q: Pretty, pretty please!
+A: No. The source code is available. Why don't you give it a shot yourself?
+
+Q: Because <insert lame excuse here>.
+A: Too bad.
+
+Q: Suppose I do fix the program, is there anything else I should do?
+A: You could certanly improve the instruction patching method. And it could
+   also be wise to set up a cachable Chip-RAM mirror so AHI won't have to
+   mix the samples from a non-cachable memory area. 
+
+Q: Hey! I found a memory leak: You don't close mmu.library! And you don't
+   clean up the MMU tables fully either.
+A: I know.  The custom chip register mirror must stay if applications were
+   patched. mmu.library must not be flushed from memory, or we loose the
+   mirror.
+
+
+Version history:
+
+0.1, 2001-04-23:	* Initial release.
+0.2, 2001-04-28:	* Redirected logging to the listview in GUI mode.
+			* Minor GUI updates.
+0.3, 2001-05-04		* Clears insr. caches when patching applications.
+			* Added a few more instr. patches (base relative).
+			This means that I had to move the register mirror
+			to $e00000. At least that area is unused on my A4000.
+			* The GUI does not touch the Paula registers on exit, 
+			unless the user has pressed "Test" at least once.
+			* Final update! I've returned the sound card I
+                        borrowed to write this hack. Thus, no more updates.
