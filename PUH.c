@@ -19,6 +19,8 @@
      Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <stdarg.h>
+
 #include <dos/dos.h>
 #include <exec/execbase.h>
 #include <exec/memory.h>
@@ -41,8 +43,8 @@
 
 #define INTF_AUDIO   ( INTF_AUD3 | INTF_AUD2 | INTF_AUD1 | INTF_AUD0 )
 
-//#define DEBUG(...)	DebugPrintF(__VA_ARGS__)
-#define DEBUG(...)
+#define DEBUG(...)	DebugPrintF(__VA_ARGS__)
+//#define DEBUG(...)
 
 
 #ifdef RemapMemory
@@ -560,6 +562,10 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 				PUHWrite((eff_addr & 0x1ff),value,&bHandled,pd,SysBase);
 			break;
 
+			case 34: /* lbz */
+				pContext->gpr[d_reg] = (int32)PUHRead(( ((uint32) pFaultAddress) & 0x1ff),&bHandled,pd,pSysBase) & 0xFF;
+				break;
+
 			case 36: /* stw */
 				eff_addr = (a_reg==0?0:pContext->gpr[a_reg]) + offset;
 				value    = pContext->gpr[d_reg];
@@ -573,6 +579,10 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 			case 31:
 				switch(sub_code)
 				{
+					case 87: /* lbzx */
+						pContext->gpr[d_reg] = (int32)PUHRead(( ((uint32) pFaultAddress) & 0x1ff),&bHandled,pd,pSysBase) & 0xFF;
+						break;
+
 					case 407: /* sthx */
 						eff_addr = (a_reg==0?0:pContext->gpr[a_reg]) + pContext->gpr[b_reg];
 						value    = pContext->gpr[d_reg] & 0xffff;
@@ -638,8 +648,7 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 ** Handle reads ***************************************************************
 ******************************************************************************/
 
-static UWORD
-PUHRead( UWORD            reg,
+static UWORD PUHRead( UWORD            reg,
          BOOL*            handled,
          struct PUHData*  pd,
          struct ExecBase* SysBase )
@@ -688,8 +697,7 @@ PUHRead( UWORD            reg,
 ** Handle writes **************************************************************
 ******************************************************************************/
 
-static void
-PUHWrite( UWORD            reg,
+static void PUHWrite( UWORD            reg,
           UWORD            value,
           BOOL*            handled,
           struct PUHData*  pd,
@@ -1230,8 +1238,7 @@ PUHSoftInt(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct 
 	while (mask != 0);
 }
 
-SAVEDS static void
-PUHSoundFunc( REG( a0, struct Hook*            hook ),
+SAVEDS static void PUHSoundFunc( REG( a0, struct Hook*            hook ),
               REG( a2, struct AHIAudioCtrl*    actrl ),
               REG( a1, struct AHISoundMessage* msg ) )
 {
