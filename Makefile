@@ -7,7 +7,7 @@ CFLAGS	= -fomit-frame-pointer -O2 -W -Wall -Wno-unused \
 LDFLAGS	= -lauto -g
 
 TARGET	= NallePUH
-OBJECTS	= Nalle.o PUH.o
+OBJECTS	= Nalle.o PUH.o debug.o
 
 %.o:	%.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
