@@ -1,3 +1,12 @@
+* Project to restore NallePuh *****************************
+
+its crashing a lot on AmigaOS4.1, (or locks up...)
+
+  1. Figure out where it locks up!!!  
+  2. Modernize code.
+    
+* Orginal ReadME ******************************************
+
 Short:    Redirects any (hw-banging) sound program to AHI
 Uploader: Martin Blom <martin@blom.org>
 Author:   Martin Blom <martin@blom.org>
