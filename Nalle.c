@@ -312,9 +312,7 @@ int main( int argc,char* argv[] )
 						break;
 				}
 #endif
-				if ( ! InstallPUH( flags,
-													mode_id, frequency,
-													pd ) )
+				if ( ! InstallPUH( flags,	mode_id, frequency ) )
 				{
 					rc = 20;
 				}
@@ -665,7 +663,7 @@ static BOOL HandleGUI( Object * window,	 struct Gadget** gadgets,	 struct PUHDat
 		&log_data
 	};
 
-	chip = AllocVecTagList( pooh11_sblen, MEMF_CHIP );
+	chip = AllocVecTagList( pooh11_sblen, chip_tags );
 
 	if ( chip == NULL )
 	{

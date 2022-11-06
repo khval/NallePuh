@@ -2,8 +2,13 @@
 CC			= ppc-amigaos-gcc
 LD			= ppc-amigaos-ld
 STRIP		= ppc-amigaos-strip
-CFLAGS	= -fomit-frame-pointer -O2 -W -Wall -Wno-unused \
-			  -DNO_GUI -D__USE_INLINE__ -D__USE_BASETYPE__ -g
+
+CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
+			-Wno-unused \
+			-Wno-cast-function-type \
+			-DNO_GUI -D__USE_INLINE__ -D__USE_BASETYPE__ -g
+
+
 LDFLAGS	= -lauto -g
 
 TARGET	= NallePUH

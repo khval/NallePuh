@@ -4,12 +4,12 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define __USE_INLINE__
-
 #include <proto/exec.h>
 #include <proto/dos.h>
 
 extern struct Hook *stackDump_hook;
+
+// Can't stack trace my self, even from exception!!!
 
 int32 printStack(struct Hook *hook, struct Task *task, struct StackFrameMsg *frame)
 {
@@ -22,7 +22,7 @@ int32 printStack(struct Hook *hook, struct Task *task, struct StackFrameMsg *fra
 
 				if (symbol)
 				{
-					Printf("Stack %p -> Address: %p, offset %p, SegmentNumber %p, SegmentOffset %p, Name: %s, BaseName: %s,FunctionName: %s\n", 
+					DebugPrintF("Stack %p -> Address: %p, offset %p, SegmentNumber %p, SegmentOffset %p, Name: %s, BaseName: %s,FunctionName: %s\n", 
 							frame->StackPointer, 
 							frame->MemoryAddress,
 							symbol -> Offset,
@@ -69,7 +69,7 @@ void StackDump(  struct Task *task )
 {
 	if (task)
 	{
-		Printf("Task: %08lx\n",task);
+		DebugPrintF("Task: %08lx (%s)\n",task,task -> tc_Node.ln_Name );
 		uint32 result = StackTrace(task, stackDump_hook);	
 	}
 }
