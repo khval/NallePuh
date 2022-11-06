@@ -54,20 +54,10 @@ KPrintFArgs( UBYTE* fmt,
 
 /* Make nice accesses to hardware registers */
 
-UWORD
-ReadWord( void* address );
-
-
-void
-WriteWord( void* address, UWORD value );
-
-
-ULONG
-ReadLong( void* address );
-
-
-void
-WriteLong( void* address, ULONG value );
+UWORD ReadWord( BOOL *handled, void* address );
+void WriteWord( BOOL *handled, void* address, UWORD value );
+ULONG ReadLong( BOOL *handled, void* address );
+void WriteLong( BOOL *handled, void* address, ULONG value );
 
 
 /* The emulator */
@@ -124,42 +114,13 @@ struct PUHData
 
 };
 
-
-struct PUHData*
-AllocPUH( void );
-
-
-void
-FreePUH( struct PUHData* pd );
-
-
-void
-SetPUHLogger( struct Hook*    hook,
-              struct PUHData* pd );
-
-
-void VARARGS68K
-LogPUH( struct PUHData* pd,
-        STRPTR          fmt,
-        ... );
-
-
-BOOL
-InstallPUH( ULONG           flags,
-            ULONG           audio_mode,
-            ULONG           frequency,
-	    struct PUHData* pd );
-
-
-void
-UninstallPUH( struct PUHData* pd );
-
-
-BOOL
-ActivatePUH( struct PUHData* pd );
-
-
-void
-DeactivatePUH( struct PUHData* pd );
+struct PUHData *AllocPUH( void );
+void FreePUH( struct PUHData* pd );
+void SetPUHLogger( struct Hook*    hook,    struct PUHData* pd );
+void VARARGS68K LogPUH( struct PUHData* pd, STRPTR fmt,   ... );
+BOOL InstallPUH( ULONG  flags, ULONG audio_mode, ULONG frequency );
+void UninstallPUH( struct PUHData* pd );
+BOOL ActivatePUH( struct PUHData* pd );
+void DeactivatePUH( struct PUHData* pd );
 
 #endif /* NallePUH_PUH_h */
