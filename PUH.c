@@ -41,7 +41,7 @@
 
 #include "PUH.h"
 
-#define INTF_AUDIO	 ( INTF_AUD3 | INTF_AUD2 | INTF_AUD1 | INTF_AUD0 )
+#define INTF_AUDIO	( INTF_AUD3 | INTF_AUD2 | INTF_AUD1 | INTF_AUD0 )
 
 #define DEBUG(...)	DebugPrintF(__VA_ARGS__)
 //#define DEBUG(...)
@@ -210,15 +210,15 @@ struct PUHData*AllocPUH( void )
 		}
 		else
 		{
-			pd->m_Active							 = FALSE;
+			pd->m_Active							= FALSE;
 
 			pd->m_AudioMode						= AHI_INVALID_ID;
 
 			pd->m_SoundFunc.h_Entry		= (ULONG(*)(void)) PUHSoundFunc;
-			pd->m_SoundFunc.h_Data		 = pd;
+			pd->m_SoundFunc.h_Data		= pd;
 
 			if ( gfxbase != NULL &&
-				 ( gfxbase->DisplayFlags & REALLY_PAL ) == 0 )
+				( gfxbase->DisplayFlags & REALLY_PAL ) == 0 )
 			{
 				// NTSC
 				pd->m_ChipFreq = 3579545;
@@ -229,18 +229,18 @@ struct PUHData*AllocPUH( void )
 				pd->m_ChipFreq = 3546895;
 			}
 
-			pd->m_DMACON							 = DMAF_MASTER;
-			pd->m_INTENA							 = INTF_INTEN;
+			pd->m_DMACON							= DMAF_MASTER;
+			pd->m_INTENA							= INTF_INTEN;
 
 			pd->m_Intercepted					= (void*) 0xdff000;
-			pd->m_CustomDirect				 = (void*) 0xdff000;
-			pd->m_CustomSize					 = 0x200;
+			pd->m_CustomDirect				= (void*) 0xdff000;
+			pd->m_CustomSize					= 0x200;
 
 			pd->m_SoftInt.is_Node.ln_Type = NT_EXTINTERRUPT;
 			pd->m_SoftInt.is_Node.ln_Pri	= 32;
 			pd->m_SoftInt.is_Node.ln_Name = "NallePUH Level 4 emulation";
-			pd->m_SoftInt.is_Data				 = pd;
-			pd->m_SoftInt.is_Code				 = (void(*)(void)) PUHSoftInt;
+			pd->m_SoftInt.is_Data				= pd;
+			pd->m_SoftInt.is_Code				= (void(*)(void)) PUHSoftInt;
 		}
 	}
 
@@ -298,11 +298,11 @@ void VARARGS68K LogPUH( struct PUHData* pd,STRPTR fmt, ... )
 	else
 	{
 		char		buffer[ 256 ];
-	 #ifdef __amigaos4__
-	 VSNPrintf( buffer, sizeof( buffer ), fmt, va_getlinearva(ap, void *) );
-	 #else
+	#ifdef __amigaos4__
+	VSNPrintf( buffer, sizeof( buffer ), fmt, va_getlinearva(ap, void *) );
+	#else
 		vsnprintf( buffer, sizeof( buffer ), fmt, ap );
-	 #endif
+	#endif
 
 		CallHookPkt( pd->m_LogHook, pd, buffer );
 	}
@@ -318,15 +318,15 @@ BOOL InstallPUH( ULONG flags, ULONG	audio_mode, ULONG frequency )
 {
 	BOOL ahi_ok = FALSE;
 
-	pd->m_Flags		 = flags;
+	pd->m_Flags		= flags;
 	pd->m_AudioMode = audio_mode;
 
 	// Activate AHI
 
 	pd->m_AudioCtrl = AHI_AllocAudio( AHIA_AudioID,		audio_mode,
 																		AHIA_MixFreq,		frequency,
-																		AHIA_Channels,	 4,
-																		AHIA_Sounds,		 1,
+																		AHIA_Channels,	4,
+																		AHIA_Sounds,		1,
 																		AHIA_SoundFunc,	(ULONG) &pd->m_SoundFunc,
 																		//AHIA_PlayerFreq, 100 << 16,
 																		TAG_DONE );
@@ -339,9 +339,9 @@ BOOL InstallPUH( ULONG flags, ULONG	audio_mode, ULONG frequency )
 	{
 		struct AHISampleInfo si =
 		{
-			AHIST_M8S,	 // An 8-bit sample
-			0,					 // beginning at address 0
-			0xffffffff	 // and ending at the last address.
+			AHIST_M8S,	// An 8-bit sample
+			0,					// beginning at address 0
+			0xffffffff	// and ending at the last address.
 		};
 
 		if( AHI_LoadSound( 0, AHIST_DYNAMICSAMPLE, &si, pd->m_AudioCtrl ) != AHIE_OK )
@@ -408,9 +408,9 @@ void UninstallPUH( struct PUHData* pd )
 
 	if (pd->m_OldFaultInt != NULL)
 	{
-		 Forbid();
+		Forbid();
 		SetIntVector(TRAPNUM_DATA_SEGMENT_VIOLATION, pd->m_OldFaultInt);
-	 Permit();
+	Permit();
 	}
 
 	if( pd->m_Active )
@@ -424,7 +424,7 @@ void UninstallPUH( struct PUHData* pd )
 		pd->m_AudioCtrl = NULL;
 	}
 
-	pd->m_Flags		 = 0L;
+	pd->m_Flags		= 0L;
 	pd->m_AudioMode = AHI_INVALID_ID;
 	pd->m_Active		= FALSE;
 }
@@ -492,17 +492,17 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 	pFaultInst = (APTR)pContext->ip;
 
 	if (PUH_ON &&
-		 pFaultAddress >= (APTR)(0xdff000 + DMACONR) &&
-		 pFaultAddress <= (APTR)(0xdff000 + AUD3DAT))
+		pFaultAddress >= (APTR)(0xdff000 + DMACONR) &&
+		pFaultAddress <= (APTR)(0xdff000 + AUD3DAT))
 	{
 		ULONG op_code 	= 0;
 		ULONG sub_code = 0;
 
-		ULONG d_reg		 = 0;
-		ULONG a_reg		 = 0;
+		ULONG d_reg		= 0;
+		ULONG a_reg		= 0;
 
-		LONG	offset	 = 0;
-		ULONG b_reg		 = 0;
+		LONG	offset	= 0;
+		ULONG b_reg		= 0;
 		ULONG instruction;
 		ULONG eff_addr;
 		ULONG value;
@@ -514,8 +514,8 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 
 		instruction = *(ULONG *)pContext->ip;
 		op_code = (instruction & 0xFC000000) >> 26;
-		d_reg	 = (instruction & 0x03E00000) >> 21;
-		a_reg	 = (instruction & 0x001F0000) >> 16;
+		d_reg	= (instruction & 0x03E00000) >> 21;
+		a_reg	= (instruction & 0x001F0000) >> 16;
 
 		if (op_code == 31)
 		{
@@ -538,7 +538,7 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 
 				pContext->gpr[d_reg] = (int32)PUHRead((eff_addr & 0x1ff),&bHandled1,pd,pSysBase);
 
-	 			if (pContext->gpr[d_reg] & 0x8000) /* signed? */
+				if (pContext->gpr[d_reg] & 0x8000) /* signed? */
 					pContext->gpr[d_reg] |= 0xFFFF0000;
 
 				DEBUG( "lha %lx, %lx\n", eff_addr, pContext->gpr[d_reg] );
@@ -667,9 +667,9 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 ******************************************************************************/
 
 static UWORD PUHRead( UWORD						reg,
-				 BOOL*						handled,
-				 struct PUHData*	pd,
-				 struct ExecBase* SysBase )
+				BOOL*						handled,
+				struct PUHData*	pd,
+				struct ExecBase* SysBase )
 {
 	UWORD	result;
 	UWORD* address = (UWORD*) ( (ULONG) pd->m_CustomDirect + reg );
@@ -779,7 +779,7 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 		}
 		else
 		{
-			pd->m_SoundOn[ 0 ]	 = FALSE;
+			pd->m_SoundOn[ 0 ]	= FALSE;
 
 			AHI_SetSound( 0, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
 		}
@@ -807,7 +807,7 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 		}
 		else
 		{
-			pd->m_SoundOn[ 1 ]	 = FALSE;
+			pd->m_SoundOn[ 1 ]	= FALSE;
 
 			AHI_SetSound( 1, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
 		}
@@ -835,7 +835,7 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 		}
 		else
 		{
-			pd->m_SoundOn[ 2 ]	 = FALSE;
+			pd->m_SoundOn[ 2 ]	= FALSE;
 
 			AHI_SetSound( 2, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
 		}
@@ -863,7 +863,7 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 		}
 		else
 		{
-			pd->m_SoundOn[ 3 ]	 = FALSE;
+			pd->m_SoundOn[ 3 ]	= FALSE;
 
 			AHI_SetSound( 3, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
 		}
@@ -951,7 +951,7 @@ static void PUHWrite( UWORD						reg,
 		case AUD2LCH:
 		case AUD3LCH:
 	{
-		int channel		 = ( reg - AUD0LCH ) >> 4;
+		int channel		= ( reg - AUD0LCH ) >> 4;
 
 			pd->m_SoundLocation[ channel ] &= 0x0000ffff;
 			pd->m_SoundLocation[ channel ] |= value << 16;
@@ -992,7 +992,7 @@ static void PUHWrite( UWORD						reg,
 		case AUD2LCL:
 		case AUD3LCL:
 		{
-			int channel		 = ( reg - AUD0LCL ) >> 4;
+			int channel		= ( reg - AUD0LCL ) >> 4;
 
 			pd->m_SoundLocation[ channel ] &= 0xffff0000;
 			pd->m_SoundLocation[ channel ] |= value;
@@ -1065,23 +1065,23 @@ static void PUHWrite( UWORD						reg,
 		case AUD2PER:
 		case AUD3PER:
 		{
-			int	 channel = ( reg - AUD0PER ) >> 4;
+			int	channel = ( reg - AUD0PER ) >> 4;
 
 			if( value == 0 )
 			{
 				// What is the correct emulation for this?
 
 				AHI_SetFreq( channel,
-										 pd->m_ChipFreq >> 16,
-										 pd->m_AudioCtrl,
-										 AHISF_IMM );
+										pd->m_ChipFreq >> 16,
+										pd->m_AudioCtrl,
+										AHISF_IMM );
 			}
 			else
 			{
 				AHI_SetFreq( channel,
-										 pd->m_ChipFreq / value,
-										 pd->m_AudioCtrl,
-										 AHISF_IMM );
+										pd->m_ChipFreq / value,
+										pd->m_AudioCtrl,
+										AHISF_IMM );
 			}
 
 			*handled = TRUE;
@@ -1236,9 +1236,9 @@ STATIC ULONG CallInt(UWORD irq, UWORD mask, struct ExceptionContext *pContext, s
 
 SAVEDS static void PUHSoftInt(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd)
 {
-	UWORD	 mask;
+	UWORD	mask;
 
-	 pd->m_CausePending = FALSE;
+	pd->m_CausePending = FALSE;
 
 	mask = (pd->m_INTREQ & pd->m_INTENA);
 
@@ -1278,7 +1278,7 @@ SAVEDS static void PUHSoundFunc( REG( a0, struct Hook *hook ),REG( a2, struct AH
 			if (!pd->m_CausePending)
 		{
 				pd->m_CausePending = TRUE;
-	 		Cause(&pd->m_SoftInt);
+			Cause(&pd->m_SoftInt);
 		}
 	}
 }
