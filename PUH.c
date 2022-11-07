@@ -871,6 +871,11 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 }
 
 
+void adkcon(UWORD value)
+{
+	DEBUG( "NYI: adkcon write %d\n",value);
+}
+
 static void PUHWrite( UWORD						reg,
 					UWORD						value,
 					BOOL*						handled,
@@ -943,7 +948,8 @@ static void PUHWrite( UWORD						reg,
 
 
 		case ADKCON:
-			WriteWord( handled, address, value );
+			adkcon( value );
+			*handled = TRUE;
 			break;
 
 		case AUD0LCH:
