@@ -71,6 +71,8 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 ******************************************************************************/
 
 #define DMACONR 0x002
+#define VPOSR	0x004
+#define VHPOSR 	0x006
 #define ADKCONR 0x010
 #define INTENAR 0x01c
 #define INTREQR 0x01e
@@ -674,6 +676,13 @@ static UWORD PUHRead( UWORD						reg,
 
 	switch( reg )
 	{
+		case VPOSR:
+		case VHPOSR:
+			result = ( pd->m_VPOS++ );
+			
+			*handled = TRUE;
+			break;
+			
 		case DMACONR:
 			result	= ReadWord( handled, address );
 			result &= ~DMAF_AUDIO;
