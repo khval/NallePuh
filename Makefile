@@ -9,7 +9,7 @@ CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
 			-DNO_GUI -D__USE_INLINE__ -D__USE_BASETYPE__ -g
 
 
-LDFLAGS	= -lauto -g
+LDFLAGS	= -g
 
 TARGET	= NallePUH
 OBJECTS	= Nalle.o PUH.o debug.o
