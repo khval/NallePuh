@@ -90,7 +90,8 @@ struct PUHData
   struct Hook           m_SoundFunc;
 
   ULONG                 m_ChipFreq;
-
+     
+  UWORD                 m_VPOS;
   UWORD                 m_DMACON;
   UWORD                 m_INTREQ;
   UWORD                 m_INTENA;
