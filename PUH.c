@@ -654,6 +654,12 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 }
 
 
+void adkcon(UWORD value)
+{
+	CustomData.adkconr = (value & 0x8000) ?  (CustomData.adkconr | value) : (CustomData.adkconr & ~value) & 0x7FFF;
+}
+
+
 /******************************************************************************
 ** Handle reads ***************************************************************
 ******************************************************************************/
@@ -674,7 +680,12 @@ static UWORD PUHRead( UWORD						reg,
 			
 			*handled = TRUE;
 			break;
-			
+		
+		case ADKCONR:
+			result = CustomData.adkconr;
+			*handled = TRUE;
+			break;
+	
 		case DMACONR:
 			result	= cd_ReadWord( handled, address );
 			result &= ~DMAF_AUDIO;
@@ -863,10 +874,6 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 }
 
 
-void adkcon(UWORD value)
-{
-	DEBUG( "NYI: adkcon write %d\n",value);
-}
 
 static void PUHWrite( UWORD						reg,
 					UWORD						value,
@@ -1192,8 +1199,9 @@ static void PUHWrite( UWORD						reg,
 
 		default:
 
-	DEBUG( "Not supported chipset register\n");
-
+			DEBUG( "Not emulated chipset register\n");
+			cd_WriteWord( handled, address, value & ~INTF_AUDIO );
+			*handled = TRUE;
 			break;
 	}
 }
