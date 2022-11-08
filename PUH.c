@@ -676,7 +676,7 @@ static UWORD PUHRead( UWORD						reg,
 			break;
 			
 		case DMACONR:
-			result	= ReadWord( handled, address );
+			result	= cd_ReadWord( handled, address );
 			result &= ~DMAF_AUDIO;
 			result |= ( pd->m_DMACON & DMAF_AUDIO );
 
@@ -684,7 +684,7 @@ static UWORD PUHRead( UWORD						reg,
 			break;
 
 		case INTENAR:
-			result	= ReadWord( handled, address );
+			result	= cd_ReadWord( handled, address );
 			result &= ~INTF_AUDIO;
 			result |= ( pd->m_INTENA & INTF_AUDIO );
 
@@ -692,7 +692,7 @@ static UWORD PUHRead( UWORD						reg,
 			break;
 
 		case INTREQR:
-			result	= ReadWord( handled, address );
+			result	= cd_ReadWord( handled, address );
 			result &= ~INTF_AUDIO;
 			result |= ( pd->m_INTREQ & INTF_AUDIO );
 
@@ -702,7 +702,7 @@ static UWORD PUHRead( UWORD						reg,
 		default:
 			// Just carry out the intercepted read operation
 
-			result = ReadWord( handled, address );
+			result = cd_ReadWord( handled, address );
 			break;
 	}
 
@@ -897,7 +897,7 @@ static void PUHWrite( UWORD						reg,
 				pd->m_INTENA &= ~( value & ~INTF_SETCLR );
 			}
 
-			if (value & INTF_AUDIO) WriteWord( handled, address, value & ~INTF_AUDIO );
+			cd_WriteWord( handled, address, value & ~INTF_AUDIO );
 
 			if( ( pd->m_INTENA & pd->m_INTREQ & INTF_AUDIO ) &&
 					! pd->m_CausePending )
@@ -923,7 +923,7 @@ static void PUHWrite( UWORD						reg,
 				pd->m_INTREQ &= ~( value & ~INTF_SETCLR );
 			}
 
-			if (value & INTF_AUDIO) WriteWord( handled, address, value & ~INTF_AUDIO );
+			cd_WriteWord( handled, address, value & ~INTF_AUDIO );
 
 			if( ( pd->m_INTENA & pd->m_INTREQ & INTF_AUDIO ) &&
 					! pd->m_CausePending )
