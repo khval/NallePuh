@@ -113,56 +113,49 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 ** Read and write hardware registers ******************************************
 ******************************************************************************/
 
-STATIC UBYTE CustomData[512];
+struct Custom CustomData;
 
-#if 1
 
-UWORD ReadWord( BOOL *bHandled, void* address )
+UWORD cd_ReadWord( BOOL *bHandled, void* address )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
 
 	DEBUG( "%s:%ld)\n", __FUNCTION__,__LINE__ );
-	return ((UWORD *)CustomData)[offset/2];
+	return ((UWORD *) &CustomData)[offset/2];
 }
 
-ULONG ReadLong( BOOL *bHandled, void* address )
+ULONG cd_ReadLong( BOOL *bHandled, void* address )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
 
 	DEBUG( "%s:%ld)\n", __FUNCTION__,__LINE__ );
-	return ((UWORD *)CustomData)[offset/4];
+	return ((UWORD *) &CustomData)[offset/4];
 }
 
-#endif
-
-#if 0
-
-void WriteWord( BOOL *bHandled, void* address, UWORD value )
+void cd_WriteWord( BOOL *bHandled, void* address, UWORD value )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
 
 	DEBUG( "%s:%ld)\n", __FUNCTION__,__LINE__ );
-	((UWORD *) address)[offset/2] = value;
+	((UWORD *) &CustomData)[offset/2] = value;
 }
 
-void WriteLong( BOOL *bHandled, void* address, ULONG value )
+void cd_WriteLong( BOOL *bHandled, void* address, ULONG value )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
 
 	DEBUG( "%s:%ld)\n", __FUNCTION__,__LINE__ );
-	((ULONG *) address)[offset/4] = value;
+	((ULONG *) &CustomData)[offset/4] = value;
 }
 
-#else
-
-void WriteWord( BOOL *bHandled, void* address, UWORD value )
+void emu_WriteWord( BOOL *bHandled, void* address, UWORD value )
 {
 	DEBUG( "%s:%ld -- address: %p\n", __FUNCTION__,__LINE__, address);
 
 	PUHWrite(( (ULONG) address & 0x1ff), (ULONG) value,bHandled,pd,SysBase);
 }
 
-void WriteLong( BOOL *bHandled, void* address, ULONG value )
+void emu_WriteLong( BOOL *bHandled, void* address, ULONG value )
 {
 	BOOL bHandled2;
 
@@ -172,7 +165,6 @@ void WriteLong( BOOL *bHandled, void* address, ULONG value )
 	PUHWrite(( (ULONG) address & 0x1ff)+2,value&0xffff,&bHandled2,pd,SysBase);
 }
 
-#endif
 
 
 /******************************************************************************
