@@ -12,6 +12,13 @@ HippoPLayer.
 if you find anything working, please report, 
 lets make this list longer.
 
+* what does not work **************************************
+
+(there is native version of Digibooster for AmigaOS4.1, so no need)
+Octamed Soundstudio 1.03c does not work, need CIAA/B timers.
+THX Sound System 2.3d, crashes badly, no idea why.
+Delitracker 2.32 and Egalplayer do not work, freeze the system.
+
 Changes in Nov. 2022
 
 * Added two missing PowerPC oppcodes to the exception handler.
@@ -22,13 +29,6 @@ Changes in Nov. 2022
 * code cleanup, std style format.
 * Improved debuging (task name, etc).
 
-* what does not work **************************************
-
-(there is native version of Digibooster for AmigaOS4.1, so no need)
-Octamed Soundstudio 1.03c does not work, need CIAA/B timers.
-THX Sound System 2.3d, crashes badly, no idea why.
-Delitracker 2.32 and Egalplayer do not work, freeze the system.
-   
 * Orginal ReadME ******************************************
 
 Short:    Redirects any (hw-banging) sound program to AHI
