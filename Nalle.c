@@ -418,11 +418,13 @@ static BOOL OpenAHI( void )
 {
 	BOOL rc = FALSE;
 
-	AHImp = CreateMsgPort();
+	AHImp = (struct MsgPort *) AllocSysObjectTags(ASOT_PORT, TAG_DONE);
 
 	if ( AHImp != NULL )
 	{
-		AHIio = (struct AHIRequest*) CreateIORequest( AHImp, sizeof( struct AHIRequest ) );
+		AHIio = (struct AHIRequest*) AllocSysObjectTags(ASOT_IOREQUEST,
+					ASOIOR_Size, sizeof( struct AHIRequest ), 
+					TAG_DONE);
 
 		if ( AHIio != NULL ) 
 		{
@@ -432,7 +434,7 @@ static BOOL OpenAHI( void )
 			if ( AHIDevice == 0 )
 			{
 				AHIBase = (struct Library *) AHIio->ahir_Std.io_Device;
-			GETIFACE(AHI);
+				GETIFACE(AHI);
 				rc = TRUE;
 			}
 		}
@@ -456,8 +458,8 @@ static void CloseAHI( void )
 		CloseDevice( (struct IORequest*) AHIio );
 	}
 
-	DeleteIORequest( (struct IORequest*) AHIio );
-	DeleteMsgPort( AHImp );
+	FreeSysObject(ASOT_IOREQUEST, AHIio );
+	FreeSysObject(ASOT_PORT, AHImp );
 
 	AHIBase	 = NULL;
 	AHImp = NULL;
