@@ -36,6 +36,7 @@
 #include <proto/exec.h>
 #include <proto/utility.h>
 #include <proto/dos.h>
+#include <proto/libblitter.h>
 
 #include <stdio.h>
 
@@ -109,11 +110,15 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 #define AUD3VOL 0x0d8
 #define AUD3DAT 0x0da
 
+#define BLTSIZE 0x058
+
 /******************************************************************************
 ** Read and write hardware registers ******************************************
 ******************************************************************************/
 
 struct Custom CustomData;
+
+extern struct libblitterIFace *ILibblitter;
 
 
 UWORD cd_ReadWord( BOOL *bHandled, void* address )
@@ -171,7 +176,7 @@ void emu_WriteLong( BOOL *bHandled, void* address, ULONG value )
 ** Initialize PUH *************************************************************
 ******************************************************************************/
 
-struct TagItem public_tags[]=
+struct TagItem public_tags[] = 
 {
 	AVT_Type, MEMF_SHARED,
 	AVT_Contiguous, TRUE,
@@ -1197,10 +1202,16 @@ static void PUHWrite( UWORD						reg,
 			*handled = TRUE;
 			break;
 
+		case BLTSIZE:
+
+			cd_WriteWord( handled, address, value );
+			if (ILibBlitter) doBlitter(&CustomData);
+			break;
+
 		default:
 
 			DEBUG( "Not emulated chipset register\n");
-			cd_WriteWord( handled, address, value & ~INTF_AUDIO );
+			cd_WriteWord( handled, address, value );
 			*handled = TRUE;
 			break;
 	}

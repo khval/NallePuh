@@ -43,6 +43,7 @@
 #include <proto/intuition.h>
 #include <proto/locale.h>
 #include <proto/expansion.h>
+#include <proto/libblitter.h>
 
 #ifndef NO_GUI
 #include <proto/listbrowser.h>
@@ -61,8 +62,8 @@
 #include "PUH.h"
 
 #ifdef __amigaos4__
-#define GETIFACE(x)	(I ## x = (struct x ## IFace *) GetInterface((struct Library *) x ## Base, "main", 1L, NULL))
-#define DROPIFACE(x)	DropInterface((struct Interface *) I ## x);
+#define GETIFACE(x)	if (x ## Base)  { I ## x = (struct x ## IFace *) GetInterface((struct Library *) x ## Base, "main", 1L, NULL); }
+#define DROPIFACE(x)	if (I ## x) { DropInterface((struct Interface *) I ## x); I ## x = NULL; }
 #else
 #define GETIFACE(x)
 #define DROPIFACE(x)
@@ -94,8 +95,10 @@ struct Library * AHIBase = NULL;
 struct IntuitionBase* IntuitionBase = NULL;
 struct Library *LocaleBase = NULL;
 struct Library *MMUBase = NULL;
+struct Library *LibBlitterBase = NULL;
 
 struct DebugIFace *IDebug = NULL;
+struct LibBlitterIFace *ILibBlitter = NULL;
 
 #ifndef NO_GUI
 	struct Library *ResourceBase = NULL;
@@ -358,53 +361,32 @@ static BOOL OpenLibs( void )
 	IntuitionBase = (struct IntuitionBase*) OpenLibrary( "intuition.library", 39 );
 	LocaleBase = (struct LocaleBase*) OpenLibrary( "locale.library", 39 );
 	UtilityBase = (struct UtilityBase*) OpenLibrary( "utility.library", 39 );
+	LibBlitterBase = (struct Library *) OpenLibrary( "libblitter.library", 1 );
 
 	#ifndef NO_GUI
 	ResourceBase	 = OpenLibrary( "resource.library", 44 );
 	ListBrowserBase = OpenLibrary( "listbrowser.gadget", 44 );
 	#endif
 
-	#ifndef __amigaos4__
-	MMUBase		 = OpenLibrary( "mmu.library", 41 );
-	#endif
-
+	GETIFACE(LibBlitter);
 	GETIFACE(Intuition);
 	GETIFACE(Locale);
 	GETIFACE(Utility);
 
-	if ( IntuitionBase == NULL || LocaleBase == NULL
-		#ifndef NO_GUI
-			|| ResourceBase  == NULL || ListBrowserBase == NULL
-		#endif
-	 )
+	if (ILibBlitter) 
 	{
-		CloseLibrary( (struct Library *) IntuitionBase );
-		CloseLibrary( (struct Library *) LocaleBase );
-	 CloseLibrary( (struct Library *) UtilityBase );
-
-	 #ifndef NO_GUI
-		CloseLibrary( ResourceBase );
-		CloseLibrary( ListBrowserBase );
-
-		 ResourceBase	 = NULL;
-		ListBrowserBase = NULL;
-	 #endif
-
-		IntuitionBase	 = NULL;
-		LocaleBase = NULL;
-	 UtilityBase = NULL;
-
-		Printf( "The GUI requires AmigaOS 3.5.\n" );
+		Printf("found & using LibBlitter.library\n");
+	}
+	else
+	{
+		Printf("NOT using LibBlitter.library, sorry\n");
 	}
 
-	#ifndef __amigaos4__
-	if ( MMUBase == NULL )
+	if ( IntuitionBase == NULL || LocaleBase == NULL )
 	{
-		Printf( "Unable to open mmu.library version 41.\n" );
 		CloseLibs();
 		return FALSE;
 	}
-	#endif
 
 	return TRUE;
 }
@@ -414,29 +396,18 @@ static BOOL OpenLibs( void )
 ** CloseLibs ******************************************************************
 ******************************************************************************/
 
+#define safe_CloseLibrary(b) if (b) { CloseLibrary( (struct Library *) b ); b = NULL;}
+
 static void CloseLibs( void )
 {
-	if (stackDump_hook) 
-	{
-		FreeSysObject(ASOT_HOOK, stackDump_hook);
-		stackDump_hook = NULL;
-	}
-
 	DROPIFACE(Intuition);
 	DROPIFACE(Utility);
 	DROPIFACE(Locale);
 
-	CloseLibrary( (struct Library *) UtilityBase );
-	CloseLibrary( (struct Library *) IntuitionBase );
-	CloseLibrary( (struct Library *) LocaleBase );
-
-	#ifndef NO_GUI
-	CloseLibrary( ResourceBase );
-	CloseLibrary( ListBrowserBase );
-	#endif
-
-	// We must not close mmu.library if we have pached applications running!
-	//	CloseLibrary( MMUBase );
+	safe_CloseLibrary(LibBlitterBase);
+	safe_CloseLibrary(UtilityBase);
+	safe_CloseLibrary(IntuitionBase);
+	safe_CloseLibrary(LocaleBase);
 }
 
 /******************************************************************************
