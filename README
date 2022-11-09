@@ -10,7 +10,17 @@ TODO:
 	
 	3. Add a GUI
 		(It’s time for OS4.1 version to catch up!)
-  
+		
+About AmigaOS4.1 version
+
+	Orginaly created by Martin Blom
+	First ported by Stephan Rupprecht
+	Stephan Rupprecht has not been active since 2009 on OS4Depot.net.
+	it has gone 13 years without any updates, it’s now time to dust it off, and get it working again.
+	We (Damien Stewart and Kjetil Hvalstrand) believe something changed in the Petunia JIT compiler, 
+	and possibly some of the OS4.1 internal emulation of the custom chips where removed. 
+	This left NallePuh in a horrible state.
+
 What works with NallePuh on AmigaOS4.1
 
 	HippoPLayer.
