@@ -5,13 +5,22 @@ its crashing a lot on AmigaOS4.1, (or locks up...)
   1. Figure out where it locks up!!!  
   2. Modernize code.
   
-  
 * What works with NallePuh on AmigaOS4.1 ******************
 
 HippoPLayer.
 
 if you find anything working, please report, 
 lets make this list longer.
+
+Changes in Nov. 2022
+
+* Added two missing PowerPC oppcodes to the exception handler.
+* VPOS/VPOSR support
+* ADKCON/ADKCONR is now handled correct.
+* libblitter.library is used.
+* Deprecated functions replaced.
+* code cleanup, std style format.
+* Improved debuging (task name, etc).
 
 * what does not work **************************************
 
