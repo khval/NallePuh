@@ -83,9 +83,6 @@ static BOOL HandleGUI( Object* window, struct Gadget** gadgets, struct PUHData* 
 ** Global variables ***********************************************************
 ******************************************************************************/
 
-struct Hook *stackDump_hook;
-
-extern int32 printStack(struct Hook *hook, struct Task *task, struct StackFrameMsg *frame);
 
 static struct MsgPort *AHImp = NULL;
 static struct AHIRequest *AHIio = NULL;
@@ -424,6 +421,7 @@ static BOOL OpenAHI( void )
 	{
 		AHIio = (struct AHIRequest*) AllocSysObjectTags(ASOT_IOREQUEST,
 					ASOIOR_Size, sizeof( struct AHIRequest ), 
+					ASOIOR_ReplyPort, AHImp,
 					TAG_DONE);
 
 		if ( AHIio != NULL ) 
