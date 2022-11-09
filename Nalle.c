@@ -356,8 +356,6 @@ int main( int argc,char* argv[] )
 
 static BOOL OpenLibs( void )
 {
-	stackDump_hook = AllocSysObjectTags(ASOT_HOOK,	ASOHOOK_Entry, printStack, TAG_END);
-
 	IntuitionBase = (struct IntuitionBase*) OpenLibrary( "intuition.library", 39 );
 	LocaleBase = (struct LocaleBase*) OpenLibrary( "locale.library", 39 );
 	UtilityBase = (struct UtilityBase*) OpenLibrary( "utility.library", 39 );
