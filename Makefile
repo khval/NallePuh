@@ -15,11 +15,12 @@ LDFLAGS	= -g
 TARGET	= NallePUH
 OBJECTS	= Nalle.o PUH.o 
 
-%.o:	%.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
+
 
 all:	$(TARGET)
 
+%.o:	%.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
 
 mostly-clean:
 	$(RM) $(OBJECTS)

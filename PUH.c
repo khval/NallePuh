@@ -678,6 +678,9 @@ static UWORD PUHRead( UWORD						reg,
 	switch( reg )
 	{
 		case VPOSR:
+			result = 0x3300;	// Alice PAL
+			break;
+
 		case VHPOSR:
 			result = ( pd->m_VPOS++ );
 			
