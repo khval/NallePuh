@@ -20,6 +20,8 @@
 */
 
 #include <stdarg.h>
+#include <stdbool.h>
+#include <time.h>
 
 #include <dos/dos.h>
 #include <exec/execbase.h>
@@ -44,8 +46,10 @@
 
 #define INTF_AUDIO	( INTF_AUD3 | INTF_AUD2 | INTF_AUD1 | INTF_AUD0 )
 
-#define DEBUG(...)	DebugPrintF(__VA_ARGS__)
-//#define DEBUG(...)
+//#define DEBUG(...)	DebugPrintF(__VA_ARGS__)
+#define DEBUG(...)
+
+#define TDEBUG(...) DebugPrintF(__VA_ARGS__)
 
 //extern void StackDump(	struct Task *task );
 
@@ -671,6 +675,14 @@ static UWORD PUHRead( UWORD						reg,
 				BOOL*						handled,
 				struct PUHData*	pd,
 				struct ExecBase* SysBase )
+
+struct timeval te ;
+struct timeval te_start ;
+struct timeval te_diff ;
+long long int us_start;
+bool te_start_set = false;
+
+static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase )
 {
 	UWORD	result;
 	UWORD* address = (UWORD*) ( (ULONG) pd->m_CustomDirect + reg );
@@ -682,8 +694,52 @@ static UWORD PUHRead( UWORD						reg,
 			break;
 
 		case VHPOSR:
-			result = ( pd->m_VPOS++ );
-			
+
+//			TDEBUG("VHPOSR %8x\n", CustomData.vhposr);
+
+			{
+
+				ULONG h = CustomData.vhposr & 255;	// we don't give f.. about horizontal pos.
+				ULONG v = CustomData.vhposr >> 8;
+
+//				TDEBUG("h %d, v %d\n", h , v);
+
+				if (h==0)
+				{
+					gettimeofday(&te_start, NULL);
+					te_start_set = true;
+					h++;
+				}
+				else if (h==255)	// we count up to 255.
+				{
+					if (te_start_set)
+					{
+						long long int ticks;
+						gettimeofday(&te, NULL);
+						timersub(&te,&te_start,&te_diff);
+
+						if (te_diff.tv_usec> 25) 
+						{
+							ticks = te_diff.tv_usec / 25;
+							v+= ticks < 255 ? ticks : 1; 
+							h = 0;
+						}
+					}
+					else 
+					{
+						v++;
+						h=0;
+					}
+
+				}
+				else h++;
+
+				CustomData.vhposr = (v << 8) | (h & 0xFF);
+
+//				TDEBUG("vhposr %8x\n", CustomData.vhposr);
+			}
+
+			result =CustomData.vhposr;
 			*handled = TRUE;
 			break;
 		
