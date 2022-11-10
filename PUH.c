@@ -121,7 +121,7 @@ struct Custom CustomData;
 extern struct libblitterIFace *ILibblitter;
 
 
-UWORD cd_ReadWord( BOOL *bHandled, void* address )
+UWORD cd_ReadWord( void* address )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
 
@@ -129,7 +129,7 @@ UWORD cd_ReadWord( BOOL *bHandled, void* address )
 	return ((UWORD *) &CustomData)[offset/2];
 }
 
-ULONG cd_ReadLong( BOOL *bHandled, void* address )
+ULONG cd_ReadLong( void* address )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
 
@@ -137,7 +137,7 @@ ULONG cd_ReadLong( BOOL *bHandled, void* address )
 	return ((UWORD *) &CustomData)[offset/4];
 }
 
-void cd_WriteWord( BOOL *bHandled, void* address, UWORD value )
+void cd_WriteWord( void* address, UWORD value )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
 
