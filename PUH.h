@@ -91,7 +91,6 @@ struct PUHData
 
   ULONG                 m_ChipFreq;
      
-  UWORD                 m_VPOS;
   UWORD                 m_DMACON;
   UWORD                 m_INTREQ;
   UWORD                 m_INTENA;
