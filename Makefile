@@ -13,9 +13,7 @@ CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
 LDFLAGS	= -g
 
 TARGET	= NallePUH
-OBJECTS	= Nalle.o PUH.o 
-
-
+OBJECTS	= Nalle.o PUH.o debug.o gui.o
 
 all:	$(TARGET)
 
