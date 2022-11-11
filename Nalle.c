@@ -1,22 +1,22 @@
 /* $Id: Nalle.c,v 1.15 2001/05/04 08:43:33 lcs Exp $ */
 
 /*
-		 NallePUH -- Paula utan henne -- A minimal Paula emulator.
-		 Copyright (C) 2001 Martin Blom <martin@blom.org>
-		 
-		 This program is free software; you can redistribute it and/or
-		 modify it under the terms of the GNU General Public License
-		 as published by the Free Software Foundation; either version 2
-		 of the License, or (at your option) any later version.
-		 
-		 This program is distributed in the hope that it will be useful,
-		 but WITHOUT ANY WARRANTY; without even the implied warranty of
-		 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
-		 GNU General Public License for more details.
-		 
-		 You should have received a copy of the GNU General Public License
-		 along with this program; if not, write to the Free Software
-		 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+		NallePUH -- Paula utan henne -- A minimal Paula emulator.
+		Copyright (C) 2001 Martin Blom <martin@blom.org>
+		
+		This program is free software; you can redistribute it and/or
+		modify it under the terms of the GNU General Public License
+		as published by the Free Software Foundation; either version 2
+		of the License, or (at your option) any later version.
+		
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+		GNU General Public License for more details.
+		
+		You should have received a copy of the GNU General Public License
+		along with this program; if not, write to the Free Software
+		Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #ifndef __amigaos4__
@@ -28,13 +28,6 @@
 #include <exec/lists.h>
 #include <exec/memory.h>
 
-#ifndef NO_GUI
-#include <classes/window.h>
-#include <gadgets/listbrowser.h>
-#include <intuition/gadgetclass.h>
-#include <libraries/resource.h>
-#endif
-
 #include <clib/alib_protos.h>
 #include <proto/ahi.h>
 #include <proto/dos.h>
@@ -44,11 +37,6 @@
 #include <proto/locale.h>
 #include <proto/expansion.h>
 #include <proto/libblitter.h>
-
-#ifndef NO_GUI
-#include <proto/listbrowser.h>
-#include <proto/resource.h>
-#endif
 
 #include <hardware/custom.h>
 #include <hardware/dmabits.h>
@@ -60,6 +48,7 @@
 
 #include "NallePUH.h"
 #include "PUH.h"
+#include "debug.h"
 
 #ifdef __amigaos4__
 #define GETIFACE(x)	if (x ## Base)  { I ## x = (struct x ## IFace *) GetInterface((struct Library *) x ## Base, "main", 1L, NULL); }
@@ -76,8 +65,7 @@ static BOOL OpenLibs( void );
 static void CloseLibs( void );
 static BOOL OpenAHI( void );
 static void CloseAHI( void );
-static BOOL ShowGUI( struct PUHData* pd );
-static BOOL HandleGUI( Object* window, struct Gadget** gadgets, struct PUHData* pd );
+
 
 /******************************************************************************
 ** Global variables ***********************************************************
@@ -97,10 +85,27 @@ struct Library *LibBlitterBase = NULL;
 struct DebugIFace *IDebug = NULL;
 struct LibBlitterIFace *ILibBlitter = NULL;
 
-#ifndef NO_GUI
-	struct Library *ResourceBase = NULL;
-	struct Library *ListBrowserBase = NULL;
-#endif
+struct Library			*StringBase = NULL;
+struct Library			*LayoutBase = NULL;
+struct Library			*LabelBase = NULL;
+struct Library			*ChooserBase = NULL;
+struct Library			*IntegerBase = NULL;
+struct Library			*ListBrowserBase = NULL;
+struct Library			*ClickTabBase = NULL;
+struct Library			*WindowBase = NULL;
+struct Library			*CheckBoxBase = NULL;
+struct Library			*RequesterBase = NULL;
+
+struct StringIFace *IString = NULL;
+struct LayoutIFace *ILayout = NULL;
+struct LabelIFace *ILabel = NULL;
+struct ChooserIFace *IChooser = NULL;
+struct IntegerIFace *IInteger = NULL;
+struct ListBrowserIFace *IListBrowser = NULL;
+struct ClickTabIFace *IClickTab = NULL;
+struct WindowIFace *IWindow = NULL;
+struct CheckBoxIFace *ICheckBox = NULL;
+struct RequesterIFace *IRequester = NULL;
 
 struct UtilityBase *UtilityBase;
 
@@ -121,54 +126,6 @@ void __chkabort( void )
 }
 
 
-/******************************************************************************
-** GUI utility functions ******************************************************
-******************************************************************************/
-
-#ifndef NO_GUI
-ULONG RefreshSetGadgetAttrsA( struct Gadget *	g, struct Window *w,	struct Requester* r,	struct TagItem* tags )
-{
-	ULONG retval;
-	BOOL	changedisabled = FALSE;
-	BOOL	disabled	 = FALSE;
-
-	if ( w != NULL )
-	{
-		if ( FindTagItem( GA_Disabled, tags ) )
-		{
-			changedisabled = TRUE;
- 			disabled = g->Flags & GFLG_DISABLED;
- 		}
- 	}
-
-	retval = SetGadgetAttrsA( g, w, r, tags );
-
-	if ( w != NULL &&
-			( retval != 0 || 
-				( changedisabled && disabled != ( g->Flags & GFLG_DISABLED ) ) ) )
-	{
-		RefreshGList( g, w, r, 1 );
-		retval = 1;
-	}
-
-	return retval;
-}
-
-ULONG RefreshSetGadgetAttrs( struct Gadget *g, struct Window *w, struct Requester *r, Tag tag1, ... )
-{
-	return RefreshSetGadgetAttrsA( g, w, r, (struct TagItem*) &tag1 );
-}
-
-struct Node*LBAddNodeA( struct Gadget *	lb,	struct Window *w,	struct Requester *r,	struct Node *n,	struct TagItem* tags )
-{
-	return (struct Node*) DoGadgetMethod( lb, w, r,LBM_ADDNODE, NULL, (ULONG) n, (ULONG) tags );
-}
-
-struct Node *LBAddNode( struct Gadget *lb, struct Window *w, struct Requester* r, struct Node *n, Tag tag1, ... )
-{
-	return (struct Node*) DoGadgetMethod( lb, w, r, LBM_ADDNODE, NULL, (ULONG) n, (ULONG) &tag1 );
-}
-#endif
 
 /******************************************************************************
 ** main ***********************************************************************
@@ -176,10 +133,10 @@ struct Node *LBAddNode( struct Gadget *lb, struct Window *w, struct Requester* r
 
 int main( int argc,char* argv[] )
 {
-	int	 rc = 0;
+	int	rc = 0;
 	BOOL	gui_mode = FALSE;
 
-	ULONG mode_id	 = 0;
+	ULONG mode_id	= 0;
 	ULONG frequency = 0;
 	ULONG level = 0;
 
@@ -187,52 +144,43 @@ int main( int argc,char* argv[] )
 	{
 		return 20;
 	}
-#ifndef NO_GUI
-	if ( argc == 1 && ResourceBase != NULL )
-	{
-		// Gui mode
 
+	if ( argc == 1 )
+	{
 		gui_mode = TRUE;
 	}
 	else
-#endif
 	if ( argc != 3 )
 	{
 		//Printf( "Usage: %s [0x]<AHI mode ID> <Frequency> <Level>\n", argv[ 0 ] );
 		//Printf( "Level can be 0 (no patches), 1 (ROM patches) or 2 (appl. patches)\n" );
-	 Printf( "Usage: %s [0x]<AHI mode ID> <Frequency>\n", argv[ 0 ] );
+		Printf( "Usage: %s [0x]<AHI mode ID> <Frequency>\n", argv[ 0 ] );
 		return 10;
 	}
 
 	#ifdef __amigaos4__
 	{
 		struct Library	*ExpansionBase;
-	 struct ExpansionIFace *IExpansion;
-	 BOOL	 Classic = TRUE;
+		struct ExpansionIFace *IExpansion;
+		BOOL	Classic = FALSE;
 
-	 ExpansionBase = OpenLibrary( "expansion.library", 50 );
-	 GETIFACE(Expansion);
-	 if (IExpansion != NULL)
-	 {
+		ExpansionBase = OpenLibrary( "expansion.library", 50 );
+		GETIFACE(Expansion);
+		if (IExpansion != NULL)
+		{
 			STRPTR	extensions;
+			GetMachineInfoTags(GMIT_Extensions, (ULONG) &extensions,TAG_DONE );
+			if (strstr(extensions, "classic.customchips")) Classic = TRUE;
+			DROPIFACE(Expansion);
+		}
 
-		GetMachineInfoTags(
-			GMIT_Extensions, (ULONG) &extensions,
-			TAG_DONE );
+		CloseLibrary(ExpansionBase);
 
-		if (!strstr(extensions, "classic.customchips"))
-				Classic = FALSE;
-
-	 	DROPIFACE(Expansion);
-	 }
-
-	 CloseLibrary(ExpansionBase);
-
-	 if (Classic)
-	 {
-		 Printf( "Sorry, this program doesn't work on classic hardware\n" );
-		return 10;
-	 }
+		if (Classic)
+		{
+			Printf( "Sorry, this program doesn't work on classic hardware\n" );
+			return 10;
+		}
 	}
 	#endif
 
@@ -242,10 +190,10 @@ int main( int argc,char* argv[] )
 		char* freq_ptr;
 		char* levl_ptr;
 
-		mode_id	 = strtol( argv[ 1 ], &mode_ptr, 0 );
+		mode_id	= strtol( argv[ 1 ], &mode_ptr, 0 );
 		frequency = strtol( argv[ 2 ], &freq_ptr, 0 );
 		level = strtol( "0" /*argv[ 3 ]*/, &levl_ptr, 0 );
-	 
+	
 		if ( *mode_ptr != 0 || *freq_ptr != 0 || *levl_ptr != 0 )
 		{
 			Printf( "All arguments must be numbers.\n" );
@@ -312,7 +260,7 @@ int main( int argc,char* argv[] )
 						break;
 				}
 #endif
-				if ( ! InstallPUH( flags,	mode_id, frequency ) )
+				if ( ! InstallPUH( flags, mode_id, frequency ) )
 				{
 					rc = 20;
 				}
@@ -351,6 +299,24 @@ int main( int argc,char* argv[] )
 ** OpenLibs *******************************************************************
 ******************************************************************************/
 
+BOOL open_lib( const char *name, int ver , const char *iname, int iver, struct Library **base, struct Interface **interface)
+{
+	*interface = NULL;
+	*base = OpenLibrary( name , ver);
+
+	if (*base)
+	{
+		 *interface = GetInterface( *base,  iname , iver, TAG_END );
+		if (!*interface) printf("Unable to getInterface %s for %s %ld!\n",iname,name,ver);
+	}
+	else
+	{
+	   	printf("Unable to open the %s %ld!\n",name,ver);
+	}
+	return (*interface) ? TRUE : FALSE;
+}
+
+
 static BOOL OpenLibs( void )
 {
 	IntuitionBase = (struct IntuitionBase*) OpenLibrary( "intuition.library", 39 );
@@ -358,15 +324,21 @@ static BOOL OpenLibs( void )
 	UtilityBase = (struct UtilityBase*) OpenLibrary( "utility.library", 39 );
 	LibBlitterBase = (struct Library *) OpenLibrary( "libblitter.library", 1 );
 
-	#ifndef NO_GUI
-	ResourceBase	 = OpenLibrary( "resource.library", 44 );
-	ListBrowserBase = OpenLibrary( "listbrowser.gadget", 44 );
-	#endif
-
 	GETIFACE(LibBlitter);
 	GETIFACE(Intuition);
 	GETIFACE(Locale);
 	GETIFACE(Utility);
+
+	if ( ! open_lib( "string.gadget", 53, "main", 1, &StringBase, (struct Interface **) &IString) ) return FALSE;
+	if ( ! open_lib( "layout.gadget", 53, "main", 1, &LayoutBase, (struct Interface **) &ILayout) ) return FALSE;
+	if ( ! open_lib( "label.image", 53, "main", 1, &LabelBase, (struct Interface **) &ILabel) ) return FALSE;
+	if ( ! open_lib( "chooser.gadget", 53, "main", 1, &ChooserBase, (struct Interface **) &IChooser) ) return FALSE;
+	if ( ! open_lib( "integer.gadget", 53, "main", 1, &IntegerBase, (struct Interface **) &IInteger) ) return FALSE;
+	if ( ! open_lib( "listbrowser.gadget", 53, "main", 1, &ListBrowserBase, (struct Interface **) &IListBrowser) ) return FALSE;
+	if ( ! open_lib( "clicktab.gadget", 53, "main", 1, &ClickTabBase, (struct Interface **) &IClickTab) ) return FALSE;
+	if ( ! open_lib( "window.class", 53, "main", 1, &WindowBase, (struct Interface **) &IWindow) ) return FALSE;
+	if ( ! open_lib( "checkbox.gadget", 53, "main", 1, &CheckBoxBase, (struct Interface **) &ICheckBox) ) return FALSE;
+	if ( ! open_lib( "requester.class", 53, "main", 1, &RequesterBase, (struct Interface **) &IRequester) ) return FALSE;
 
 	if (ILibBlitter) 
 	{
@@ -393,8 +365,46 @@ static BOOL OpenLibs( void )
 
 #define safe_CloseLibrary(b) if (b) { CloseLibrary( (struct Library *) b ); b = NULL;}
 
+static void CloseClasses( void )
+{
+	if (StringBase) CloseLibrary(StringBase); StringBase = 0;
+	if (IString) DropInterface((struct Interface*) IString); IString = 0;
+
+	if (LayoutBase) CloseLibrary(LayoutBase); LayoutBase = 0;
+	if (ILayout) DropInterface((struct Interface*) ILayout); ILayout = 0;
+
+	if (LabelBase) CloseLibrary(LabelBase); LabelBase = 0;
+	if (ILabel) DropInterface((struct Interface*) ILabel); ILabel = 0;
+
+	if (ChooserBase) CloseLibrary(ChooserBase); ChooserBase = 0;
+	if (IChooser) DropInterface((struct Interface*) IChooser); IChooser = 0;
+
+	if (IntegerBase) CloseLibrary(IntegerBase); IntegerBase = 0;
+	if (IInteger) DropInterface((struct Interface*) IInteger); IInteger = 0;
+
+	if (ListBrowserBase) CloseLibrary(ListBrowserBase); ListBrowserBase = 0;
+	if (IListBrowser) DropInterface((struct Interface*) IListBrowser); IListBrowser = 0;
+
+	if (ClickTabBase) CloseLibrary(ClickTabBase); ClickTabBase = 0;
+	if (IClickTab) DropInterface((struct Interface*) IClickTab); IClickTab = 0;
+
+	if (WindowBase) CloseLibrary(WindowBase); WindowBase = 0;
+	if (IWindow) DropInterface((struct Interface*) IWindow); IWindow = 0;
+
+	if (ClickTabBase) CloseLibrary(ClickTabBase); ClickTabBase = 0;
+	if (IClickTab) DropInterface((struct Interface*) IClickTab); IClickTab = 0;
+
+	if (CheckBoxBase) CloseLibrary(CheckBoxBase); CheckBoxBase = 0;
+	if (ICheckBox) DropInterface((struct Interface*) ICheckBox); ICheckBox = 0;
+
+	if (RequesterBase) CloseLibrary(RequesterBase); RequesterBase = 0;
+	if (IRequester) DropInterface((struct Interface*) IRequester); IRequester = 0;
+}
+
 static void CloseLibs( void )
 {
+	CloseClasses();
+
 	DROPIFACE(Intuition);
 	DROPIFACE(Utility);
 	DROPIFACE(Locale);
@@ -404,6 +414,7 @@ static void CloseLibs( void )
 	safe_CloseLibrary(IntuitionBase);
 	safe_CloseLibrary(LocaleBase);
 }
+
 
 /******************************************************************************
 ** OpenAHI ********************************************************************
@@ -427,7 +438,7 @@ static BOOL OpenAHI( void )
 		if ( AHIio != NULL ) 
 		{
 			AHIio->ahir_Version = 4;
-			AHIDevice = OpenDevice( AHINAME,	AHI_NO_UNIT,(struct IORequest*) AHIio,0UL );
+			AHIDevice = OpenDevice( AHINAME, AHI_NO_UNIT,(struct IORequest*) AHIio,0UL );
 
 			if ( AHIDevice == 0 )
 			{
@@ -452,508 +463,18 @@ static void CloseAHI( void )
 {
 	if ( AHIDevice == 0 )
 	{
-		 DROPIFACE(AHI);
+		DROPIFACE(AHI);
 		CloseDevice( (struct IORequest*) AHIio );
 	}
 
 	FreeSysObject(ASOT_IOREQUEST, AHIio );
 	FreeSysObject(ASOT_PORT, AHImp );
 
-	AHIBase	 = NULL;
+	AHIBase	= NULL;
 	AHImp = NULL;
 	AHIio = NULL;
 	AHIDevice = IOERR_OPENFAIL;
 }
 
 
-/******************************************************************************
-** ShowGUI ********************************************************************
-******************************************************************************/
 
-static BOOL ShowGUI( struct PUHData* pd )
-{
-#ifdef NO_GUI
-	return FALSE;
-#else
-	BOOL rc = FALSE;
-
-	struct Catalog *catalog;
-	struct Screen *screen;
-	struct MsgPort *idcmp_port;
-	struct MsgPort *app_port;
-	RESOURCEFILE	resource;
-	Object *window;
-	struct Gadget **gadgets;
-
-	catalog = OpenCatalogA( NULL, "NallePUH.catalog",NULL);
-	
-	screen = LockPubScreen( NULL );
-	
-	if ( screen != NULL )
-	{
-		idcmp_port = CreateMsgPort();
-		
-		if ( idcmp_port != NULL )
-		{
-			app_port = CreateMsgPort();
-			
-			if ( app_port != NULL )
-			{
-				resource = RL_OpenResource( RCTResource, screen, catalog );
-
-				if ( resource != NULL )
-				{
-					window = RL_NewObject( resource, WIN_1_ID,
-								 WINDOW_SharedPort, (ULONG) idcmp_port,
-								 WINDOW_AppPort,		(ULONG) app_port,
-								 TAG_DONE );
-																 
-					if ( window != NULL )
-					{
-						gadgets = (struct Gadget**) RL_GetObjectArray( resource, window, GROUP_2_ID );
-
-						if ( gadgets != NULL )
-						{
-							DoMethod( window, WM_OPEN );
-							rc = HandleGUI( window, gadgets, pd );
-							DoMethod( window, WM_CLOSE);
-						}
-					}
-					RL_CloseResource( resource );
-				}
-				
-				DeleteMsgPort( app_port );
-			}
-			
-			DeleteMsgPort( idcmp_port );
-		}
-
-		UnlockPubScreen( NULL, screen );
-	}
-	
-	CloseCatalog( catalog );
-
-	return rc;
-#endif
-}
-
-
-/******************************************************************************
-** HandleGUI ********************************************************************
-******************************************************************************/
-
-#ifndef NO_GUI
-
-ASMCALL SAVEDS static ULONG FilterFunc( REG( a0, struct Hook *hook ),	REG( a2, struct AHIAudioModeRequester* req ), REG( a1, ULONG mode_id ) )
-{
-	// Remove all Paula modes (hardcoded mode IDs suck.)
-
-	if ( ( mode_id & 0xffff0000	) == 0x00020000 )
-	{
-		return FALSE;
-	}
-	else
-	{
-		return TRUE;
-	}
-}
-
-
-struct LogData
-{
-	struct Gadget* m_Gadget;
-	struct Window* m_Window;
-};
-
-
-ASMCALL SAVEDS static void LogToList( REG( a0, struct Hook*hook ),REG( a2, struct PUHData* pd ), REG( a1, STRPTR message ) )
-{
-	struct LogData* d = (struct LogData*) hook->h_Data;
-
-	LBAddNode( d->m_Gadget, d->m_Window, NULL,
-						 (struct Node*) ~0,
-						 LBNCA_CopyText, TRUE,
-						 LBNA_Column,		0,
-						 LBNCA_Text,		 (ULONG) message,
-						 TAG_DONE );
-}
-
-static void ClearList( struct LogData* d )
-{
-	struct List* list;
-	struct Node* node;
-
-	GetAttr( LISTBROWSER_Labels, d->m_Gadget, (ULONG*) &list );
-
-	// Detach
-	RefreshSetGadgetAttrs( d->m_Gadget, d->m_Window, NULL, LISTBROWSER_Labels, NULL, TAG_DONE );
-
-	// Free and remove nodes
-	while( ( node = RemTail( list ) ) != NULL )
-	{
-		FreeListBrowserNode( node );
-	}
-
-	// Attach the (now empty) list again
-	RefreshSetGadgetAttrs( d->m_Gadget, d->m_Window, NULL, LISTBROWSER_Labels, list, TAG_DONE );
-}
-
-
-struct TagItem *chip_tags[]=
-{
-	AVT_Type, MEMF_SHARED,
-	AVT_Contiguous, TRUE,
-	AVT_Alignment, 16,
-	AVT_ClearWithValue, 0,
-	TAG_END
-}
-
-static BOOL HandleGUI( Object * window,	 struct Gadget** gadgets,	 struct PUHData* pd )
-{
-	BOOL	rc = FALSE;
-	BOOL	quit = FALSE;
-	BOOL	messed_with_registers = FALSE;
-
-	struct Window* win_ptr = NULL;
-	ULONG	window_signals = 0;
-
-	ULONG	audio_mode = 0;
-	ULONG	frequency = 0;
-
-	void *chip = NULL;
-	struct Custom *custom = (struct Custom*) 0xdff000;
-	struct LogData log_data;
-
-	struct Hook log_hook =
-	{
-		{ NULL, NULL },
-		(HOOKFUNC) LogToList,
-		NULL,
-		&log_data
-	};
-
-	chip = AllocVecTagList( pooh11_sblen, chip_tags );
-
-	if ( chip == NULL )
-	{
-		LogPUH( pd, "Failed to alloc chip memory." );
-		return FALSE;
-	}
-
-	CopyMem( pooh11_sb, chip, pooh11_sblen );
-
-	GetAttr( WINDOW_SigMask, window, &window_signals );
-	GetAttr( WINDOW_Window,	window, (ULONG*) &win_ptr );
-
-	log_data.m_Gadget = gadgets[ GAD_MESSAGES ];
-	log_data.m_Window = win_ptr;
-
-	SetPUHLogger( &log_hook, pd );
-
-	while( ! quit )
-	{
-		ULONG mask;
-		
-		mask = Wait( window_signals | SIGBREAKF_CTRL_C );
-		
-		if ( mask & SIGBREAKF_CTRL_C )
-		{
-			quit = TRUE;
-			rc	 = TRUE;
-			break;
-		}
-
-		if ( mask & window_signals )
-		{
-			ULONG input_flags = 0;
-			UWORD code = 0;
-			
-			while( ( input_flags = DoMethod( window, WM_HANDLEINPUT, &code ) ) 
-						 != WMHI_LASTMSG )
-			{
-				switch( input_flags & WMHI_CLASSMASK)
-				{
-					case WMHI_CLOSEWINDOW:
-						quit = TRUE;
-						rc	 = TRUE;
-						break;
-
-					case WMHI_ICONIFY:
-						DoMethod( window, WM_ICONIFY );
-						GetAttr( WINDOW_Window,	window, (ULONG*) &win_ptr );
-						log_data.m_Window = win_ptr;
-						break;
-						
-					case WMHI_UNICONIFY:
-						DoMethod( window, WM_OPEN );
-						GetAttr( WINDOW_Window,	window, (ULONG*) &win_ptr );
-						log_data.m_Window = win_ptr;
-						break;
-
-					case WMHI_GADGETUP:
-					{
-						switch( input_flags & RL_GADGETMASK )
-						{
-							case GAD_MODE_SELECT:
-							{
-								struct AHIAudioModeRequester* req = NULL;
-								
-								struct TagItem								filter_tags[] =
-								{
-									{ AHIDB_Realtime,		TRUE },
-									{ AHIDB_MaxChannels, 4		},
-									{ TAG_DONE,					0		}
-								};
-
-								struct Hook filter_hook =
-								{
-									{ NULL, NULL },
-									(HOOKFUNC) FilterFunc,
-									NULL,
-									NULL
-								};
-
-								req = AHI_AllocAudioRequest(
-										AHIR_Window,		 (ULONG) win_ptr,
-										AHIR_SleepWindow,	TRUE,
-										AHIR_InitialAudioID,	audio_mode,
-										AHIR_InitialMixFreq,	frequency,
-										AHIR_DoMixFreq,	TRUE,
-										AHIR_DoDefaultMode,	TRUE,
-										AHIR_FilterFunc,	 (ULONG) &filter_hook,
-										AHIR_FilterTags,	 (ULONG) filter_tags,
-										TAG_DONE );
-
-								if ( req == NULL )
-								{
-									quit = TRUE;
-									rc	 = FALSE;
-								}
-								else
-								{
-									if ( AHI_AudioRequest( req, TAG_DONE ) )
-									{
-										char buffer[ 256 ];
-
-										audio_mode = req->ahiam_AudioID;
-										frequency = req->ahiam_MixFreq;
-										
-										if ( AHI_GetAudioAttrs( audio_mode, NULL,	AHIDB_BufferLen, 255, AHIDB_Name, (ULONG) buffer, TAG_DONE ) )
-										{
-											RefreshSetGadgetAttrs( gadgets[ GAD_MODE_INFO ], win_ptr, NULL,
-													STRINGA_TextVal, (ULONG) buffer, TAG_DONE );
-
-											RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], win_ptr, NULL,
-													GA_Disabled, FALSE,	TAG_DONE );
-										}
-									}
-
-									AHI_FreeAudioRequest( req );
-								}
-
-								break;
-							}
-
-							case GAD_INSTALL:
-							{
-								ULONG flags = 0;
-								ULONG patch_rom = 0;
-								ULONG patch_apps = 0;
-								ULONG toggle_led = 0;
-
-								GetAttr( GA_Selected, gadgets[ GAD_PATCH_ROM ], &patch_rom );
-								GetAttr( GA_Selected, gadgets[ GAD_PATCH_APPS ], &patch_apps );
-								GetAttr( GA_Selected, gadgets[ GAD_TOGGLE_LED ], &toggle_led );
-
-								ClearList( &log_data );
-
-								if ( patch_rom )
-								{
-									flags |= PUHF_PATCH_ROM;
-								}
-
-								if ( patch_apps )
-								{
-									flags |= PUHF_PATCH_APPS;
-								}
-
-								if ( toggle_led )
-								{
-									flags |= PUHF_TOGGLE_LED;
-								}
-
-								if ( ! InstallPUH( flags,	audio_mode, frequency, pd ) )
-								{
-									LogPUH( pd, "Unable to install PUH." );
-								}
-								else
-								{
-									RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_ROM ], win_ptr, NULL,
-											GA_Disabled, TRUE,	TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,
-											GA_Disabled, TRUE,	TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_TOGGLE_LED ], win_ptr, NULL,
-											GA_Disabled, TRUE,	TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_MODE_SELECT ], win_ptr, NULL,
-											GA_Disabled, TRUE,	TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], win_ptr, NULL,
-											GA_Disabled, TRUE,	TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_UNINSTALL ], win_ptr, NULL,
-											GA_Disabled, FALSE,	TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,
-											GA_Disabled, FALSE,	TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,
-											GA_Disabled, TRUE,	TAG_DONE );
-								}
-
-								break;
-							}
-
-
-							case GAD_UNINSTALL:
-							{
-								ULONG patch_rom = 0;
-
-								ClearList( &log_data );
-
-								UninstallPUH( pd );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_ROM ], win_ptr, NULL,
-										GA_Disabled, FALSE,	TAG_DONE );
-
-								GetAttr( GA_Selected, gadgets[ GAD_PATCH_ROM	], &patch_rom );
-								
-								if ( patch_rom )
-								{
-									RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,
-											GA_Disabled, FALSE,	TAG_DONE );
-								}
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_TOGGLE_LED ], win_ptr, NULL,
-										GA_Disabled, FALSE,	TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_MODE_SELECT ], win_ptr, NULL,
-										GA_Disabled, FALSE,	TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], win_ptr, NULL,
-										GA_Disabled, FALSE,	TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_UNINSTALL ], win_ptr, NULL,
-										GA_Disabled, TRUE,	TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,
-										GA_Disabled, TRUE,	TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,
-										GA_Disabled, TRUE,	TAG_DONE );
-								break;
-							}
-
-
-							case GAD_ACTIVATE:
-							{
-								if ( ! ActivatePUH( pd ) )
-								{
-									LogPUH( pd, "Unable to activate PUH." );
-								}
-								else
-								{
-									LogPUH( pd, "Activated PUH." );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,
-											GA_Disabled, TRUE,
-											TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,
-											GA_Disabled, FALSE,
-											TAG_DONE );
-								}
-
-								break;
-							}
-
-
-							case GAD_DEACTIVATE:
-							{
-								DeactivatePUH( pd );
-
-								LogPUH( pd, "Deactivated PUH." );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,
-										GA_Disabled, FALSE,
-										TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,
-										GA_Disabled, TRUE,
-										TAG_DONE );
-
-								break;
-							}
-							
-							case GAD_TEST:
-							{
-								messed_with_registers = TRUE;
-
-								WriteWord( &custom->dmacon, DMAF_AUD0 );
-
-								Delay( 1 );	// The infamous DMA-wait! ;-)
-
-								WriteLong( &custom->aud[ 0 ].ac_ptr, (ULONG) chip );
-								WriteWord( &custom->aud[ 0 ].ac_len, pooh11_sblen / 2);
-								WriteWord( &custom->aud[ 0 ].ac_per, 161 );
-								WriteWord( &custom->aud[ 0 ].ac_vol, 64 );
-
-								WriteWord( &custom->dmacon, DMAF_SETCLR | DMAF_AUD0 );
-
-								WriteWord( &custom->aud[ 0 ].ac_len, 1 );
-								break;
-							}
-							
-							case GAD_PATCH_ROM:
-								if ( code )
-								{
-									RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,
-											GA_Disabled, FALSE,
-											TAG_DONE );
-								}
-								else
-								{
-									RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,
-											GA_Disabled, TRUE,
-											GA_Selected, FALSE,
-											TAG_DONE );
-								}
-								break;
-						}
-						
-						break;
-					}
-
-					default:
-						break;
-				}
-			}
-		}
-	}
-	
-	SetPUHLogger( NULL, pd );
-
-	if ( messed_with_registers )
-	{
-		WriteWord( &custom->dmacon, DMAF_AUD0 );
-		WriteWord( &custom->aud[ 0 ].ac_vol, 0 );
-	}
-
-	FreeVec( chip );
-
-	return rc;
-}
-
-#endif

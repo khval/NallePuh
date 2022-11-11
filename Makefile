@@ -7,7 +7,7 @@ CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
 			-Wno-cast-function-type \
 			-Wno-incompatible-pointer-types \
 			-Wno-missing-braces \
-			-DNO_GUI -D__USE_INLINE__ -D__USE_BASETYPE__ -g
+			-D__USE_INLINE__ -D__USE_BASETYPE__ -g
 
 
 LDFLAGS	= -g
