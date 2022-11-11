@@ -596,7 +596,7 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 
 						pContext->gpr[d_reg] = (int32) PUHRead( (eff_addr & 0x1ff),&bHandled1,pd,pSysBase) & 0xFF;
 
-						DEBUG( "lbzx r%ld, r%ld, r%ld (ea: %lx	data: %lx)\n", d_reg, a_reg, b_reg, eff_addr, value );
+						DEBUG( "lbzx r%ld, r%ld, r%ld (ea: %lx	data: %lx)\n", d_reg, a_reg, b_reg, eff_addr, pContext->gpr[d_reg] );
 
 						break;
 
@@ -671,10 +671,13 @@ void adkcon(UWORD value)
 ** Handle reads ***************************************************************
 ******************************************************************************/
 
-static UWORD PUHRead( UWORD						reg,
-				BOOL*						handled,
-				struct PUHData*	pd,
-				struct ExecBase* SysBase )
+
+typedef struct 
+{
+	unsigned char v;
+	unsigned char h;
+} vhposr_t;
+
 
 struct timeval te ;
 struct timeval te_start ;
