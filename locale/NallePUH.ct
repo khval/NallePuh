@@ -1,0 +1,48 @@
+## version $VER: XX.catalog XX.XX (XX.XX.20XX)
+## codeset X
+## language X
+;
+msgPatchROM
+
+; Patch _ROM
+;
+msgPatchApplications
+
+; Patch a_pplications
+;
+msgAudioMode
+
+; Audio _mode...
+;
+msgInstall
+
+; _Install
+;
+msgUninstall
+
+; _Uninstall
+;
+msgActivate
+
+; _Activate
+;
+msgDeactivate
+
+; _Deactivate
+;
+msgNallePUH
+
+; Nalle PUH version 0.3 (c)2001 Martin Blom <martin@blom.org>
+;
+msgTest
+
+; _Test
+;
+msgToggleLed
+
+; Toggle _led on exceptions
+;
+msgActivityLog
+
+; [Activity log area]
+;

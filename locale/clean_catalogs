@@ -1,0 +1,3 @@
+list all catalogs/#?/#?.catalog lformat "echo *E[1mDelete *"%p%n*"*E[0m*ndelete *"%p%n*"" >t:b2-clean
+protect t:b2-clean +s
+t:b2-clean

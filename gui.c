@@ -5,6 +5,13 @@
 #include <libraries/resource.h>
 #include <proto/listbrowser.h>
 #include <proto/resource.h>
+#include <proto/locale.h>
+#include <proto/intuition.h>
+
+#include <devices/ahi.h>
+
+#include "locale/NallePUH.h"
+#include "PUH.h"
 
 /******************************************************************************
 ** GUI utility functions ******************************************************

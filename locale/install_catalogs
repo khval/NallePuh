@@ -1,0 +1,4 @@
+list all catalogs/#?/#?.catalog lformat "copy *"%p%n*" to locale:%p" >t:b2-install
+protect t:b2-install +s
+t:b2-install
+

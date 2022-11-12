@@ -2,6 +2,7 @@
 CC			= ppc-amigaos-gcc
 LD			= ppc-amigaos-ld
 STRIP		= ppc-amigaos-strip
+CATCOMP		= catcomp
 
 CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
 			-Wno-cast-function-type \
@@ -15,13 +16,21 @@ LDFLAGS	= -g
 TARGET	= NallePUH
 OBJECTS	= Nalle.o PUH.o debug.o gui.o
 
-all:	$(TARGET)
+all:	make_locale $(TARGET) 
 
 %.o:	%.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
 
-mostly-clean:
-	$(RM) $(OBJECTS)
+make_locale: locale/NallePUH.c locale/NallePUH.h
+
+locale/NallePUH.ct: locale/NallePUH.cd
+	@$(CATCOMP) locale/NallePUH.cd CTFILE locale/NallePUH.ct
+
+locale/NallePUH.h: locale/NallePUH.cd locale/NallePUH.ct
+	@$(CATCOMP) locale/NallePUH.cd CFILE locale/locale.h NOSTRINGS NOARRAY NOBLOCK NOCODE
+
+locale/NallePUH.c: locale/NallePUH.cd locale/NallePUH.ct
+	@$(CATCOMP) locale/NallePUH.cd CFILE locale/locale.c NOBLOCK NOCODE
 
 clean:
 	$(RM) $(TARGET) $(OBJECTS)
@@ -30,7 +39,7 @@ $(TARGET): 	$(OBJECTS)
 	$(CC) $(LDFLAGS) -o $@.debug $^
 	$(STRIP) -R .comment $@.debug -o $@
 
-Nalle.o:	Nalle.c PUH.h NallePUH.h
+Nalle.o:	Nalle.c PUH.h locale/NallePUH.h
 
 PUH.o:		PUH.c PUH.h
 
