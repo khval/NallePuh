@@ -33,10 +33,19 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/utility.h>
+#include <proto/icon.h>
+#include <proto/wb.h>
 #include <proto/intuition.h>
 #include <proto/locale.h>
 #include <proto/expansion.h>
 #include <proto/libblitter.h>
+#include <proto/diskfont.h>
+#include <diskfont/diskfonttag.h>
+
+#include <gadgets/integer.h>
+#include <gadgets/layout.h>
+#include <gadgets/button.h>
+#include <images/label.h>
 
 #include <hardware/custom.h>
 #include <hardware/dmabits.h>
@@ -81,20 +90,21 @@ struct IntuitionBase* IntuitionBase = NULL;
 struct Library *LocaleBase = NULL;
 struct Library *MMUBase = NULL;
 struct Library *LibBlitterBase = NULL;
+struct Library *DiskfontBase = NULL;
 
 struct DebugIFace *IDebug = NULL;
 struct LibBlitterIFace *ILibBlitter = NULL;
 
-struct Library			*StringBase = NULL;
-struct Library			*LayoutBase = NULL;
-struct Library			*LabelBase = NULL;
-struct Library			*ChooserBase = NULL;
-struct Library			*IntegerBase = NULL;
-struct Library			*ListBrowserBase = NULL;
-struct Library			*ClickTabBase = NULL;
-struct Library			*WindowBase = NULL;
-struct Library			*CheckBoxBase = NULL;
-struct Library			*RequesterBase = NULL;
+struct Library *StringBase = NULL;
+struct Library *LayoutBase = NULL;
+struct Library *LabelBase = NULL;
+struct Library *ChooserBase = NULL;
+struct Library *IntegerBase = NULL;
+struct Library *ListBrowserBase = NULL;
+struct Library *ClickTabBase = NULL;
+struct Library *WindowBase = NULL;
+struct Library *CheckBoxBase = NULL;
+struct Library *RequesterBase = NULL;
 
 struct StringIFace *IString = NULL;
 struct LayoutIFace *ILayout = NULL;
@@ -106,15 +116,19 @@ struct ClickTabIFace *IClickTab = NULL;
 struct WindowIFace *IWindow = NULL;
 struct CheckBoxIFace *ICheckBox = NULL;
 struct RequesterIFace *IRequester = NULL;
+struct DiskfontIFace *IDiskfont = NULL;
+
+struct Catalog *catalog = NULL;
+struct Locale *_locale = NULL;
+ULONG *codeset_page = NULL;
 
 struct UtilityBase *UtilityBase;
 
-#ifdef __amigaos4__
-	struct AHIIFace *IAHI;
-	struct IntuitionIFace *IIntuition;
-	struct LocaleIFace *ILocale;
-	struct UtilityIFace *IUtility;
-#endif
+struct AHIIFace *IAHI = NULL;
+struct IntuitionIFace *IIntuition = NULL;
+struct LocaleIFace *ILocale = NULL;
+struct UtilityIFace *IUtility = NULL;
+
 
 /******************************************************************************
 ** Disable ctrl-c *************************************************************
@@ -339,6 +353,8 @@ static BOOL OpenLibs( void )
 	if ( ! open_lib( "window.class", 53, "main", 1, &WindowBase, (struct Interface **) &IWindow) ) return FALSE;
 	if ( ! open_lib( "checkbox.gadget", 53, "main", 1, &CheckBoxBase, (struct Interface **) &ICheckBox) ) return FALSE;
 	if ( ! open_lib( "requester.class", 53, "main", 1, &RequesterBase, (struct Interface **) &IRequester) ) return FALSE;
+	if ( ! open_lib( "locale.library", 53 , "main", 1, &LocaleBase, (struct Interface **) &ILocale  ) ) return FALSE;
+	if ( ! open_lib( "diskfont.library", 53 , "main", 1, &DiskfontBase, (struct Interface **) &IDiskfont ) ) return FALSE;
 
 	if (ILibBlitter) 
 	{
@@ -354,6 +370,15 @@ static BOOL OpenLibs( void )
 		CloseLibs();
 		return FALSE;
 	}
+
+	_locale = (struct Locale *) OpenLocale(NULL);
+
+	if (_locale)
+	{
+		codeset_page = (ULONG *) ObtainCharsetInfo(DFCS_NUMBER, (ULONG) _locale -> loc_CodeSet , DFCS_MAPTABLE);
+	}
+
+	catalog = OpenCatalog(NULL, "basilisk.catalog", OC_BuiltInLanguage, "english", TAG_DONE);
 
 	return TRUE;
 }
@@ -399,10 +424,28 @@ static void CloseClasses( void )
 
 	if (RequesterBase) CloseLibrary(RequesterBase); RequesterBase = 0;
 	if (IRequester) DropInterface((struct Interface*) IRequester); IRequester = 0;
+
+	if (DiskfontBase) CloseLibrary(DiskfontBase); DiskfontBase = 0;
+	if (IDiskfont) DropInterface((struct Interface*) IDiskfont); IDiskfont = 0;
 }
 
 static void CloseLibs( void )
 {
+	if (ILocale)	// check if lib is open...
+	{
+		if (catalog)
+		{
+			CloseCatalog(catalog); 
+			catalog = NULL;
+		}
+	
+		if (_locale)
+		{
+			CloseLocale(_locale); 
+			_locale = NULL;
+		}
+	}
+
 	CloseClasses();
 
 	DROPIFACE(Intuition);

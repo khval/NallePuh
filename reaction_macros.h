@@ -37,18 +37,18 @@
 
 // LEFT location of checkbox text label
 #define MakeCheckL(n, v) obj[n] = (Object*) CheckBoxObject, \
- GA_ID,              n,              \
- GA_Selected,        v,              \
- GA_Text,            _L(n),          \
- CHECKBOX_TextPlace, PLACETEXT_LEFT, \
- TAG_END)
+	GA_ID,              n,              \
+	GA_Selected,        v,              \
+	GA_Text,            _L(n),          \
+	CHECKBOX_TextPlace, PLACETEXT_LEFT, \
+	TAG_END)
 
 // RIGHT location of checkbox text label
 #define MakeCheckR(n, v) obj[n] = (Object*) CheckBoxObject, \
- GA_ID,       n,     \
- GA_Selected, v,     \
- GA_Text,     _L(n), \
- TAG_END)
+	GA_ID,       n,     \
+	GA_Selected, v,     \
+	GA_Text,     _L(n), \
+	TAG_END)
 
 #define MakeString(n) obj[n] =  (Object*) StringObject, \
 	GA_ID, n,				\

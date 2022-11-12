@@ -8,10 +8,11 @@ CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
 			-Wno-cast-function-type \
 			-Wno-incompatible-pointer-types \
 			-Wno-missing-braces \
-			-D__USE_INLINE__ -D__USE_BASETYPE__ -g
+			-Wno-unused-parameter \
+			-D__USE_INLINE__ -D__USE_BASETYPE__ -g -D__amigaos4__
 
 
-LDFLAGS	= -g
+LDFLAGS	= 
 
 TARGET	= NallePUH
 OBJECTS	= Nalle.o PUH.o debug.o gui.o

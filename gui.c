@@ -1,5 +1,7 @@
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <classes/window.h>
 #include <gadgets/listbrowser.h>
@@ -30,9 +32,13 @@
 #define ALL_REACTION_CLASSES
 #include <reaction/reaction.h>
 #include <reaction/reaction_macros.h>
-#include <gadgets/integer.h>
-#include <gadgets/layout.h>
-#include <gadgets/button.h>
+#include <proto/window.h>
+#include <proto/integer.h>
+#include <proto/layout.h>
+#include <proto/button.h>
+#include <proto/string.h>
+#include <proto/label.h>
+#include <inline4/label.h>
 #include <images/label.h>
 
 #include "reaction_macros.h"
@@ -49,12 +55,14 @@ struct Window *	win[win_end];
 Object *			layout[win_end];
 Object *			obj[ID_END];
 
+extern UBYTE pooh11_sb[];
 extern struct Catalog *catalog;
+ULONG pooh11_sblen;
 
-const char *_L_default(unsigned int num) 
+const char *_L_default(LONG num) 
 {
 	unsigned int n;
-	char ret = 0;
+	int ret = 0;
 
 	for (n=0;n< ( sizeof(CatCompArray) / sizeof( struct CatCompArrayType ) );n++)
 	{
@@ -337,7 +345,7 @@ static void ClearList( struct LogData* d )
 	RefreshSetGadgetAttrs( d->m_Gadget, d->m_Window, NULL, LISTBROWSER_Labels, list, TAG_DONE );
 }
 
-unsigned int pooh11_sblen;
+
 
 void nallepuh_test()
 {
