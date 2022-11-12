@@ -378,7 +378,7 @@ static BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData*
 									flags |= PUHF_TOGGLE_LED;
 								}
 
-								if ( ! InstallPUH( flags, audio_mode, frequency, pd ) )
+								if ( ! InstallPUH( flags, audio_mode, frequency ) )
 								{
 									LogPUH( pd, "Unable to install PUH." );
 								}
