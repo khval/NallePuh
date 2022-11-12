@@ -17,10 +17,59 @@
 #include <hardware/custom.h>
 #include <hardware/dmabits.h>
 
+#define CATCOMP_NUMBERS
+#define CATCOMP_STRINGS
+#define CATCOMP_ARRAY
+
 #include "locale/NallePUH.h"
 #include "PUH.h"
+#include "gui.h"
+
+#define ALL_REACTION_CLASSES
+#include <reaction/reaction.h>
+#include <reaction/reaction_macros.h>
+#include <gadgets/integer.h>
+#include <gadgets/layout.h>
+#include <gadgets/button.h>
+#include <images/label.h>
+
+#include "reaction_macros.h"
 
 extern struct Custom CustomData;
+
+enum
+{
+	win_prefs,
+	win_end
+};
+
+struct Window *	win[win_end];
+Object *			layout[win_end];
+
+#include "locale/NallePUH.c"
+
+const char *_L_default(unsigned int num) 
+{
+	unsigned int n;
+	char ret = 0;
+
+	for (n=0;n< ( sizeof(CatCompArray) / sizeof( struct CatCompArrayType ) );n++)
+	{
+		if (CatCompArray[n].cca_ID == num) { ret = n; break; }
+	}
+
+	return CatCompArray[ret].cca_Str ;
+}
+
+const char *_L_catalog(unsigned int num) 
+{
+	const char *str;
+	str = GetCatalogStr(catalog, num, NULL);
+	if (!str) return _L_default(num) ;
+	return str;
+}
+
+const char *(*_L)(unsigned int num) = _L_default;
 
 /******************************************************************************
 ** GUI utility functions ******************************************************
@@ -76,6 +125,8 @@ struct Node *LBAddNode( struct Gadget *lb, struct Window *w, struct Requester* r
 ******************************************************************************/
 
 static BOOL ShowGUI( struct PUHData* pd )
+
+BOOL ShowGUI( struct PUHData* pd )
 {
 	BOOL rc = FALSE;
 
@@ -101,8 +152,10 @@ static BOOL ShowGUI( struct PUHData* pd )
 			
 			if ( app_port != NULL )
 			{
-				resource = RL_OpenResource( RCTResource, screen, catalog );
 
+
+#if 0
+				resource = RL_OpenResource( RCTResource, screen, catalog );
 				if ( resource != NULL )
 				{
 					window = RL_NewObject( resource, WIN_1_ID,
@@ -123,6 +176,9 @@ static BOOL ShowGUI( struct PUHData* pd )
 					}
 					RL_CloseResource( resource );
 				}
+#endif
+
+
 				
 				FreeSysObject( ASOT_PORT, app_port );
 			}
@@ -166,14 +222,15 @@ struct LogData
 
 void LogToList( REG( a0, struct Hook*hook ),REG( a2, struct PUHData* pd ), REG( a1, STRPTR message ) )
 {
+#if 0
 	struct LogData* d = (struct LogData*) hook->h_Data;
-
 	LBAddNode( d->m_Gadget, d->m_Window, NULL,
 						(struct Node*) ~0,
 						LBNCA_CopyText, TRUE,
 						LBNA_Column, 	0,
 						LBNCA_Text, 	(ULONG) message,
 						TAG_DONE );
+#endif
 }
 
 
@@ -201,9 +258,8 @@ unsigned int pooh11_sblen;
 
 void nallepuh_test()
 {
-	BOOL bHandled;
-
 #if 0
+	BOOL bHandled;
 
 	emu_WriteWord( &bHandled, &CustomData.dmacon, DMAF_AUD0 );
 	Delay( 1 );	// The infamous DMA-wait! ;-)
@@ -217,7 +273,7 @@ void nallepuh_test()
 #endif
 }
 
-static BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
+BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 {
 	BOOL	rc = FALSE;
 	BOOL	quit = FALSE;
