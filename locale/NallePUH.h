@@ -52,17 +52,18 @@
 #define GAD_TEST 9
 #define GAD_TOGGLE_LED 10
 #define GAD_UNINSTALL 11
-#define msgPatchROM 100
-#define msgPatchApplications 101
-#define msgAudioMode 102
-#define msgInstall 103
-#define msgUninstall 104
-#define msgActivate 105
-#define msgDeactivate 106
-#define msgNallePUH 107
-#define msgTest 108
-#define msgToggleLed 109
-#define msgActivityLog 110
+#define msgPatchROM 12
+#define msgPatchApplications 13
+#define msgAudioMode 14
+#define msgInstall 15
+#define msgUninstall 16
+#define msgActivate 17
+#define msgDeactivate 18
+#define msgNallePUH 19
+#define msgTest 20
+#define msgToggleLed 21
+#define msgActivityLog 22
+#define ID_END 23
 
 #endif /* CATCOMP_NUMBERS */
 

@@ -1,4 +1,6 @@
 
+#include <stdio.h>
+
 #include <classes/window.h>
 #include <gadgets/listbrowser.h>
 #include <intuition/gadgetclass.h>
@@ -21,7 +23,7 @@
 #define CATCOMP_STRINGS
 #define CATCOMP_ARRAY
 
-#include "locale/NallePUH.h"
+#include "locale/NallePUH.c"
 #include "PUH.h"
 #include "gui.h"
 
@@ -45,8 +47,9 @@ enum
 
 struct Window *	win[win_end];
 Object *			layout[win_end];
+Object *			obj[ID_END];
 
-#include "locale/NallePUH.c"
+extern struct Catalog *catalog;
 
 const char *_L_default(unsigned int num) 
 {
@@ -76,6 +79,7 @@ const char *(*_L)(unsigned int num) = _L_default;
 ******************************************************************************/
 
 /*
+
 ULONG RefreshSetGadgetAttrsA( struct Gadget *g, struct Window *w, struct Requester* r, struct TagItem* tags )
 {
 	ULONG retval;
@@ -124,7 +128,78 @@ struct Node *LBAddNode( struct Gadget *lb, struct Window *w, struct Requester* r
 ** ShowGUI ********************************************************************
 ******************************************************************************/
 
-static BOOL ShowGUI( struct PUHData* pd )
+char window_title_name[100];
+
+void init_prefs(int win_nr)
+{
+
+	sprintf(window_title_name,_L(msgNallePUH),99,99);
+
+	layout[win_nr] = (Object*) WindowObject,
+			WA_Title,       window_title_name,
+			WA_ScreenTitle, window_title_name,
+
+			WA_SizeGadget,   TRUE,
+			WA_DepthGadget,  TRUE,
+			WA_DragBar,      TRUE,
+			WA_CloseGadget,  TRUE,
+			WA_Activate,     TRUE,
+			WA_SmartRefresh, TRUE,
+			WINDOW_Position, WPOS_CENTERSCREEN,
+			WINDOW_ParentGroup, VLayoutObject,
+				LAYOUT_SpaceOuter, TRUE,
+				LAYOUT_DeferLayout, TRUE,
+
+				LAYOUT_AddChild, VGroupObject,
+
+					LAYOUT_AddChild, MakeString(GAD_MODE_INFO),
+					CHILD_Label, MakeLabel(GAD_MODE_INFO),
+
+#ifdef HAVE_ROM
+					LAYOUT_AddChild, MakeCheck(GAD_PATCH_ROM,0),
+					CHILD_Label, MakeLabel(GAD_PATCH_ROM),
+#endif 
+
+#ifdef HAVE_APP_PATCHES
+					LAYOUT_AddChild, MakeCheck(GAD_PATCH_APPS,0),
+					CHILD_Label, MakeLabel(GAD_PATCH_APPS),
+#endif
+
+#ifdef HAVE_CLASSIC_AMIGA 
+					LAYOUT_AddChild, MakeCheck(GAD_TOGGLE_LED,0),
+					CHILD_Label, MakeLabel(GAD_TOGGLE_LED),
+#endif
+
+#if 0
+					LAYOUT_AddChild, MakeList(GAD_MESSAGES, list_columns, message_list ),
+					CHILD_Label, MakeLabel(ID_CREATE_SIZE_GAD),
+#endif
+
+				LayoutEnd,
+
+				LAYOUT_AddChild, VGroupObject,
+
+					LAYOUT_AddChild, MakeButton(GAD_MODE_SELECT),
+					LAYOUT_AddChild, MakeButton(GAD_INSTALL),
+					LAYOUT_AddChild, MakeButton(GAD_UNINSTALL),
+					LAYOUT_AddChild, MakeButton(GAD_ACTIVATE),
+					LAYOUT_AddChild, MakeButton(GAD_DEACTIVATE),
+					LAYOUT_AddChild, MakeButton(GAD_TEST),
+
+				LayoutEnd,
+
+#if 0
+				LAYOUT_AddChild, VGroupObject,
+					LAYOUT_AddChild, MakeImageButton(GAD_IMAGE, nallepuh_logo),
+				LayoutEnd,
+#endif
+
+				CHILD_WeightedHeight, 0,
+
+			EndMember,
+		EndWindow;
+}
+
 
 BOOL ShowGUI( struct PUHData* pd )
 {
@@ -134,7 +209,7 @@ BOOL ShowGUI( struct PUHData* pd )
 	struct Screen *screen;
 	struct MsgPort *idcmp_port;
 	struct MsgPort *app_port;
-	RESOURCEFILE	resource;
+//	RESOURCEFILE	resource;
 	Object *window;
 	struct Gadget **gadgets;
 
@@ -152,7 +227,15 @@ BOOL ShowGUI( struct PUHData* pd )
 			
 			if ( app_port != NULL )
 			{
+				init_prefs(win_prefs);
 
+				window = RA_OpenWindow( layout[win_prefs] );
+
+				if (window)
+				{
+					rc = HandleGUI( window, gadgets, pd );
+				}
+			
 
 #if 0
 				resource = RL_OpenResource( RCTResource, screen, catalog );
@@ -321,7 +404,9 @@ BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 			ULONG input_flags = 0;
 			UWORD code = 0;
 			
-			while( ( input_flags = DoMethod( window, WM_HANDLEINPUT, &code ) ) != WMHI_LASTMSG )
+
+
+			while( ( input_flags = RA_HandleInput( layout[ win_prefs ] ,&code) ) != WMHI_LASTMSG )
 			{
 				switch( input_flags & WMHI_CLASSMASK)
 				{
@@ -405,6 +490,8 @@ BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 
 								break;
 							}
+
+#if 0
 
 							case GAD_INSTALL:
 							{
@@ -508,7 +595,6 @@ BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 								break;
 							}
 
-
 							case GAD_ACTIVATE:
 							{
 								if ( ! ActivatePUH( pd ) )
@@ -531,7 +617,6 @@ BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 								break;
 							}
 
-
 							case GAD_DEACTIVATE:
 							{
 								DeactivatePUH( pd );
@@ -548,6 +633,7 @@ BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 
 								break;
 							}
+#endif
 							
 							case GAD_TEST:
 							{
@@ -555,7 +641,7 @@ BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 								nallepuh_test();
 								break;
 							}
-							
+#if 0
 							case GAD_PATCH_ROM:
 								if ( code )
 								{
@@ -571,6 +657,7 @@ BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 											TAG_DONE );
 								}
 								break;
+#endif
 						}
 						
 						break;

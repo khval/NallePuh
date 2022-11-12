@@ -76,7 +76,7 @@ msgDeactivate
 ;
 msgNallePUH
 
-; Nalle PUH version 0.3 (c)2001 Martin Blom <martin@blom.org>
+; Nalle PUH version %d.%d (c)2001 Martin Blom <martin@blom.org>
 ;
 msgTest
 
@@ -89,4 +89,8 @@ msgToggleLed
 msgActivityLog
 
 ; [Activity log area]
+;
+ID_END
+
+; ;
 ;
