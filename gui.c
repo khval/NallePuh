@@ -3,21 +3,31 @@
 #include <gadgets/listbrowser.h>
 #include <intuition/gadgetclass.h>
 #include <libraries/resource.h>
+
+#include <proto/exec.h>
+#include <proto/dos.h>
 #include <proto/listbrowser.h>
 #include <proto/resource.h>
 #include <proto/locale.h>
 #include <proto/intuition.h>
+#include <proto/ahi.h>
 
 #include <devices/ahi.h>
 
+#include <hardware/custom.h>
+#include <hardware/dmabits.h>
+
 #include "locale/NallePUH.h"
 #include "PUH.h"
+
+extern struct Custom CustomData;
 
 /******************************************************************************
 ** GUI utility functions ******************************************************
 ******************************************************************************/
 
-ULONG RefreshSetGadgetAttrsA( struct Gadget *	g, struct Window *w, struct Requester* r, struct TagItem* tags )
+/*
+ULONG RefreshSetGadgetAttrsA( struct Gadget *g, struct Window *w, struct Requester* r, struct TagItem* tags )
 {
 	ULONG retval;
 	BOOL	changedisabled = FALSE;
@@ -59,6 +69,7 @@ struct Node *LBAddNode( struct Gadget *lb, struct Window *w, struct Requester* r
 {
 	return (struct Node*) DoGadgetMethod( lb, w, r, LBM_ADDNODE, NULL, (ULONG) n, (ULONG) &tag1 );
 }
+*/
 
 /******************************************************************************
 ** ShowGUI ********************************************************************
@@ -82,11 +93,11 @@ static BOOL ShowGUI( struct PUHData* pd )
 	
 	if ( screen != NULL )
 	{
-		idcmp_port = CreateMsgPort();
+		idcmp_port = (struct MsgPort *) AllocSysObjectTags(ASOT_PORT, TAG_DONE);
 		
 		if ( idcmp_port != NULL )
 		{
-			app_port = CreateMsgPort();
+			app_port = (struct MsgPort *) AllocSysObjectTags(ASOT_PORT, TAG_DONE);
 			
 			if ( app_port != NULL )
 			{
@@ -113,10 +124,10 @@ static BOOL ShowGUI( struct PUHData* pd )
 					RL_CloseResource( resource );
 				}
 				
-				DeleteMsgPort( app_port );
+				FreeSysObject( ASOT_PORT, app_port );
 			}
 			
-			DeleteMsgPort( idcmp_port );
+			FreeSysObject( ASOT_PORT, idcmp_port );
 		}
 
 		UnlockPubScreen( NULL, screen );
@@ -125,7 +136,6 @@ static BOOL ShowGUI( struct PUHData* pd )
 	CloseCatalog( catalog );
 
 	return rc;
-#endif
 }
 
 
@@ -133,7 +143,7 @@ static BOOL ShowGUI( struct PUHData* pd )
 ** HandleGUI ********************************************************************
 ******************************************************************************/
 
-ASMCALL SAVEDS static ULONG FilterFunc( REG( a0, struct Hook *hook ), REG( a2, struct AHIAudioModeRequester* req ), REG( a1, ULONG mode_id ) )
+ULONG FilterFunc( REG( a0, struct Hook *hook ), REG( a2, struct AHIAudioModeRequester* req ), REG( a1, ULONG mode_id ) )
 {
 	// Remove all Paula modes (hardcoded mode IDs suck.)
 
@@ -154,7 +164,7 @@ struct LogData
 };
 
 
-ASMCALL SAVEDS static void LogToList( REG( a0, struct Hook*hook ),REG( a2, struct PUHData* pd ), REG( a1, STRPTR message ) )
+void LogToList( REG( a0, struct Hook*hook ),REG( a2, struct PUHData* pd ), REG( a1, STRPTR message ) )
 {
 	struct LogData* d = (struct LogData*) hook->h_Data;
 
@@ -189,6 +199,24 @@ static void ClearList( struct LogData* d )
 
 unsigned int pooh11_sblen;
 
+void nallepuh_test()
+{
+	BOOL bHandled;
+
+#if 0
+
+	emu_WriteWord( &bHandled, &CustomData.dmacon, DMAF_AUD0 );
+	Delay( 1 );	// The infamous DMA-wait! ;-)
+	emu_WriteLong( &bHandled, &CustomData.aud[ 0 ].ac_ptr, (ULONG) chip );
+	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_len, pooh11_sblen / 2);
+	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_per, 161 );
+	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_vol, 64 );
+	emu_WriteWord( &bHandled, &CustomData.dmacon, DMAF_SETCLR | DMAF_AUD0 );
+	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_len, 1 );
+
+#endif
+}
+
 static BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 {
 	BOOL	rc = FALSE;
@@ -201,7 +229,6 @@ static BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData*
 	ULONG	audio_mode = 0;
 	ULONG	frequency = 0;
 
-	struct Custom *custom = (struct Custom*) 0xdff000;
 	struct LogData log_data;
 
 	struct Hook log_hook =
@@ -211,8 +238,6 @@ static BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData*
 		NULL,
 		&log_data
 	};
-
-	CopyMem( pooh11_sb, chip, pooh11_sblen );
 
 	GetAttr( WINDOW_SigMask, window, &window_signals );
 	GetAttr( WINDOW_Window, window, (ULONG*) &win_ptr );
@@ -240,8 +265,7 @@ static BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData*
 			ULONG input_flags = 0;
 			UWORD code = 0;
 			
-			while( ( input_flags = DoMethod( window, WM_HANDLEINPUT, &code ) ) 
-						!= WMHI_LASTMSG )
+			while( ( input_flags = DoMethod( window, WM_HANDLEINPUT, &code ) ) != WMHI_LASTMSG )
 			{
 				switch( input_flags & WMHI_CLASSMASK)
 				{
@@ -472,19 +496,7 @@ static BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData*
 							case GAD_TEST:
 							{
 								messed_with_registers = TRUE;
-
-								WriteWord( &custom->dmacon, DMAF_AUD0 );
-
-								Delay( 1 );	// The infamous DMA-wait! ;-)
-
-								WriteLong( &custom->aud[ 0 ].ac_ptr, (ULONG) chip );
-								WriteWord( &custom->aud[ 0 ].ac_len, pooh11_sblen / 2);
-								WriteWord( &custom->aud[ 0 ].ac_per, 161 );
-								WriteWord( &custom->aud[ 0 ].ac_vol, 64 );
-
-								WriteWord( &custom->dmacon, DMAF_SETCLR | DMAF_AUD0 );
-
-								WriteWord( &custom->aud[ 0 ].ac_len, 1 );
+								nallepuh_test();
 								break;
 							}
 							
@@ -519,11 +531,11 @@ static BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData*
 
 	if ( messed_with_registers )
 	{
-		WriteWord( &custom->dmacon, DMAF_AUD0 );
-		WriteWord( &custom->aud[ 0 ].ac_vol, 0 );
-	}
+		BOOL bHandled;
 
-	FreeVec( chip );
+		emu_WriteWord( &bHandled, &CustomData.dmacon, DMAF_AUD0 );
+		emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_vol, 0 );
+	}
 
 	return rc;
 }

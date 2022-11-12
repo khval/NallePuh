@@ -54,11 +54,15 @@ KPrintFArgs( UBYTE* fmt,
 
 /* Make nice accesses to hardware registers */
 
-UWORD ReadWord( BOOL *handled, void* address );
-void WriteWord( BOOL *handled, void* address, UWORD value );
-ULONG ReadLong( BOOL *handled, void* address );
-void WriteLong( BOOL *handled, void* address, ULONG value );
+/*
+UWORD ReadWord( void* address );
+void WriteWord(  void* address, UWORD value );
+ULONG ReadLong( void* address );
+void WriteLong(  void* address, ULONG value );
+*/
 
+void emu_WriteWord( BOOL *bHandled, void *address, UWORD value );
+void emu_WriteLong( BOOL *bHandled, void *address, ULONG value );
 
 /* The emulator */
 

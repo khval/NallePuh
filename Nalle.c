@@ -46,7 +46,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "NallePUH.h"
+#include "locale/NallePUH.h"
 #include "PUH.h"
 #include "debug.h"
 
