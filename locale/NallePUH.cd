@@ -1,35 +1,68 @@
 ; *** catalog description file of "NallePUH.res"
 ;
-msgPatchROM (256//)
+GAD_ACTIVATE  (1//)
+Activate
+;
+GAD_DEACTIVATE  (//)
+Deactivate
+;
+GAD_INSTALL  (//)
+Install
+;
+GAD_MESSAGES  (//)
+Messages
+;
+GAD_MODE_INFO  (//)
+Mode info
+;
+GAD_MODE_SELECT  (//)
+Mode select
+;
+GAD_PATCH_APPS  (//)
+Patch apps
+;
+GAD_PATCH_ROM  (//)
+Patch rom
+;
+GAD_TEST  (//)
+Test
+;
+GAD_TOGGLE_LED  (//)
+Toggele led
+;
+GAD_UNINSTALL  (//)
+Uninstall
+;
+msgPatchROM (100//)
 Patch _ROM
 ;
-msgPatchApplications (257//)
+msgPatchApplications (//)
 Patch a_pplications
 ;
-msgAudioMode (258//)
+msgAudioMode (//)
 Audio _mode...
 ;
-msgInstall (259//)
+msgInstall (//)
 _Install
 ;
-msgUninstall (260//)
+msgUninstall (//)
 _Uninstall
 ;
-msgActivate (261//)
+msgActivate (//)
 _Activate
 ;
-msgDeactivate (262//)
+msgDeactivate (//)
 _Deactivate
 ;
-msgNallePUH (263//)
+msgNallePUH (//)
 Nalle PUH version 0.3 (c)2001 Martin Blom <martin@blom.org>
 ;
-msgTest (264//)
+msgTest (//)
 _Test
 ;
-msgToggleLed (265//)
+msgToggleLed (//)
 Toggle _led on exceptions
 ;
-msgActivityLog (266//)
+msgActivityLog (//)
 [Activity log area]
 ;

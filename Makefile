@@ -27,10 +27,10 @@ locale/NallePUH.ct: locale/NallePUH.cd
 	@$(CATCOMP) locale/NallePUH.cd CTFILE locale/NallePUH.ct
 
 locale/NallePUH.h: locale/NallePUH.cd locale/NallePUH.ct
-	@$(CATCOMP) locale/NallePUH.cd CFILE locale/locale.h NOSTRINGS NOARRAY NOBLOCK NOCODE
+	@$(CATCOMP) locale/NallePUH.cd CFILE locale/NallePUH.h NOSTRINGS NOARRAY NOBLOCK NOCODE
 
 locale/NallePUH.c: locale/NallePUH.cd locale/NallePUH.ct
-	@$(CATCOMP) locale/NallePUH.cd CFILE locale/locale.c NOBLOCK NOCODE
+	@$(CATCOMP) locale/NallePUH.cd CFILE locale/NallePUH.c NOBLOCK NOCODE
 
 clean:
 	$(RM) $(TARGET) $(OBJECTS)
