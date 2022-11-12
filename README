@@ -47,6 +47,14 @@ Changes in Nov. 2022
 	* code cleanup, std style format.
 	* Improved debuging (task name, etc).
 
+Dependecies
+
+	AmigaOS4.1 SDK can be downloaded from Hyperion Entertainment
+	https://www.hyperion-entertainment.com/index.php/downloads?view=details&file=127
+	
+	Flexcat - needed for building lanuage catalogs.
+	http://os4depot.net/?function=showfile&file=development/misc/flexcat.lha
+	
 ******************************************************************
 
 Orginal ReadME 
