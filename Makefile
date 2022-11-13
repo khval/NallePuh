@@ -9,13 +9,14 @@ CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
 			-Wno-incompatible-pointer-types \
 			-Wno-missing-braces \
 			-Wno-unused-parameter \
+			-gstabs \
 			-D__USE_INLINE__ -D__USE_BASETYPE__ -g -D__amigaos4__
 
 
 LDFLAGS	= 
 
 TARGET	= NallePUH
-OBJECTS	= Nalle.o PUH.o debug.o gui.o
+OBJECTS	= Nalle.o PUH.o debug.o iconify.o gui.o 
 
 all:	make_locale $(TARGET) 
 

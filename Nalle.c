@@ -40,6 +40,8 @@
 #include <proto/expansion.h>
 #include <proto/libblitter.h>
 #include <proto/diskfont.h>
+#include <proto/icon.h>
+#include <proto/wb.h>
 #include <diskfont/diskfonttag.h>
 
 #include <gadgets/integer.h>
@@ -75,6 +77,7 @@ static void CloseLibs( void );
 static BOOL OpenAHI( void );
 static void CloseAHI( void );
 
+#include "gui.h"
 
 /******************************************************************************
 ** Global variables ***********************************************************
@@ -91,6 +94,9 @@ struct Library *LocaleBase = NULL;
 struct Library *MMUBase = NULL;
 struct Library *LibBlitterBase = NULL;
 struct Library *DiskfontBase = NULL;
+
+struct Library *IconBase = NULL;
+struct Library *WorkbenchBase = NULL;
 
 struct DebugIFace *IDebug = NULL;
 struct LibBlitterIFace *ILibBlitter = NULL;
@@ -117,6 +123,9 @@ struct WindowIFace *IWindow = NULL;
 struct CheckBoxIFace *ICheckBox = NULL;
 struct RequesterIFace *IRequester = NULL;
 struct DiskfontIFace *IDiskfont = NULL;
+
+struct IconIFace * IIcon = NULL;
+struct WorkbenchIFace *IWorkbench = NULL;
 
 struct Catalog *catalog = NULL;
 struct Locale *_locale = NULL;
@@ -154,10 +163,14 @@ int main( int argc,char* argv[] )
 	ULONG frequency = 0;
 	ULONG level = 0;
 
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
 	if ( ! OpenLibs() )
 	{
 		return 20;
 	}
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
 
 	if ( argc == 1 )
 	{
@@ -198,6 +211,8 @@ int main( int argc,char* argv[] )
 	}
 	#endif
 
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
 	if ( ! gui_mode )
 	{
 		char* mode_ptr;
@@ -221,11 +236,15 @@ int main( int argc,char* argv[] )
 		}
 	}
 
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
 	if ( ! OpenAHI() )
 	{
 		Printf( "Unable to open ahi.device version 4.\n" );
 		rc = 20;
 	}
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
 
 	if ( rc == 0 )
 	{
@@ -241,10 +260,25 @@ int main( int argc,char* argv[] )
 		{
 			if ( gui_mode )
 			{
-				if ( ! ShowGUI( pd ) )
+				struct rc rcode;
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+				rcode = ShowGUI( pd );
+
+				printf( "rc: %d\n",rcode.rc);
+				printf( "frequency: %d\n",rcode.frequency);
+				printf( "audio_mode: %08x\n",rcode.audio_mode);
+
+				if ( ! rcode.rc )
 				{
 					Printf( "Failed to create GUI.\n" );
 					rc = 20;
+				}
+				else
+				{
+					mode_id	= rcode.audio_mode;
+					frequency = rcode.frequency;
 				}
 			}
 			else
@@ -355,6 +389,8 @@ static BOOL OpenLibs( void )
 	if ( ! open_lib( "requester.class", 53, "main", 1, &RequesterBase, (struct Interface **) &IRequester) ) return FALSE;
 	if ( ! open_lib( "locale.library", 53 , "main", 1, &LocaleBase, (struct Interface **) &ILocale  ) ) return FALSE;
 	if ( ! open_lib( "diskfont.library", 53 , "main", 1, &DiskfontBase, (struct Interface **) &IDiskfont ) ) return FALSE;
+	if ( ! open_lib( "icon.library", 53 , "main", 1, &IconBase, (struct Interface **) &IIcon ) ) return FALSE;
+	if ( ! open_lib( "workbench.library", 53 , "main", 1, &WorkbenchBase, (struct Interface **) &IWorkbench ) ) return FALSE;
 
 	if (ILibBlitter) 
 	{
@@ -427,6 +463,12 @@ static void CloseClasses( void )
 
 	if (DiskfontBase) CloseLibrary(DiskfontBase); DiskfontBase = 0;
 	if (IDiskfont) DropInterface((struct Interface*) IDiskfont); IDiskfont = 0;
+
+	if (IconBase) CloseLibrary(IconBase); IconBase = 0;
+	if (IIcon) DropInterface((struct Interface*) IIcon); IIcon = 0;
+
+	if (WorkbenchBase) CloseLibrary(WorkbenchBase); WorkbenchBase = 0;
+	if (IWorkbench) DropInterface((struct Interface*) IWorkbench); IWorkbench = 0;
 }
 
 static void CloseLibs( void )

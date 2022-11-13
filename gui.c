@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+
 
 #include <classes/window.h>
 #include <gadgets/listbrowser.h>
@@ -57,7 +59,14 @@ Object *			obj[ID_END];
 
 extern UBYTE pooh11_sb[];
 extern struct Catalog *catalog;
-ULONG pooh11_sblen;
+
+struct kIcon
+{
+	struct Gadeget *gadget ;
+	struct Image *image ;
+};
+
+struct kIcon iconifyIcon = { NULL, NULL };
 
 const char *_L_default(LONG num) 
 {
@@ -88,6 +97,41 @@ const char *(*_L)(unsigned int num) = _L_default;
 
 char window_title_name[100];
 
+extern struct MsgPort *iconifyPort ;
+
+extern void enable_Iconify();
+extern void disable_Iconify();
+
+void handel_iconify()
+{
+	struct Message *msg;
+	BOOL disabled = FALSE;
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+	enable_Iconify();
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+	if (iconifyPort)
+	{
+		while (msg = (struct Message *) GetMsg( iconifyPort ) )
+		{
+			ReplyMsg( (struct Message*) msg );
+			disabled = TRUE;
+		}
+	}
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+	if (disabled)
+	{
+		disable_Iconify();
+	}
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+}
+
 void init_prefs(int win_nr)
 {
 
@@ -104,6 +148,8 @@ void init_prefs(int win_nr)
 			WA_Activate,     TRUE,
 			WA_SmartRefresh, TRUE,
 			WA_Width, 600,
+			WINDOW_IconifyGadget, TRUE,
+			WINDOW_Iconifiable, TRUE,
 			WINDOW_Position, WPOS_CENTERSCREEN,
 			WINDOW_ParentGroup, HLayoutObject,
 				LAYOUT_SpaceOuter, TRUE,
@@ -139,10 +185,16 @@ void init_prefs(int win_nr)
 				LAYOUT_AddChild, VGroupObject,
 
 					LAYOUT_AddChild, MakeButton(GAD_MODE_SELECT),
+
+// maybe change for cylce gadget
 					LAYOUT_AddChild, MakeButton(GAD_INSTALL),
 					LAYOUT_AddChild, MakeButton(GAD_UNINSTALL),
+
+// maybe change for cylce gadget
 					LAYOUT_AddChild, MakeButton(GAD_ACTIVATE),
 					LAYOUT_AddChild, MakeButton(GAD_DEACTIVATE),
+
+
 					LAYOUT_AddChild, MakeButton(GAD_TEST),
 
 				LayoutEnd,
@@ -160,39 +212,65 @@ void init_prefs(int win_nr)
 		EndWindow;
 }
 
-
-BOOL ShowGUI( struct PUHData* pd )
+void close_window(int layout_nr)
 {
-	BOOL rc = FALSE;
+	if (layout[ layout_nr ])
+	{
+		DisposeObject( (Object *) layout[ layout_nr ] );
+		layout[ layout_nr ]	= 0;
+		win[ layout_nr ]	= 0;
+	}
+}
 
-	struct Catalog *catalog;
+struct rc ShowGUI( struct PUHData* pd )
+{
+	struct rc rc;
 	struct Screen *screen;
 	struct MsgPort *idcmp_port;
 	struct MsgPort *app_port;
-//	RESOURCEFILE	resource;
 	struct Window *window;
-//	struct Gadget **gadgets;
-
-	catalog = OpenCatalogA( NULL, "NallePUH.catalog",NULL);
 	
+	rc.rc = FALSE;
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
 	screen = LockPubScreen( NULL );
 	
 	if ( screen != NULL )
 	{
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
 		idcmp_port = (struct MsgPort *) AllocSysObjectTags(ASOT_PORT, TAG_DONE);
 		
 		if ( idcmp_port != NULL )
 		{
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
 			app_port = (struct MsgPort *) AllocSysObjectTags(ASOT_PORT, TAG_DONE);
 			
 			if ( app_port != NULL )
 			{
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
 				init_prefs(win_prefs);
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
 
 				window = RA_OpenWindow( layout[win_prefs] );
 				if (window)
 				{
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+					win[ win_prefs ] = window;
 					RSetAttrO( win_prefs, GAD_MODE_INFO, GA_Disabled, TRUE);
+					RSetAttrO( win_prefs, GAD_UNINSTALL, GA_Disabled, TRUE);
+					RSetAttrO( win_prefs, GAD_ACTIVATE, GA_Disabled, TRUE);
+					RSetAttrO( win_prefs, GAD_DEACTIVATE, GA_Disabled, TRUE);
+					RSetAttrO( win_prefs, GAD_TEST, GA_Disabled, TRUE);
 
 					rc = HandleGUI( window, pd );
 					close_window(win_prefs);
@@ -207,21 +285,8 @@ BOOL ShowGUI( struct PUHData* pd )
 		UnlockPubScreen( NULL, screen );
 	}
 	
-	CloseCatalog( catalog );
-
 	return rc;
 }
-
-void close_window(int layout_nr)
-{
-	if (layout[ layout_nr ])
-	{
-		DisposeObject( (Object *) layout[ layout_nr ] );
-		layout[ layout_nr ]	= 0;
-		win[ layout_nr ]	= 0;
-	}
-}
-
 
 /******************************************************************************
 ** HandleGUI ********************************************************************
@@ -241,12 +306,6 @@ ULONG FilterFunc( REG( a0, struct Hook *hook ), REG( a2, struct AHIAudioModeRequ
 	}
 }
 
-struct LogData
-{
-	struct Gadget* m_Gadget;
-	struct Window* m_Window;
-};
-
 
 void LogToList( REG( a0, struct Hook*hook ),REG( a2, struct PUHData* pd ), REG( a1, STRPTR message ) )
 {
@@ -261,8 +320,8 @@ void LogToList( REG( a0, struct Hook*hook ),REG( a2, struct PUHData* pd ), REG( 
 #endif
 }
 
-
-static void ClearList( struct LogData* d )
+/*
+void ClearList( struct LogData* d )
 {
 	struct List* list;
 	struct Node* node;
@@ -281,48 +340,39 @@ static void ClearList( struct LogData* d )
 	// Attach the (now empty) list again
 	RefreshSetGadgetAttrs( d->m_Gadget, d->m_Window, NULL, LISTBROWSER_Labels, list, TAG_DONE );
 }
-
+*/
 
 
 void nallepuh_test()
 {
-#if 0
+	char *wave;
+	ULONG n;
 	BOOL bHandled;
+	ULONG wave_size = 512;
+
+	wave = (char *) malloc( wave_size );
+
+	for (n=0;n<wave_size;n++)
+	{
+		wave[n] = sin( (float) n / 500.0f ) * 126;
+	}
 
 	emu_WriteWord( &bHandled, &CustomData.dmacon, DMAF_AUD0 );
 	Delay( 1 );	// The infamous DMA-wait! ;-)
-	emu_WriteLong( &bHandled, &CustomData.aud[ 0 ].ac_ptr, (ULONG) chip );
-	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_len, pooh11_sblen / 2);
+	emu_WriteLong( &bHandled, &CustomData.aud[ 0 ].ac_ptr, (ULONG) wave );
+	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_len, wave_size / 2);
 	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_per, 161 );
 	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_vol, 64 );
 	emu_WriteWord( &bHandled, &CustomData.dmacon, DMAF_SETCLR | DMAF_AUD0 );
 	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_len, 1 );
 
-#endif
+	Wait(5);
+
+	FreeVec(wave);
+
 }
 
-struct rc 
-{
-	BOOL rc ;
-	BOOL quit ;
-	BOOL messed_with_registers;
-	ULONG audio_mode ;
-	ULONG frequency ;
-	struct Window* win_ptr;
-	ULONG code;
-
-	struct LogData log_data;
-/*
-	struct Hook log_hook =
-	{
-		{ NULL, NULL },
-		(HOOKFUNC) LogToList,
-		NULL,
-		&log_data
-	};*/
-};
-
-void init_rc(struct rc *rc)
+void init_rc(struct rc *rc, struct Window * window, struct PUHData* pd)
 {
 	rc -> rc = FALSE;
 	rc -> quit = FALSE;
@@ -331,6 +381,8 @@ void init_rc(struct rc *rc)
 	rc -> frequency = 0;
 	rc -> win_ptr = NULL;
 	rc -> code = 0;
+	rc -> win_ptr = window;
+	rc -> pd = pd;
 }
 
 void HandleGadgets(ULONG input_flags , struct rc *rc)
@@ -393,7 +445,6 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 				break;
 			}
 
-#if 0
 		case GAD_INSTALL:
 			{
 				unsigned int flags = 0;
@@ -405,7 +456,7 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 				GetAttr( GA_Selected, obj[ GAD_PATCH_APPS ], &patch_apps );
 				GetAttr( GA_Selected, obj[ GAD_TOGGLE_LED ], &toggle_led );
 
-				ClearList( &log_data );
+//				ClearList( &log_data );
 
 				if ( patch_rom )
 				{
@@ -422,20 +473,20 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 					flags |= PUHF_TOGGLE_LED;
 				}
 
-				if ( ! InstallPUH( flags, audio_mode, frequency ) )
+				if ( ! InstallPUH( flags, rc -> audio_mode, rc -> frequency ) )
 				{
-					LogPUH( pd, "Unable to install PUH." );
+//					LogPUH( pd, "Unable to install PUH." );
 				}
 				else
 				{
-					RefreshSetGadgetAttrs( obj[ GAD_PATCH_ROM ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_TOGGLE_LED ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_MODE_SELECT ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_INSTALL ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_UNINSTALL ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_PATCH_ROM ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_TOGGLE_LED ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_MODE_SELECT ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_INSTALL ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_UNINSTALL ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
 				}
 			}
 			break;
@@ -444,55 +495,54 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 			{
 				ULONG patch_rom = 0;
 
-				ClearList( &log_data );
+//				ClearList( &log_data );
 
-				UninstallPUH( pd );
+				UninstallPUH( rc -> pd );
 
-				RefreshSetGadgetAttrs( obj[ GAD_PATCH_ROM ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_PATCH_ROM ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
 
 				GetAttr( GA_Selected, obj[ GAD_PATCH_ROM	], &patch_rom );
 								
 				if ( patch_rom )
 				{
-					RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
 				}
 
-				RefreshSetGadgetAttrs( obj[ GAD_TOGGLE_LED ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_MODE_SELECT ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_INSTALL ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_UNINSTALL ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_TOGGLE_LED ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_MODE_SELECT ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_INSTALL ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_UNINSTALL ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
 			}
 			break;
 
 		case GAD_ACTIVATE:
 			{
-				if ( ! ActivatePUH( pd ) )
+				if ( ! ActivatePUH( rc -> pd ) )
 				{
-					LogPUH( pd, "Unable to activate PUH." );
+//					LogPUH( pd, "Unable to activate PUH." );
 				}
 				else
 				{
-					LogPUH( pd, "Activated PUH." );
-					RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-
-					RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
+//					LogPUH( pd, "Activated PUH." );
+					RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], rc->win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
 				}
 			}
 			break;
 
 		case GAD_DEACTIVATE:
 			{
-				DeactivatePUH( pd );
+				DeactivatePUH( rc -> pd );
 
-				LogPUH( pd, "Deactivated PUH." );
+//				LogPUH( pd, "Deactivated PUH." );
 
-				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE,	TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], rc->win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], rc->win_ptr, NULL,GA_Disabled, TRUE,	TAG_DONE );
 			}
 			break;
-#endif
+
 							
 		case GAD_TEST:
 			{
@@ -504,11 +554,11 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 		case GAD_PATCH_ROM:
 			if ( rc -> code )
 			{
-				RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], rc->win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
 			}
 			else
 			{
-				RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, TRUE,GA_Selected, FALSE,	TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], rc->win_ptr, NULL,GA_Disabled, TRUE,GA_Selected, FALSE,	TAG_DONE );
 			}
 			break;
 #endif
@@ -517,15 +567,14 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 
 
 
-BOOL HandleGUI( struct Window * window, struct PUHData* pd )
+struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 {
 	struct rc rc;
 	ULONG	window_signals = 0;
 
-	init_rc( &rc );
+	init_rc( &rc, window, pd );
 
 	window_signals = 1L << window -> UserPort -> mp_SigBit;
-	rc.win_ptr = window;
 
 //	log_data.m_Gadget = obj[ GAD_MESSAGES ];
 //	log_data.m_Window = rc.win_ptr;
@@ -558,16 +607,31 @@ BOOL HandleGUI( struct Window * window, struct PUHData* pd )
 						break;
 
 					case WMHI_ICONIFY:
-						DoMethod( window, WM_ICONIFY );
-						GetAttr( WINDOW_Window, window, (ULONG*) &rc.win_ptr );
+
+				printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+						while( ( input_flags = RA_HandleInput( layout[ win_prefs ] ,&rc.code) ) != WMHI_LASTMSG );
+
+				printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+						handel_iconify();
+
+				printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+						rc.win_ptr = window;
 						rc.log_data.m_Window = rc.win_ptr;
+
+				printf("%s:%d\n",__FUNCTION__,__LINE__);
+
 						break;
-						
+
+/*						
 					case WMHI_UNICONIFY:
 						DoMethod( window, WM_OPEN );
 						GetAttr( WINDOW_Window, window, (ULONG*) &rc.win_ptr );
 						rc.log_data.m_Window = rc.win_ptr;
 						break;
+*/
 
 					case WMHI_GADGETUP:
 						HandleGadgets(input_flags, &rc);
@@ -589,5 +653,5 @@ BOOL HandleGUI( struct Window * window, struct PUHData* pd )
 		emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_vol, 0 );
 	}
 
-	return rc.rc;
+	return rc;
 }
