@@ -83,56 +83,6 @@ const char *_L_catalog(unsigned int num)
 const char *(*_L)(unsigned int num) = _L_default;
 
 /******************************************************************************
-** GUI utility functions ******************************************************
-******************************************************************************/
-
-/*
-
-ULONG RefreshSetGadgetAttrsA( struct Gadget *g, struct Window *w, struct Requester* r, struct TagItem* tags )
-{
-	ULONG retval;
-	BOOL	changedisabled = FALSE;
-	BOOL	disabled	= FALSE;
-
-	if ( w != NULL )
-	{
-		if ( FindTagItem( GA_Disabled, tags ) )
-		{
-			changedisabled = TRUE;
- 			disabled = g->Flags & GFLG_DISABLED;
- 		}
- 	}
-
-	retval = SetGadgetAttrsA( g, w, r, tags );
-
-	if ( w != NULL &&
-			( retval != 0 || 
-				( changedisabled && disabled != ( g->Flags & GFLG_DISABLED ) ) ) )
-	{
-		RefreshGList( g, w, r, 1 );
-		retval = 1;
-	}
-
-	return retval;
-}
-
-ULONG RefreshSetGadgetAttrs( struct Gadget *g, struct Window *w, struct Requester *r, Tag tag1, ... )
-{
-	return RefreshSetGadgetAttrsA( g, w, r, (struct TagItem*) &tag1 );
-}
-
-struct Node*LBAddNodeA( struct Gadget *	lb, struct Window *w, struct Requester *r, struct Node *n, struct TagItem* tags )
-{
-	return (struct Node*) DoGadgetMethod( lb, w, r,LBM_ADDNODE, NULL, (ULONG) n, (ULONG) tags );
-}
-
-struct Node *LBAddNode( struct Gadget *lb, struct Window *w, struct Requester* r, struct Node *n, Tag tag1, ... )
-{
-	return (struct Node*) DoGadgetMethod( lb, w, r, LBM_ADDNODE, NULL, (ULONG) n, (ULONG) &tag1 );
-}
-*/
-
-/******************************************************************************
 ** ShowGUI ********************************************************************
 ******************************************************************************/
 
@@ -153,8 +103,9 @@ void init_prefs(int win_nr)
 			WA_CloseGadget,  TRUE,
 			WA_Activate,     TRUE,
 			WA_SmartRefresh, TRUE,
+			WA_Width, 600,
 			WINDOW_Position, WPOS_CENTERSCREEN,
-			WINDOW_ParentGroup, VLayoutObject,
+			WINDOW_ParentGroup, HLayoutObject,
 				LAYOUT_SpaceOuter, TRUE,
 				LAYOUT_DeferLayout, TRUE,
 
@@ -195,6 +146,7 @@ void init_prefs(int win_nr)
 					LAYOUT_AddChild, MakeButton(GAD_TEST),
 
 				LayoutEnd,
+				CHILD_WeightedWidth, 0,
 
 #if 0
 				LAYOUT_AddChild, VGroupObject,
@@ -219,7 +171,7 @@ BOOL ShowGUI( struct PUHData* pd )
 	struct MsgPort *app_port;
 //	RESOURCEFILE	resource;
 	struct Window *window;
-	struct Gadget **gadgets;
+//	struct Gadget **gadgets;
 
 	catalog = OpenCatalogA( NULL, "NallePUH.catalog",NULL);
 	
@@ -238,39 +190,14 @@ BOOL ShowGUI( struct PUHData* pd )
 				init_prefs(win_prefs);
 
 				window = RA_OpenWindow( layout[win_prefs] );
-
 				if (window)
 				{
-					rc = HandleGUI( window, gadgets, pd );
+					RSetAttrO( win_prefs, GAD_MODE_INFO, GA_Disabled, TRUE);
+
+					rc = HandleGUI( window, pd );
+					close_window(win_prefs);
 				}
 			
-
-#if 0
-				resource = RL_OpenResource( RCTResource, screen, catalog );
-				if ( resource != NULL )
-				{
-					window = RL_NewObject( resource, WIN_1_ID,
-								WINDOW_SharedPort, (ULONG) idcmp_port,
-								WINDOW_AppPort, 	(ULONG) app_port,
-								TAG_DONE );
-																
-					if ( window != NULL )
-					{
-						gadgets = (struct Gadget**) RL_GetObjectArray( resource, window, GROUP_2_ID );
-
-						if ( gadgets != NULL )
-						{
-							DoMethod( window, WM_OPEN );
-							rc = HandleGUI( window, gadgets, pd );
-							DoMethod( window, WM_CLOSE);
-						}
-					}
-					RL_CloseResource( resource );
-				}
-#endif
-
-
-				
 				FreeSysObject( ASOT_PORT, app_port );
 			}
 			
@@ -283,6 +210,16 @@ BOOL ShowGUI( struct PUHData* pd )
 	CloseCatalog( catalog );
 
 	return rc;
+}
+
+void close_window(int layout_nr)
+{
+	if (layout[ layout_nr ])
+	{
+		DisposeObject( (Object *) layout[ layout_nr ] );
+		layout[ layout_nr ]	= 0;
+		win[ layout_nr ]	= 0;
+	}
 }
 
 
@@ -373,6 +310,16 @@ struct rc
 	ULONG frequency ;
 	struct Window* win_ptr;
 	ULONG code;
+
+	struct LogData log_data;
+/*
+	struct Hook log_hook =
+	{
+		{ NULL, NULL },
+		(HOOKFUNC) LogToList,
+		NULL,
+		&log_data
+	};*/
 };
 
 void init_rc(struct rc *rc)
@@ -385,8 +332,6 @@ void init_rc(struct rc *rc)
 	rc -> win_ptr = NULL;
 	rc -> code = 0;
 }
-
-#if 0
 
 void HandleGadgets(ULONG input_flags , struct rc *rc)
 {
@@ -438,8 +383,8 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 										
 						if ( AHI_GetAudioAttrs( rc -> audio_mode, NULL, AHIDB_BufferLen, 255, AHIDB_Name, (ULONG) buffer, TAG_DONE ) )
 						{
-							RefreshSetGadgetAttrs( gadgets[ GAD_MODE_INFO ], rc -> win_ptr, NULL,STRINGA_TextVal, (ULONG) buffer, TAG_DONE );
-							RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+							RefreshSetGadgetAttrs( obj[ GAD_MODE_INFO ], rc -> win_ptr, NULL,STRINGA_TextVal, (ULONG) buffer, TAG_DONE );
+							RefreshSetGadgetAttrs( obj[ GAD_INSTALL ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
 						}
 					}
 
@@ -456,9 +401,9 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 				ULONG patch_apps = 0;
 				ULONG toggle_led = 0;
 
-				GetAttr( GA_Selected, gadgets[ GAD_PATCH_ROM ], &patch_rom );
-				GetAttr( GA_Selected, gadgets[ GAD_PATCH_APPS ], &patch_apps );
-				GetAttr( GA_Selected, gadgets[ GAD_TOGGLE_LED ], &toggle_led );
+				GetAttr( GA_Selected, obj[ GAD_PATCH_ROM ], &patch_rom );
+				GetAttr( GA_Selected, obj[ GAD_PATCH_APPS ], &patch_apps );
+				GetAttr( GA_Selected, obj[ GAD_TOGGLE_LED ], &toggle_led );
 
 				ClearList( &log_data );
 
@@ -483,14 +428,14 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 				}
 				else
 				{
-					RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_ROM ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( gadgets[ GAD_TOGGLE_LED ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( gadgets[ GAD_MODE_SELECT ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( gadgets[ GAD_UNINSTALL ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-					RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-					RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_PATCH_ROM ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_TOGGLE_LED ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_MODE_SELECT ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_INSTALL ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_UNINSTALL ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
 				}
 			}
 			break;
@@ -503,21 +448,21 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 
 				UninstallPUH( pd );
 
-				RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_ROM ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_PATCH_ROM ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
 
-				GetAttr( GA_Selected, gadgets[ GAD_PATCH_ROM	], &patch_rom );
+				GetAttr( GA_Selected, obj[ GAD_PATCH_ROM	], &patch_rom );
 								
 				if ( patch_rom )
 				{
-					RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
 				}
 
-				RefreshSetGadgetAttrs( gadgets[ GAD_TOGGLE_LED ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-				RefreshSetGadgetAttrs( gadgets[ GAD_MODE_SELECT ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-				RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-				RefreshSetGadgetAttrs( gadgets[ GAD_UNINSTALL ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-				RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-				RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_TOGGLE_LED ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_MODE_SELECT ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_INSTALL ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_UNINSTALL ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
 			}
 			break;
 
@@ -530,9 +475,9 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 				else
 				{
 					LogPUH( pd, "Activated PUH." );
-					RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
 
-					RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
+					RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
 				}
 			}
 			break;
@@ -543,8 +488,8 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 
 				LogPUH( pd, "Deactivated PUH." );
 
-				RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
-				RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE,	TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE,	TAG_DONE );
 			}
 			break;
 #endif
@@ -559,52 +504,32 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 		case GAD_PATCH_ROM:
 			if ( rc -> code )
 			{
-				RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
 			}
 			else
 			{
-				RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, TRUE,GA_Selected, FALSE,	TAG_DONE );
+				RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, TRUE,GA_Selected, FALSE,	TAG_DONE );
 			}
 			break;
 #endif
 	}
 }
 
-#endif
 
-BOOL HandleGUI( struct Window * window, struct Gadget** gadgets, struct PUHData* pd )
+
+BOOL HandleGUI( struct Window * window, struct PUHData* pd )
 {
 	struct rc rc;
 	ULONG	window_signals = 0;
-	struct LogData log_data;
 
-	struct Hook log_hook =
-	{
-		{ NULL, NULL },
-		(HOOKFUNC) LogToList,
-		NULL,
-		&log_data
-	};
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
-//	GetAttr( WINDOW_SigMask, window, &window_signals );
-//	GetAttr( WINDOW_Window, window, (ULONG*) &rc.win_ptr );
+	init_rc( &rc );
 
 	window_signals = 1L << window -> UserPort -> mp_SigBit;
 	rc.win_ptr = window;
 
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
-//	log_data.m_Gadget = gadgets[ GAD_MESSAGES ];
+//	log_data.m_Gadget = obj[ GAD_MESSAGES ];
 //	log_data.m_Window = rc.win_ptr;
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 //	SetPUHLogger( &log_hook, pd );
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 
 	while( ! rc.quit )
 	{
@@ -635,17 +560,17 @@ BOOL HandleGUI( struct Window * window, struct Gadget** gadgets, struct PUHData*
 					case WMHI_ICONIFY:
 						DoMethod( window, WM_ICONIFY );
 						GetAttr( WINDOW_Window, window, (ULONG*) &rc.win_ptr );
-						log_data.m_Window = rc.win_ptr;
+						rc.log_data.m_Window = rc.win_ptr;
 						break;
 						
 					case WMHI_UNICONIFY:
 						DoMethod( window, WM_OPEN );
 						GetAttr( WINDOW_Window, window, (ULONG*) &rc.win_ptr );
-						log_data.m_Window = rc.win_ptr;
+						rc.log_data.m_Window = rc.win_ptr;
 						break;
 
 					case WMHI_GADGETUP:
-//						HandleGadgets(input_flags, &rc);
+						HandleGadgets(input_flags, &rc);
 						break;
 
 					default:
@@ -655,7 +580,7 @@ BOOL HandleGUI( struct Window * window, struct Gadget** gadgets, struct PUHData*
 		}
 	}
 	
-	SetPUHLogger( NULL, pd );
+//	SetPUHLogger( NULL, pd );
 
 	if ( rc.messed_with_registers )
 	{
