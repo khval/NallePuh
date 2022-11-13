@@ -218,7 +218,7 @@ BOOL ShowGUI( struct PUHData* pd )
 	struct MsgPort *idcmp_port;
 	struct MsgPort *app_port;
 //	RESOURCEFILE	resource;
-	Object *window;
+	struct Window *window;
 	struct Gadget **gadgets;
 
 	catalog = OpenCatalogA( NULL, "NallePUH.catalog",NULL);
@@ -364,18 +364,218 @@ void nallepuh_test()
 #endif
 }
 
-BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
+struct rc 
 {
-	BOOL	rc = FALSE;
-	BOOL	quit = FALSE;
-	BOOL	messed_with_registers = FALSE;
+	BOOL rc ;
+	BOOL quit ;
+	BOOL messed_with_registers;
+	ULONG audio_mode ;
+	ULONG frequency ;
+	struct Window* win_ptr;
+	ULONG code;
+};
 
-	struct Window* win_ptr = NULL;
+void init_rc(struct rc *rc)
+{
+	rc -> rc = FALSE;
+	rc -> quit = FALSE;
+	rc -> messed_with_registers = FALSE;
+	rc -> audio_mode = 0;
+	rc -> frequency = 0;
+	rc -> win_ptr = NULL;
+	rc -> code = 0;
+}
+
+#if 0
+
+void HandleGadgets(ULONG input_flags , struct rc *rc)
+{
+	switch( input_flags & RL_GADGETMASK )
+	{
+		case GAD_MODE_SELECT:
+			{
+				struct AHIAudioModeRequester* req = NULL;
+								
+				struct TagItem								filter_tags[] =
+				{
+					{ AHIDB_Realtime, 	TRUE },
+					{ AHIDB_MaxChannels, 4		},
+					{ TAG_DONE, 				0		}
+				};
+
+				struct Hook filter_hook =
+				{
+					{ NULL, NULL },
+					(HOOKFUNC) FilterFunc,
+					NULL,
+					NULL
+				};
+
+				req = AHI_AllocAudioRequest(
+						AHIR_Window, 	(ULONG) rc -> win_ptr,
+						AHIR_SleepWindow, TRUE,
+						AHIR_InitialAudioID, rc -> audio_mode,
+						AHIR_InitialMixFreq, rc -> frequency,
+						AHIR_DoMixFreq, TRUE,
+						AHIR_DoDefaultMode, TRUE,
+						AHIR_FilterFunc, (ULONG) &filter_hook,
+						AHIR_FilterTags, (ULONG) filter_tags,
+						TAG_DONE );
+
+				if ( req == NULL )
+				{
+					rc->quit = TRUE;
+					rc->rc	= FALSE;
+				}
+				else
+				{
+					if ( AHI_AudioRequest( req, TAG_DONE ) )
+					{
+						char buffer[ 256 ];
+
+						rc -> audio_mode = req->ahiam_AudioID;
+						rc -> frequency = req->ahiam_MixFreq;
+										
+						if ( AHI_GetAudioAttrs( rc -> audio_mode, NULL, AHIDB_BufferLen, 255, AHIDB_Name, (ULONG) buffer, TAG_DONE ) )
+						{
+							RefreshSetGadgetAttrs( gadgets[ GAD_MODE_INFO ], rc -> win_ptr, NULL,STRINGA_TextVal, (ULONG) buffer, TAG_DONE );
+							RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+						}
+					}
+
+					AHI_FreeAudioRequest( req );
+				}
+				break;
+			}
+
+#if 0
+		case GAD_INSTALL:
+			{
+				unsigned int flags = 0;
+				ULONG patch_rom = 0;
+				ULONG patch_apps = 0;
+				ULONG toggle_led = 0;
+
+				GetAttr( GA_Selected, gadgets[ GAD_PATCH_ROM ], &patch_rom );
+				GetAttr( GA_Selected, gadgets[ GAD_PATCH_APPS ], &patch_apps );
+				GetAttr( GA_Selected, gadgets[ GAD_TOGGLE_LED ], &toggle_led );
+
+				ClearList( &log_data );
+
+				if ( patch_rom )
+				{
+					flags |= PUHF_PATCH_ROM;
+				}
+
+				if ( patch_apps )
+				{
+					flags |= PUHF_PATCH_APPS;
+				}
+
+				if ( toggle_led )
+				{
+					flags |= PUHF_TOGGLE_LED;
+				}
+
+				if ( ! InstallPUH( flags, audio_mode, frequency ) )
+				{
+					LogPUH( pd, "Unable to install PUH." );
+				}
+				else
+				{
+					RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_ROM ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( gadgets[ GAD_TOGGLE_LED ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( gadgets[ GAD_MODE_SELECT ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+					RefreshSetGadgetAttrs( gadgets[ GAD_UNINSTALL ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+					RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+					RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+				}
+			}
+			break;
+
+		case GAD_UNINSTALL:
+			{
+				ULONG patch_rom = 0;
+
+				ClearList( &log_data );
+
+				UninstallPUH( pd );
+
+				RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_ROM ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+
+				GetAttr( GA_Selected, gadgets[ GAD_PATCH_ROM	], &patch_rom );
+								
+				if ( patch_rom )
+				{
+					RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				}
+
+				RefreshSetGadgetAttrs( gadgets[ GAD_TOGGLE_LED ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( gadgets[ GAD_MODE_SELECT ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+				RefreshSetGadgetAttrs( gadgets[ GAD_UNINSTALL ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+				RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+				RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+			}
+			break;
+
+		case GAD_ACTIVATE:
+			{
+				if ( ! ActivatePUH( pd ) )
+				{
+					LogPUH( pd, "Unable to activate PUH." );
+				}
+				else
+				{
+					LogPUH( pd, "Activated PUH." );
+					RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
+
+					RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
+				}
+			}
+			break;
+
+		case GAD_DEACTIVATE:
+			{
+				DeactivatePUH( pd );
+
+				LogPUH( pd, "Deactivated PUH." );
+
+				RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
+				RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,GA_Disabled, TRUE,	TAG_DONE );
+			}
+			break;
+#endif
+							
+		case GAD_TEST:
+			{
+				rc -> messed_with_registers = TRUE;
+				nallepuh_test();
+			}
+			break;
+#if 0
+		case GAD_PATCH_ROM:
+			if ( rc -> code )
+			{
+				RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
+			}
+			else
+			{
+				RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,GA_Disabled, TRUE,GA_Selected, FALSE,	TAG_DONE );
+			}
+			break;
+#endif
+	}
+}
+
+#endif
+
+BOOL HandleGUI( struct Window * window, struct Gadget** gadgets, struct PUHData* pd )
+{
+	struct rc rc;
 	ULONG	window_signals = 0;
-
-	ULONG	audio_mode = 0;
-	ULONG	frequency = 0;
-
 	struct LogData log_data;
 
 	struct Hook log_hook =
@@ -386,15 +586,27 @@ BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 		&log_data
 	};
 
-	GetAttr( WINDOW_SigMask, window, &window_signals );
-	GetAttr( WINDOW_Window, window, (ULONG*) &win_ptr );
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
 
-	log_data.m_Gadget = gadgets[ GAD_MESSAGES ];
-	log_data.m_Window = win_ptr;
+//	GetAttr( WINDOW_SigMask, window, &window_signals );
+//	GetAttr( WINDOW_Window, window, (ULONG*) &rc.win_ptr );
 
-	SetPUHLogger( &log_hook, pd );
+	window_signals = 1L << window -> UserPort -> mp_SigBit;
+	rc.win_ptr = window;
 
-	while( ! quit )
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+//	log_data.m_Gadget = gadgets[ GAD_MESSAGES ];
+//	log_data.m_Window = rc.win_ptr;
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+//	SetPUHLogger( &log_hook, pd );
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+
+	while( ! rc.quit )
 	{
 		ULONG mask;
 		
@@ -402,274 +614,39 @@ BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 		
 		if ( mask & SIGBREAKF_CTRL_C )
 		{
-			quit = TRUE;
-			rc	= TRUE;
+			rc.quit = TRUE;
+			rc.rc	= TRUE;
 			break;
 		}
 
 		if ( mask & window_signals )
 		{
 			ULONG input_flags = 0;
-			UWORD code = 0;
 			
-
-
-			while( ( input_flags = RA_HandleInput( layout[ win_prefs ] ,&code) ) != WMHI_LASTMSG )
+			while( ( input_flags = RA_HandleInput( layout[ win_prefs ] ,&rc.code) ) != WMHI_LASTMSG )
 			{
 				switch( input_flags & WMHI_CLASSMASK)
 				{
 					case WMHI_CLOSEWINDOW:
-						quit = TRUE;
-						rc	= TRUE;
+						rc.quit = TRUE;
+						rc.rc	= TRUE;
 						break;
 
 					case WMHI_ICONIFY:
 						DoMethod( window, WM_ICONIFY );
-						GetAttr( WINDOW_Window, window, (ULONG*) &win_ptr );
-						log_data.m_Window = win_ptr;
+						GetAttr( WINDOW_Window, window, (ULONG*) &rc.win_ptr );
+						log_data.m_Window = rc.win_ptr;
 						break;
 						
 					case WMHI_UNICONIFY:
 						DoMethod( window, WM_OPEN );
-						GetAttr( WINDOW_Window, window, (ULONG*) &win_ptr );
-						log_data.m_Window = win_ptr;
+						GetAttr( WINDOW_Window, window, (ULONG*) &rc.win_ptr );
+						log_data.m_Window = rc.win_ptr;
 						break;
 
 					case WMHI_GADGETUP:
-					{
-						switch( input_flags & RL_GADGETMASK )
-						{
-							case GAD_MODE_SELECT:
-							{
-								struct AHIAudioModeRequester* req = NULL;
-								
-								struct TagItem								filter_tags[] =
-								{
-									{ AHIDB_Realtime, 	TRUE },
-									{ AHIDB_MaxChannels, 4		},
-									{ TAG_DONE, 				0		}
-								};
-
-								struct Hook filter_hook =
-								{
-									{ NULL, NULL },
-									(HOOKFUNC) FilterFunc,
-									NULL,
-									NULL
-								};
-
-								req = AHI_AllocAudioRequest(
-										AHIR_Window, 	(ULONG) win_ptr,
-										AHIR_SleepWindow, TRUE,
-										AHIR_InitialAudioID, audio_mode,
-										AHIR_InitialMixFreq, frequency,
-										AHIR_DoMixFreq, TRUE,
-										AHIR_DoDefaultMode, TRUE,
-										AHIR_FilterFunc, (ULONG) &filter_hook,
-										AHIR_FilterTags, (ULONG) filter_tags,
-										TAG_DONE );
-
-								if ( req == NULL )
-								{
-									quit = TRUE;
-									rc	= FALSE;
-								}
-								else
-								{
-									if ( AHI_AudioRequest( req, TAG_DONE ) )
-									{
-										char buffer[ 256 ];
-
-										audio_mode = req->ahiam_AudioID;
-										frequency = req->ahiam_MixFreq;
-										
-										if ( AHI_GetAudioAttrs( audio_mode, NULL, AHIDB_BufferLen, 255, AHIDB_Name, (ULONG) buffer, TAG_DONE ) )
-										{
-											RefreshSetGadgetAttrs( gadgets[ GAD_MODE_INFO ], win_ptr, NULL,
-													STRINGA_TextVal, (ULONG) buffer, TAG_DONE );
-
-											RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], win_ptr, NULL,
-													GA_Disabled, FALSE, TAG_DONE );
-										}
-									}
-
-									AHI_FreeAudioRequest( req );
-								}
-
-								break;
-							}
-
-#if 0
-
-							case GAD_INSTALL:
-							{
-								unsigned int flags = 0;
-								ULONG patch_rom = 0;
-								ULONG patch_apps = 0;
-								ULONG toggle_led = 0;
-
-								GetAttr( GA_Selected, gadgets[ GAD_PATCH_ROM ], &patch_rom );
-								GetAttr( GA_Selected, gadgets[ GAD_PATCH_APPS ], &patch_apps );
-								GetAttr( GA_Selected, gadgets[ GAD_TOGGLE_LED ], &toggle_led );
-
-								ClearList( &log_data );
-
-								if ( patch_rom )
-								{
-									flags |= PUHF_PATCH_ROM;
-								}
-
-								if ( patch_apps )
-								{
-									flags |= PUHF_PATCH_APPS;
-								}
-
-								if ( toggle_led )
-								{
-									flags |= PUHF_TOGGLE_LED;
-								}
-
-								if ( ! InstallPUH( flags, audio_mode, frequency ) )
-								{
-									LogPUH( pd, "Unable to install PUH." );
-								}
-								else
-								{
-									RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_ROM ], win_ptr, NULL,
-											GA_Disabled, TRUE, TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,
-											GA_Disabled, TRUE, TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_TOGGLE_LED ], win_ptr, NULL,
-											GA_Disabled, TRUE, TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_MODE_SELECT ], win_ptr, NULL,
-											GA_Disabled, TRUE, TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], win_ptr, NULL,
-											GA_Disabled, TRUE, TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_UNINSTALL ], win_ptr, NULL,
-											GA_Disabled, FALSE, TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,
-											GA_Disabled, FALSE, TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,
-											GA_Disabled, TRUE, TAG_DONE );
-								}
-
-								break;
-							}
-
-
-							case GAD_UNINSTALL:
-							{
-								ULONG patch_rom = 0;
-
-								ClearList( &log_data );
-
-								UninstallPUH( pd );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_ROM ], win_ptr, NULL,
-										GA_Disabled, FALSE, TAG_DONE );
-
-								GetAttr( GA_Selected, gadgets[ GAD_PATCH_ROM	], &patch_rom );
-								
-								if ( patch_rom )
-								{
-									RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,
-											GA_Disabled, FALSE, TAG_DONE );
-								}
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_TOGGLE_LED ], win_ptr, NULL,
-										GA_Disabled, FALSE, TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_MODE_SELECT ], win_ptr, NULL,
-										GA_Disabled, FALSE, TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_INSTALL ], win_ptr, NULL,
-										GA_Disabled, FALSE, TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_UNINSTALL ], win_ptr, NULL,
-										GA_Disabled, TRUE, TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,
-										GA_Disabled, TRUE, TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,
-										GA_Disabled, TRUE, TAG_DONE );
-								break;
-							}
-
-							case GAD_ACTIVATE:
-							{
-								if ( ! ActivatePUH( pd ) )
-								{
-									LogPUH( pd, "Unable to activate PUH." );
-								}
-								else
-								{
-									LogPUH( pd, "Activated PUH." );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,
-											GA_Disabled, TRUE,
-											TAG_DONE );
-
-									RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,
-											GA_Disabled, FALSE,
-											TAG_DONE );
-								}
-
-								break;
-							}
-
-							case GAD_DEACTIVATE:
-							{
-								DeactivatePUH( pd );
-
-								LogPUH( pd, "Deactivated PUH." );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_ACTIVATE ], win_ptr, NULL,
-										GA_Disabled, FALSE,
-										TAG_DONE );
-
-								RefreshSetGadgetAttrs( gadgets[ GAD_DEACTIVATE ], win_ptr, NULL,
-										GA_Disabled, TRUE,
-										TAG_DONE );
-
-								break;
-							}
-#endif
-							
-							case GAD_TEST:
-							{
-								messed_with_registers = TRUE;
-								nallepuh_test();
-								break;
-							}
-#if 0
-							case GAD_PATCH_ROM:
-								if ( code )
-								{
-									RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,
-											GA_Disabled, FALSE,
-											TAG_DONE );
-								}
-								else
-								{
-									RefreshSetGadgetAttrs( gadgets[ GAD_PATCH_APPS ], win_ptr, NULL,
-											GA_Disabled, TRUE,
-											GA_Selected, FALSE,
-											TAG_DONE );
-								}
-								break;
-#endif
-						}
-						
+//						HandleGadgets(input_flags, &rc);
 						break;
-					}
 
 					default:
 						break;
@@ -680,13 +657,12 @@ BOOL HandleGUI( Object * window, struct Gadget** gadgets, struct PUHData* pd )
 	
 	SetPUHLogger( NULL, pd );
 
-	if ( messed_with_registers )
+	if ( rc.messed_with_registers )
 	{
 		BOOL bHandled;
-
 		emu_WriteWord( &bHandled, &CustomData.dmacon, DMAF_AUD0 );
 		emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_vol, 0 );
 	}
 
-	return rc;
+	return rc.rc;
 }
