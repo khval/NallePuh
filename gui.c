@@ -107,29 +107,25 @@ void handel_iconify()
 	struct Message *msg;
 	BOOL disabled = FALSE;
 
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 	enable_Iconify();
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 	if (iconifyPort)
 	{
-		while (msg = (struct Message *) GetMsg( iconifyPort ) )
+		do
 		{
-			ReplyMsg( (struct Message*) msg );
-			disabled = TRUE;
-		}
-	}
+			Wait( 1L << iconifyPort -> mp_SigBit);
 
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
+			while ((msg = (struct Message *) GetMsg( iconifyPort ) ))
+			{
+				ReplyMsg( (struct Message*) msg );
+				disabled = TRUE;
+			}
+		} while (disabled == FALSE );
+	}
 
 	if (disabled)
 	{
 		disable_Iconify();
 	}
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
 }
 
 void init_prefs(int win_nr)
@@ -222,57 +218,51 @@ void close_window(int layout_nr)
 	}
 }
 
+
+
+BOOL open_window(ULONG win_id )
+{
+
+	win[ win_prefs ] = RA_OpenWindow( layout[win_id] );
+	if (win[ win_prefs ])
+	{
+		RSetAttrO( win_prefs, GAD_MODE_INFO, GA_Disabled, TRUE);
+		RSetAttrO( win_prefs, GAD_UNINSTALL, GA_Disabled, TRUE);
+		RSetAttrO( win_prefs, GAD_ACTIVATE, GA_Disabled, TRUE);
+		RSetAttrO( win_prefs, GAD_DEACTIVATE, GA_Disabled, TRUE);
+		RSetAttrO( win_prefs, GAD_TEST, GA_Disabled, TRUE);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 struct rc ShowGUI( struct PUHData* pd )
 {
 	struct rc rc;
 	struct Screen *screen;
 	struct MsgPort *idcmp_port;
 	struct MsgPort *app_port;
-	struct Window *window;
 	
 	rc.rc = FALSE;
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 	screen = LockPubScreen( NULL );
 	
 	if ( screen != NULL )
 	{
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 		idcmp_port = (struct MsgPort *) AllocSysObjectTags(ASOT_PORT, TAG_DONE);
 		
 		if ( idcmp_port != NULL )
 		{
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 			app_port = (struct MsgPort *) AllocSysObjectTags(ASOT_PORT, TAG_DONE);
 			
 			if ( app_port != NULL )
 			{
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 				init_prefs(win_prefs);
 
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
-				window = RA_OpenWindow( layout[win_prefs] );
-				if (window)
+				if (open_window( win_prefs ))
 				{
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
-					win[ win_prefs ] = window;
-					RSetAttrO( win_prefs, GAD_MODE_INFO, GA_Disabled, TRUE);
-					RSetAttrO( win_prefs, GAD_UNINSTALL, GA_Disabled, TRUE);
-					RSetAttrO( win_prefs, GAD_ACTIVATE, GA_Disabled, TRUE);
-					RSetAttrO( win_prefs, GAD_DEACTIVATE, GA_Disabled, TRUE);
-					RSetAttrO( win_prefs, GAD_TEST, GA_Disabled, TRUE);
-
-					rc = HandleGUI( window, pd );
+					rc = HandleGUI( win[ win_prefs ], pd );
 					close_window(win_prefs);
 				}
 			
@@ -608,30 +598,26 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 
 					case WMHI_ICONIFY:
 
-				printf("%s:%d\n",__FUNCTION__,__LINE__);
-
+						// empty event queue
 						while( ( input_flags = RA_HandleInput( layout[ win_prefs ] ,&rc.code) ) != WMHI_LASTMSG );
 
-				printf("%s:%d\n",__FUNCTION__,__LINE__);
+						close_window( win_prefs );
 
 						handel_iconify();
 
-				printf("%s:%d\n",__FUNCTION__,__LINE__);
-
-						rc.win_ptr = window;
-						rc.log_data.m_Window = rc.win_ptr;
-
-				printf("%s:%d\n",__FUNCTION__,__LINE__);
-
+						init_prefs(win_prefs);			// we trashed objs with close_window :-)
+						if (open_window(win_prefs))
+						{
+							window = win[ win_prefs ];
+							window = rc.win_ptr;
+							rc.log_data.m_Window = rc.win_ptr;
+						}
+						else 
+						{
+							printf("failed !!\n");
+							return rc;
+						}
 						break;
-
-/*						
-					case WMHI_UNICONIFY:
-						DoMethod( window, WM_OPEN );
-						GetAttr( WINDOW_Window, window, (ULONG*) &rc.win_ptr );
-						rc.log_data.m_Window = rc.win_ptr;
-						break;
-*/
 
 					case WMHI_GADGETUP:
 						HandleGadgets(input_flags, &rc);
