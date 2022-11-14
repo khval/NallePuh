@@ -172,12 +172,16 @@ int main( int argc,char* argv[] )
 
 	printf("%s:%d\n",__FUNCTION__,__LINE__);
 
-	if ( argc == 1 )
+	if ( argc == 0)
+	{
+		// wb startup
+		gui_mode = TRUE;
+	}
+	else 	if ( argc == 1 )
 	{
 		gui_mode = TRUE;
 	}
-	else
-	if ( argc != 3 )
+	else if ( argc != 3 )
 	{
 		//Printf( "Usage: %s [0x]<AHI mode ID> <Frequency> <Level>\n", argv[ 0 ] );
 		//Printf( "Level can be 0 (no patches), 1 (ROM patches) or 2 (appl. patches)\n" );
