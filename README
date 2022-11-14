@@ -46,6 +46,9 @@ Changes in Nov. 2022
 	* Deprecated functions replaced.
 	* code cleanup, std style format.
 	* Improved debuging (task name, etc).
+	* fixed/Added a new GUI
+	* fixed/added iconify support
+	* wbstartup support
 
 Dependecies
 
