@@ -35,14 +35,16 @@ void save_window_attr( struct window *win)
 
 BOOL enable_Iconify( )
 {
-	dobj = GetDiskObject( "progdir:nallepuh" );
+	dobj = GetDiskObject( "progdir:NallePUH" );
+	if (!dobj) dobj = GetDiskObject( "envarc:Sys/def_tool" );		// fallback on default tool, if no icon found!
+
 	if (dobj)
 	{
 		iconifyPort = (struct MsgPort *) AllocSysObject(ASOT_PORT,NULL);
 
 		if (iconifyPort)
 		{
-			appicon = AddAppIcon(1, 0, "Amos Kittens", iconifyPort, 0, dobj, WBAPPICONA_SupportsOpen, TRUE,TAG_END);
+			appicon = AddAppIcon(1, 0, "NallePuh", iconifyPort, 0, dobj, WBAPPICONA_SupportsOpen, TRUE,TAG_END);
 			if (appicon) return TRUE;
 		}
 	}
