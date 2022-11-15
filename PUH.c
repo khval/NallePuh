@@ -116,6 +116,7 @@ struct Custom CustomData;
 
 extern struct libblitterIFace *ILibblitter;
 
+uint32 SchedulerState;
 
 UWORD cd_ReadWord( void* address )
 {
@@ -451,25 +452,32 @@ void DeactivatePUH( struct PUHData* pd )
 // pd->m_CustomDirect, since the patched instructions in application code
 // needs it even after Nalle PUH has terminated.
 
+/*
 static BOOL RestoreMemory( struct PUHData* pd )
 {
 	return TRUE;
 }
+*/
 
 /******************************************************************************
 ** MMU exception handler ******************************************************
 ******************************************************************************/
+
+struct TagItem SchedulerState_tags[] = {
+	{GSITAG_SchedulerState, (ULONG) &SchedulerState},
+ 	{TAG_END,0L}};
 
 ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd)
 {
 	struct ExecIFace *IExec = (struct ExecIFace *)pSysBase->MainInterface;
 	BOOL bHandled1 = FALSE;
 	BOOL bHandled2 = FALSE;
-	APTR pFaultInst, pFaultAddress;
+	APTR pFaultAddress;
+//	APTR pFaultInst;
 
 	/* Read the faulting address */
 	pFaultAddress = (APTR)pContext->dar;
-	pFaultInst = (APTR)pContext->ip;
+//	pFaultInst = (APTR)pContext->ip;
 
 	if (PUH_ON &&
 		pFaultAddress >= (APTR)(0xdff000 + DMACONR) &&
@@ -477,10 +485,8 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 	{
 		ULONG op_code  = 0;
 		ULONG sub_code = 0;
-
 		ULONG d_reg = 0;
 		ULONG a_reg = 0;
-
 		LONG	offset = 0;
 		ULONG b_reg = 0;
 		ULONG instruction;
@@ -491,6 +497,11 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 		DEBUG("Data page fault at %p, instruction %p\n", pFaultAddress, pFaultInst);
 		DEBUG("Stack Pointer: %p\n", pContext->gpr[1]);
 		DEBUG("Task: %p (%s)\n", pSysBase->ThisTask, pSysBase->ThisTask -> tc_Node.ln_Name);
+
+		// we need to know what we can't, can do!
+		GetSystemInfo(SchedulerState_tags);
+
+		DEBUG("SchedulerState: %d\n", SchedulerState);
 
 		instruction = *(ULONG *)pContext->ip;
 		op_code = (instruction & 0xFC000000) >> 26;
@@ -688,31 +699,41 @@ static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecB
 
 				if (h==0)
 				{
-					gettimeofday(&te_start, NULL);
-					te_start_set = true;
+					if (SchedulerState != GSISTATE_DISABLE)
+					{
+						gettimeofday(&te_start, NULL);
+						te_start_set = true;
+					}
 					h++;
 				}
 				else if (h==255)	// we count up to 255.
 				{
-					if (te_start_set)
+					if (SchedulerState == GSISTATE_DISABLE)	// multitasking disabled we can't keep time, this sucks!!
 					{
-						long long int ticks;
-						gettimeofday(&te, NULL);
-						timersub(&te,&te_start,&te_diff);
-
-						if (te_diff.tv_usec> 25) 
-						{
-							ticks = te_diff.tv_usec / 25;
-							v+= ticks < 255 ? ticks : 1; 
-							h = 0;
-						}
-					}
-					else 
-					{
-						v++;
+						v++;	
 						h=0;
 					}
+					else
+					{
+						if (te_start_set)
+						{
+							long long int ticks;
+							gettimeofday(&te, NULL);
+							timersub(&te,&te_start,&te_diff);
 
+							if (te_diff.tv_usec> 25) 
+							{
+								ticks = te_diff.tv_usec / 25;
+								v+= ticks < 255 ? ticks : 1; 
+								h = 0;
+							}
+						}
+						else 
+						{
+							v++;
+							h=0;
+						}
+					}
 				}
 				else h++;
 
