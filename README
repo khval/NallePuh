@@ -45,6 +45,23 @@ Changes in Nov. 2022
 	* fixed/Added a new GUI
 	* fixed/added iconify support
 	* wbstartup support
+	
+	
+Disclaimer:
+
+	NallePuh for AmigaOS4.1 is not an Amiga hardware replacement project in software,
+	it can never do what hardware does, because it depends on multitasking for time keeping, 
+	if multitasking is disabled, it will try its best to get out of nano/micro waits in forbid states,
+	but can’t do any real time keeping if that happens.
+
+	NallePuh for AmigaOS4.1 is an exception handle, it does not hack function calls, 
+	it does not depend on external MMU libs, I wont call it a hack exactly.
+
+	NallePuh does not fix broken software, if the mc680x0 game/application/demo,
+	has bugs, there is nothing NallePuh can do to solve this issues.
+
+	If you run several mc680x0 programs at the same time, that all depends on NallePuh.
+	Then this can result in unpredictable results. I know nothing that can be done about it.
 
 Dependecies
 
