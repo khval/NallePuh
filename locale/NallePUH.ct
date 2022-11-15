@@ -4,91 +4,39 @@
 ;
 GAD_ACTIVATE
 
-; Activate
+; _Activate
 ;
 GAD_DEACTIVATE
 
-; Deactivate
-;
-GAD_INSTALL
-
-; Install
+; _Deactivate
 ;
 GAD_MESSAGES
 
 ; Messages
 ;
+GAD_MODE_ID
+
+; Mode Id
+;
 GAD_MODE_INFO
 
 ; Mode info
 ;
-GAD_MODE_SELECT
+GAD_SELECT_MODE
 
-; Mode select
-;
-GAD_PATCH_APPS
-
-; Patch apps
-;
-GAD_PATCH_ROM
-
-; Patch rom
+; _Select audio mode
 ;
 GAD_TEST
 
-; Test
+; _Test
 ;
-GAD_TOGGLE_LED
+GAD_ABOUT
 
-; Toggele led
-;
-GAD_UNINSTALL
-
-; Uninstall
-;
-msgPatchROM
-
-; Patch _ROM
-;
-msgPatchApplications
-
-; Patch a_pplications
-;
-msgAudioMode
-
-; Audio _mode...
-;
-msgInstall
-
-; _Install
-;
-msgUninstall
-
-; _Uninstall
-;
-msgActivate
-
-; _Activate
-;
-msgDeactivate
-
-; _Deactivate
+; A_bout
 ;
 msgNallePUH
 
 ; Nalle PUH version %d.%d (c)2001 Martin Blom <martin@blom.org>
-;
-msgTest
-
-; _Test
-;
-msgToggleLed
-
-; Toggle _led on exceptions
-;
-msgActivityLog
-
-; [Activity log area]
 ;
 ID_END
 

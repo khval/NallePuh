@@ -43,27 +43,14 @@
 
 #define GAD_ACTIVATE 1
 #define GAD_DEACTIVATE 2
-#define GAD_INSTALL 3
-#define GAD_MESSAGES 4
+#define GAD_MESSAGES 3
+#define GAD_MODE_ID 4
 #define GAD_MODE_INFO 5
-#define GAD_MODE_SELECT 6
-#define GAD_PATCH_APPS 7
-#define GAD_PATCH_ROM 8
-#define GAD_TEST 9
-#define GAD_TOGGLE_LED 10
-#define GAD_UNINSTALL 11
-#define msgPatchROM 12
-#define msgPatchApplications 13
-#define msgAudioMode 14
-#define msgInstall 15
-#define msgUninstall 16
-#define msgActivate 17
-#define msgDeactivate 18
-#define msgNallePUH 19
-#define msgTest 20
-#define msgToggleLed 21
-#define msgActivityLog 22
-#define ID_END 23
+#define GAD_SELECT_MODE 6
+#define GAD_TEST 7
+#define GAD_ABOUT 8
+#define msgNallePUH 9
+#define ID_END 10
 
 #endif /* CATCOMP_NUMBERS */
 
@@ -73,28 +60,15 @@
 
 #ifdef CATCOMP_STRINGS
 
-#define GAD_ACTIVATE_STR "Activate"
-#define GAD_DEACTIVATE_STR "Deactivate"
-#define GAD_INSTALL_STR "Install"
+#define GAD_ACTIVATE_STR "_Activate"
+#define GAD_DEACTIVATE_STR "_Deactivate"
 #define GAD_MESSAGES_STR "Messages"
+#define GAD_MODE_ID_STR "Mode Id"
 #define GAD_MODE_INFO_STR "Mode info"
-#define GAD_MODE_SELECT_STR "Mode select"
-#define GAD_PATCH_APPS_STR "Patch apps"
-#define GAD_PATCH_ROM_STR "Patch rom"
-#define GAD_TEST_STR "Test"
-#define GAD_TOGGLE_LED_STR "Toggele led"
-#define GAD_UNINSTALL_STR "Uninstall"
-#define msgPatchROM_STR "Patch _ROM"
-#define msgPatchApplications_STR "Patch a_pplications"
-#define msgAudioMode_STR "Audio _mode..."
-#define msgInstall_STR "_Install"
-#define msgUninstall_STR "_Uninstall"
-#define msgActivate_STR "_Activate"
-#define msgDeactivate_STR "_Deactivate"
+#define GAD_SELECT_MODE_STR "_Select audio mode"
+#define GAD_TEST_STR "_Test"
+#define GAD_ABOUT_STR "A_bout"
 #define msgNallePUH_STR "Nalle PUH version %d.%d (c)2001 Martin Blom <martin@blom.org>"
-#define msgTest_STR "_Test"
-#define msgToggleLed_STR "Toggle _led on exceptions"
-#define msgActivityLog_STR "[Activity log area]"
 #define ID_END_STR ";"
 
 #endif /* CATCOMP_STRINGS */
@@ -115,26 +89,13 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
 {
     {GAD_ACTIVATE,(CONST_STRPTR)GAD_ACTIVATE_STR},
     {GAD_DEACTIVATE,(CONST_STRPTR)GAD_DEACTIVATE_STR},
-    {GAD_INSTALL,(CONST_STRPTR)GAD_INSTALL_STR},
     {GAD_MESSAGES,(CONST_STRPTR)GAD_MESSAGES_STR},
+    {GAD_MODE_ID,(CONST_STRPTR)GAD_MODE_ID_STR},
     {GAD_MODE_INFO,(CONST_STRPTR)GAD_MODE_INFO_STR},
-    {GAD_MODE_SELECT,(CONST_STRPTR)GAD_MODE_SELECT_STR},
-    {GAD_PATCH_APPS,(CONST_STRPTR)GAD_PATCH_APPS_STR},
-    {GAD_PATCH_ROM,(CONST_STRPTR)GAD_PATCH_ROM_STR},
+    {GAD_SELECT_MODE,(CONST_STRPTR)GAD_SELECT_MODE_STR},
     {GAD_TEST,(CONST_STRPTR)GAD_TEST_STR},
-    {GAD_TOGGLE_LED,(CONST_STRPTR)GAD_TOGGLE_LED_STR},
-    {GAD_UNINSTALL,(CONST_STRPTR)GAD_UNINSTALL_STR},
-    {msgPatchROM,(CONST_STRPTR)msgPatchROM_STR},
-    {msgPatchApplications,(CONST_STRPTR)msgPatchApplications_STR},
-    {msgAudioMode,(CONST_STRPTR)msgAudioMode_STR},
-    {msgInstall,(CONST_STRPTR)msgInstall_STR},
-    {msgUninstall,(CONST_STRPTR)msgUninstall_STR},
-    {msgActivate,(CONST_STRPTR)msgActivate_STR},
-    {msgDeactivate,(CONST_STRPTR)msgDeactivate_STR},
+    {GAD_ABOUT,(CONST_STRPTR)GAD_ABOUT_STR},
     {msgNallePUH,(CONST_STRPTR)msgNallePUH_STR},
-    {msgTest,(CONST_STRPTR)msgTest_STR},
-    {msgToggleLed,(CONST_STRPTR)msgToggleLed_STR},
-    {msgActivityLog,(CONST_STRPTR)msgActivityLog_STR},
     {ID_END,(CONST_STRPTR)ID_END_STR},
 };
 

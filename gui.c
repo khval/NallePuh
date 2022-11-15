@@ -66,6 +66,18 @@ struct kIcon
 	struct Image *image ;
 };
 
+struct options
+{
+	BOOL installed;
+	BOOL activated;
+} options;
+
+void init_options( struct options *o)
+{
+	o -> installed = FALSE;
+	o -> activated = FALSE;
+}
+
 struct kIcon iconifyIcon = { NULL, NULL };
 
 const char *_L_default(LONG num) 
@@ -128,6 +140,47 @@ void handel_iconify()
 	}
 }
 
+void update_gui( int win_nr, struct rc *rc )
+{
+
+	switch (win_nr)
+	{
+		case win_prefs:
+			{
+				if (rc)
+				{
+					char tmp[100];
+
+					sprintf(tmp,"%08x", rc -> audio_mode );
+					RefreshSetGadgetAttrs( obj[ GAD_MODE_ID ], win[ win_nr ], NULL,
+						STRINGA_TextVal, (ULONG) tmp, 
+						TAG_DONE );
+
+					RefreshSetGadgetAttrs( obj[ GAD_MODE_INFO ], win[ win_nr ], NULL,
+						STRINGA_TextVal, (ULONG) rc -> AHI_name, 
+						TAG_DONE );
+				}
+
+				RefreshSetGadgetAttrs( obj[ GAD_SELECT_MODE ], win[ win_nr ], NULL,
+					GA_Disabled,  options.activated ? TRUE : FALSE, 
+					TAG_DONE );
+	
+				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win[ win_nr ], NULL,
+					GA_Disabled, options.activated ? TRUE : FALSE, 
+					TAG_DONE );
+
+				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win[ win_nr ], NULL,
+					GA_Disabled, options.activated ? FALSE : TRUE, 
+					TAG_DONE );
+
+				RefreshSetGadgetAttrs( obj[ GAD_TEST ], win[ win_nr ], NULL,
+					GA_Disabled, options.activated ? FALSE : TRUE, 
+					TAG_DONE );
+			}
+			break;
+	}
+}
+
 void init_prefs(int win_nr)
 {
 
@@ -143,65 +196,37 @@ void init_prefs(int win_nr)
 			WA_CloseGadget,  TRUE,
 			WA_Activate,     TRUE,
 			WA_SmartRefresh, TRUE,
-			WA_Width, 600,
+			WA_Width, 400,
 			WINDOW_IconifyGadget, TRUE,
 			WINDOW_Iconifiable, TRUE,
 			WINDOW_Position, WPOS_CENTERSCREEN,
-			WINDOW_ParentGroup, HLayoutObject,
+			WINDOW_ParentGroup, VLayoutObject,
 				LAYOUT_SpaceOuter, TRUE,
 				LAYOUT_DeferLayout, TRUE,
 
 				LAYOUT_AddChild, VGroupObject,
 
+					LAYOUT_AddChild, MakeString(GAD_MODE_ID),
+					CHILD_Label, MakeLabel(GAD_MODE_ID),
+
 					LAYOUT_AddChild, MakeString(GAD_MODE_INFO),
 					CHILD_Label, MakeLabel(GAD_MODE_INFO),
 
-#ifdef HAVE_ROM
-					LAYOUT_AddChild, MakeCheck(GAD_PATCH_ROM,0),
-					CHILD_Label, MakeLabel(GAD_PATCH_ROM),
-#endif 
-
-#ifdef HAVE_APP_PATCHES
-					LAYOUT_AddChild, MakeCheck(GAD_PATCH_APPS,0),
-					CHILD_Label, MakeLabel(GAD_PATCH_APPS),
-#endif
-
-#ifdef HAVE_CLASSIC_AMIGA 
-					LAYOUT_AddChild, MakeCheck(GAD_TOGGLE_LED,0),
-					CHILD_Label, MakeLabel(GAD_TOGGLE_LED),
-#endif
-
-#if 0
-					LAYOUT_AddChild, MakeList(GAD_MESSAGES, list_columns, message_list ),
-					CHILD_Label, MakeLabel(ID_CREATE_SIZE_GAD),
-#endif
+					LAYOUT_AddChild, MakeButton(GAD_SELECT_MODE),
 
 				LayoutEnd,
+				CHILD_WeightedHeight, 0,
 
-				LAYOUT_AddChild, VGroupObject,
+				LAYOUT_AddChild, HGroupObject,
 
-					LAYOUT_AddChild, MakeButton(GAD_MODE_SELECT),
-
-// maybe change for cylce gadget
-					LAYOUT_AddChild, MakeButton(GAD_INSTALL),
-					LAYOUT_AddChild, MakeButton(GAD_UNINSTALL),
-
-// maybe change for cylce gadget
 					LAYOUT_AddChild, MakeButton(GAD_ACTIVATE),
 					LAYOUT_AddChild, MakeButton(GAD_DEACTIVATE),
-
-
 					LAYOUT_AddChild, MakeButton(GAD_TEST),
+					LAYOUT_AddChild, MakeButton(GAD_ABOUT),
+
 
 				LayoutEnd,
-				CHILD_WeightedWidth, 0,
-
-#if 0
-				LAYOUT_AddChild, VGroupObject,
-					LAYOUT_AddChild, MakeImageButton(GAD_IMAGE, nallepuh_logo),
-				LayoutEnd,
-#endif
-
+//				CHILD_WeightedWidth, 0,
 				CHILD_WeightedHeight, 0,
 
 			EndMember,
@@ -218,24 +243,21 @@ void close_window(int layout_nr)
 	}
 }
 
-
-
 BOOL open_window(ULONG win_id )
 {
+	win[ win_id ] = RA_OpenWindow( layout[win_id] );
+	if ( ! win[ win_id ]) return FALSE;
 
-	win[ win_prefs ] = RA_OpenWindow( layout[win_id] );
-	if (win[ win_prefs ])
+	switch ( win_id )
 	{
-		RSetAttrO( win_prefs, GAD_MODE_INFO, GA_Disabled, TRUE);
-		RSetAttrO( win_prefs, GAD_UNINSTALL, GA_Disabled, TRUE);
-		RSetAttrO( win_prefs, GAD_ACTIVATE, GA_Disabled, TRUE);
-		RSetAttrO( win_prefs, GAD_DEACTIVATE, GA_Disabled, TRUE);
-		RSetAttrO( win_prefs, GAD_TEST, GA_Disabled, TRUE);
-
-		return TRUE;
+		case win_prefs:
+			RSetAttrO( win_prefs, GAD_MODE_ID, GA_Disabled, TRUE);
+			RSetAttrO( win_prefs, GAD_MODE_INFO, GA_Disabled, TRUE);
+			break;
 	}
 
-	return FALSE;
+	update_gui( win_id, NULL );
+	return TRUE;
 }
 
 struct rc ShowGUI( struct PUHData* pd )
@@ -373,13 +395,14 @@ void init_rc(struct rc *rc, struct Window * window, struct PUHData* pd)
 	rc -> code = 0;
 	rc -> win_ptr = window;
 	rc -> pd = pd;
+	rc -> AHI_name[0] = 0;
 }
 
 void HandleGadgets(ULONG input_flags , struct rc *rc)
 {
 	switch( input_flags & RL_GADGETMASK )
 	{
-		case GAD_MODE_SELECT:
+		case GAD_SELECT_MODE:
 			{
 				struct AHIAudioModeRequester* req = NULL;
 								
@@ -418,15 +441,12 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 				{
 					if ( AHI_AudioRequest( req, TAG_DONE ) )
 					{
-						char buffer[ 256 ];
-
 						rc -> audio_mode = req->ahiam_AudioID;
 						rc -> frequency = req->ahiam_MixFreq;
 										
-						if ( AHI_GetAudioAttrs( rc -> audio_mode, NULL, AHIDB_BufferLen, 255, AHIDB_Name, (ULONG) buffer, TAG_DONE ) )
+						if ( AHI_GetAudioAttrs( rc -> audio_mode, NULL, AHIDB_BufferLen, 255, AHIDB_Name, (ULONG) rc -> AHI_name, TAG_DONE ) )
 						{
-							RefreshSetGadgetAttrs( obj[ GAD_MODE_INFO ], rc -> win_ptr, NULL,STRINGA_TextVal, (ULONG) buffer, TAG_DONE );
-							RefreshSetGadgetAttrs( obj[ GAD_INSTALL ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
+							update_gui( win_prefs, rc );
 						}
 					}
 
@@ -435,101 +455,34 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 				break;
 			}
 
-		case GAD_INSTALL:
-			{
-				unsigned int flags = 0;
-				ULONG patch_rom = 0;
-				ULONG patch_apps = 0;
-				ULONG toggle_led = 0;
-
-				GetAttr( GA_Selected, obj[ GAD_PATCH_ROM ], &patch_rom );
-				GetAttr( GA_Selected, obj[ GAD_PATCH_APPS ], &patch_apps );
-				GetAttr( GA_Selected, obj[ GAD_TOGGLE_LED ], &toggle_led );
-
-//				ClearList( &log_data );
-
-				if ( patch_rom )
-				{
-					flags |= PUHF_PATCH_ROM;
-				}
-
-				if ( patch_apps )
-				{
-					flags |= PUHF_PATCH_APPS;
-				}
-
-				if ( toggle_led )
-				{
-					flags |= PUHF_TOGGLE_LED;
-				}
-
-				if ( ! InstallPUH( flags, rc -> audio_mode, rc -> frequency ) )
-				{
-//					LogPUH( pd, "Unable to install PUH." );
-				}
-				else
-				{
-					RefreshSetGadgetAttrs( obj[ GAD_PATCH_ROM ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_TOGGLE_LED ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_MODE_SELECT ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_INSTALL ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_UNINSTALL ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-				}
-			}
-			break;
-
-		case GAD_UNINSTALL:
-			{
-				ULONG patch_rom = 0;
-
-//				ClearList( &log_data );
-
-				UninstallPUH( rc -> pd );
-
-				RefreshSetGadgetAttrs( obj[ GAD_PATCH_ROM ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-
-				GetAttr( GA_Selected, obj[ GAD_PATCH_ROM	], &patch_rom );
-								
-				if ( patch_rom )
-				{
-					RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-				}
-
-				RefreshSetGadgetAttrs( obj[ GAD_TOGGLE_LED ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_MODE_SELECT ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_INSTALL ], rc->win_ptr, NULL,GA_Disabled, FALSE, TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_UNINSTALL ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-			}
-			break;
-
 		case GAD_ACTIVATE:
+
 			{
-				if ( ! ActivatePUH( rc -> pd ) )
+				if ( ! InstallPUH( 0, rc -> audio_mode, rc -> frequency ) )
 				{
-//					LogPUH( pd, "Unable to activate PUH." );
+					DebugPrintF( "Can't open AHI & set exception" );		// maybe use a requestor!!!
 				}
 				else
 				{
-//					LogPUH( pd, "Activated PUH." );
-					RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], rc->win_ptr, NULL,GA_Disabled, TRUE, TAG_DONE );
-					RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], rc->win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
+					options.installed = TRUE;
+
+					if (  ActivatePUH( rc -> pd ) )
+					{
+						options.activated = TRUE;
+						update_gui( win_prefs, NULL );
+					}
+
+					update_gui( win_prefs, NULL );
 				}
 			}
 			break;
 
 		case GAD_DEACTIVATE:
 			{
-				DeactivatePUH( rc -> pd );
+				UninstallPUH( rc -> pd );
 
-//				LogPUH( pd, "Deactivated PUH." );
-
-				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], rc->win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
-				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], rc->win_ptr, NULL,GA_Disabled, TRUE,	TAG_DONE );
+				options.activated = FALSE;
+				update_gui( win_prefs, NULL );
 			}
 			break;
 
@@ -540,18 +493,6 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 				nallepuh_test();
 			}
 			break;
-#if 0
-		case GAD_PATCH_ROM:
-			if ( rc -> code )
-			{
-				RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], rc->win_ptr, NULL,GA_Disabled, FALSE,TAG_DONE );
-			}
-			else
-			{
-				RefreshSetGadgetAttrs( obj[ GAD_PATCH_APPS ], rc->win_ptr, NULL,GA_Disabled, TRUE,GA_Selected, FALSE,	TAG_DONE );
-			}
-			break;
-#endif
 	}
 }
 
@@ -563,6 +504,7 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 	ULONG	window_signals = 0;
 
 	init_rc( &rc, window, pd );
+	init_options( &options );
 
 	window_signals = 1L << window -> UserPort -> mp_SigBit;
 
@@ -611,6 +553,7 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 							window = win[ win_prefs ];
 							window = rc.win_ptr;
 							rc.log_data.m_Window = rc.win_ptr;
+							update_gui( win_prefs, &rc );
 						}
 						else 
 						{

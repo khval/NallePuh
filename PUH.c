@@ -411,7 +411,7 @@ void UninstallPUH( struct PUHData* pd )
 	{
 		Forbid();
 		SetIntVector(TRAPNUM_DATA_SEGMENT_VIOLATION, pd->m_OldFaultInt);
-	Permit();
+		Permit();
 	}
 
 	if( pd->m_Active )

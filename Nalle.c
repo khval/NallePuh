@@ -163,14 +163,10 @@ int main( int argc,char* argv[] )
 	ULONG frequency = 0;
 	ULONG level = 0;
 
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 	if ( ! OpenLibs() )
 	{
 		return 20;
 	}
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
 
 	if ( argc == 0)
 	{
@@ -266,13 +262,7 @@ int main( int argc,char* argv[] )
 			{
 				struct rc rcode;
 
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 				rcode = ShowGUI( pd );
-
-				printf( "rc: %d\n",rcode.rc);
-				printf( "frequency: %d\n",rcode.frequency);
-				printf( "audio_mode: %08x\n",rcode.audio_mode);
 
 				if ( ! rcode.rc )
 				{
@@ -359,11 +349,11 @@ BOOL open_lib( const char *name, int ver , const char *iname, int iver, struct L
 	if (*base)
 	{
 		 *interface = GetInterface( *base,  iname , iver, TAG_END );
-		if (!*interface) printf("Unable to getInterface %s for %s %ld!\n",iname,name,ver);
+		if (!*interface) printf("Unable to getInterface %s for %s %d!\n",iname,name,ver);
 	}
 	else
 	{
-	   	printf("Unable to open the %s %ld!\n",name,ver);
+	   	printf("Unable to open the %s %d!\n",name,ver);
 	}
 	return (*interface) ? TRUE : FALSE;
 }

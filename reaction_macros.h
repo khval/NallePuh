@@ -119,7 +119,7 @@
 	LAYOUT_Label, txt
 
 #define RSetAttrO( win_nr, index , opt, value ) \
-	if ( win[win_nr])	 SetGadgetAttrs( (struct Gadget *) obj[index], \
+	if ( win[win_nr])	 RefreshSetGadgetAttrs( (struct Gadget *) obj[index], \
 	win[win_nr],  NULL,  opt, value, TAG_DONE); 
 
 #define RSetAttr( win_nr, obj , opt, value ) \
@@ -127,7 +127,7 @@
 	win[win_nr],  NULL,  opt, value, TAG_DONE); 
 
 #define RDetach(win_nr, index) \
-	if (win[win_nr]) SetGadgetAttrs( (struct Gadget *) obj[index], win[win_nr] , NULL, \
+	if (win[win_nr]) RefreshSetGadgetAttrs( (struct Gadget *) obj[index], win[win_nr] , NULL, \
 		LISTBROWSER_MultiSelect, FALSE, \
 		LISTBROWSER_Labels, ~0, \
 		TAG_DONE); 

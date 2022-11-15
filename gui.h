@@ -16,6 +16,7 @@ struct rc
 	ULONG code;
 	struct LogData log_data;
 	struct PUHData* pd;
+	char AHI_name[256];
 };
 
 struct rc  ShowGUI( struct PUHData* pd );
