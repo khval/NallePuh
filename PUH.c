@@ -51,14 +51,6 @@
 
 #define TDEBUG(...) DebugPrintF(__VA_ARGS__)
 
-//extern void StackDump(	struct Task *task );
-
-#ifdef RemapMemory
-#undef RemapMemory
-#endif
-
-static BOOL RemapMemory( struct PUHData* pd );
-static BOOL RestoreMemory( struct PUHData* pd );
 static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase );
 static void PUHWrite( UWORD reg, UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* SysBase );
 SAVEDS static void PUHSoundFunc( REG( a0, struct Hook *hook ), REG( a2, struct AHIAudioCtrl *actrl ), REG( a1, struct AHISoundMessage* msg ) );
@@ -414,11 +406,6 @@ void UninstallPUH( struct PUHData* pd )
 		Permit();
 	}
 
-	if( pd->m_Active )
-	{
-		RestoreMemory( pd );
-	}
-
 	if( pd->m_AudioCtrl != NULL )
 	{
 		AHI_FreeAudio( pd->m_AudioCtrl );
@@ -454,14 +441,6 @@ void DeactivatePUH( struct PUHData* pd )
 }
 
 
-/******************************************************************************
-** Activate MMU ***************************************************************
-******************************************************************************/
-
-static BOOL RemapMemory( struct PUHData* pd )
-{
-	return TRUE;
-}
 
 
 /******************************************************************************
