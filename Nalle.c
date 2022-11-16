@@ -61,6 +61,10 @@
 #include "PUH.h"
 #include "debug.h"
 
+/* Version Tag */
+#include "nallepuh_rev.h"
+STATIC CONST UBYTE USED verstag[] = VERSTAG;
+
 #ifdef __amigaos4__
 #define GETIFACE(x)	if (x ## Base)  { I ## x = (struct x ## IFace *) GetInterface((struct Library *) x ## Base, "main", 1L, NULL); }
 #define DROPIFACE(x)	if (I ## x) { DropInterface((struct Interface *) I ## x); I ## x = NULL; }

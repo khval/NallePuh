@@ -44,6 +44,7 @@
 #include <images/label.h>
 
 #include "reaction_macros.h"
+#include "nallepuh_rev.h"
 
 extern struct Custom CustomData;
 
