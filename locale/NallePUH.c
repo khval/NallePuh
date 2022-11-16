@@ -49,8 +49,15 @@
 #define GAD_SELECT_MODE 6
 #define GAD_TEST 7
 #define GAD_ABOUT 8
-#define msgNallePUH 9
-#define ID_END 10
+#define str_copyright_by 9
+#define str_ported_by 10
+#define str_updated_by 11
+#define str_contributers 12
+#define win_title 13
+#define win_about_title 14
+#define win_about_msg 15
+#define req_ok 16
+#define ID_END 17
 
 #endif /* CATCOMP_NUMBERS */
 
@@ -68,7 +75,14 @@
 #define GAD_SELECT_MODE_STR "_Select audio mode"
 #define GAD_TEST_STR "_Test"
 #define GAD_ABOUT_STR "A_bout"
-#define msgNallePUH_STR "Nalle PUH version %d.%d (c)2001 Martin Blom <martin@blom.org>"
+#define str_copyright_by_STR "(c)2001 Martin Blom <martin@blom.org>"
+#define str_ported_by_STR "Ported to AmigaOS4.0 by: Stephan Rupprecht (2004)"
+#define str_updated_by_STR "Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)"
+#define str_contributers_STR "Contributers: Damien Stewart, Samir Hawamdeh"
+#define win_title_STR "Nalle PUH (%d.%d)"
+#define win_about_title_STR "About Nalle Puh"
+#define win_about_msg_STR "replace this text"
+#define req_ok_STR "_Ok"
 #define ID_END_STR ";"
 
 #endif /* CATCOMP_STRINGS */
@@ -95,7 +109,14 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {GAD_SELECT_MODE,(CONST_STRPTR)GAD_SELECT_MODE_STR},
     {GAD_TEST,(CONST_STRPTR)GAD_TEST_STR},
     {GAD_ABOUT,(CONST_STRPTR)GAD_ABOUT_STR},
-    {msgNallePUH,(CONST_STRPTR)msgNallePUH_STR},
+    {str_copyright_by,(CONST_STRPTR)str_copyright_by_STR},
+    {str_ported_by,(CONST_STRPTR)str_ported_by_STR},
+    {str_updated_by,(CONST_STRPTR)str_updated_by_STR},
+    {str_contributers,(CONST_STRPTR)str_contributers_STR},
+    {win_title,(CONST_STRPTR)win_title_STR},
+    {win_about_title,(CONST_STRPTR)win_about_title_STR},
+    {win_about_msg,(CONST_STRPTR)win_about_msg_STR},
+    {req_ok,(CONST_STRPTR)req_ok_STR},
     {ID_END,(CONST_STRPTR)ID_END_STR},
 };
 

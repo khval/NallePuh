@@ -185,7 +185,7 @@ void update_gui( int win_nr, struct rc *rc )
 void init_prefs(int win_nr)
 {
 
-	sprintf(window_title_name,_L(msgNallePUH),99,99);
+	sprintf(window_title_name,_L(win_title),VERSION,REVISION);
 
 	layout[win_nr] = (Object*) WindowObject,
 			WA_Title,       window_title_name,
@@ -399,6 +399,29 @@ void init_rc(struct rc *rc, struct Window * window, struct PUHData* pd)
 	rc -> AHI_name[0] = 0;
 }
 
+void about()
+{
+	int about_text_size = 0;
+	char *about_text; 
+
+	about_text_size = strlen(_L(str_copyright_by) )+1;
+	about_text_size += strlen(_L(str_ported_by) )+1;
+	about_text_size += strlen(_L(str_updated_by) )+1;
+	about_text_size += strlen(_L(str_contributers) )+1;
+
+	about_text = malloc( about_text_size );
+
+	snprintf(about_text, about_text_size, "%s\n%s\n%s\n%s",
+			_L(str_copyright_by),
+			_L(str_ported_by),
+			_L(str_updated_by),
+			_L(str_contributers));
+
+	req( _L(win_about_title), about_text,_L(req_ok), 0);
+
+	free(about_text);
+}
+
 void HandleGadgets(ULONG input_flags , struct rc *rc)
 {
 	switch( input_flags & RL_GADGETMASK )
@@ -486,13 +509,17 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 				update_gui( win_prefs, NULL );
 			}
 			break;
-
-							
+				
 		case GAD_TEST:
 			{
 				rc -> messed_with_registers = TRUE;
 				nallepuh_test();
 			}
+			break;
+
+
+		case GAD_ABOUT:
+			about();
 			break;
 	}
 }

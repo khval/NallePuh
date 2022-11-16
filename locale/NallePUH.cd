@@ -24,8 +24,29 @@ _Test
 GAD_ABOUT  (//)
 A_bout
 ;
-msgNallePUH (//)
-Nalle PUH version %d.%d (c)2001 Martin Blom <martin@blom.org>
+str_copyright_by (//)
+(c)2001 Martin Blom <martin@blom.org>
+;
+str_ported_by (//)
+Ported to AmigaOS4.0 by: Stephan Rupprecht (2004)
+;
+str_updated_by (//)
+Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)
+;
+str_contributers (//)
+Contributers: Damien Stewart, Samir Hawamdeh
+;
+win_title (//)
+Nalle PUH (%d.%d)
+;
+win_about_title (//)
+About Nalle Puh
+;
+win_about_msg (//)
+replace this text
+;
+req_ok (//)
+_Ok
 ;
 ID_END (//)
 ;
