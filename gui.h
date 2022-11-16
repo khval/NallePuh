@@ -22,5 +22,5 @@ struct rc
 struct rc  ShowGUI( struct PUHData* pd );
 struct rc HandleGUI( struct Window * window, struct PUHData* pd );
 BOOL InstallPUH( ULONG  flags, ULONG audio_mode, ULONG frequency );
-
+int req(const char *title,const  char *body,const char *buttons, ULONG image);
 
