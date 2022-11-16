@@ -138,6 +138,8 @@ struct IntuitionIFace *IIntuition = NULL;
 struct LocaleIFace *ILocale = NULL;
 struct UtilityIFace *IUtility = NULL;
 
+BOOL cli_start = TRUE;
+BOOL gui_mode = FALSE;
 
 /******************************************************************************
 ** Disable ctrl-c *************************************************************
@@ -157,7 +159,6 @@ void __chkabort( void )
 int main( int argc,char* argv[] )
 {
 	int	rc = 0;
-	BOOL	gui_mode = FALSE;
 
 	ULONG mode_id	= 0;
 	ULONG frequency = 0;
@@ -172,6 +173,7 @@ int main( int argc,char* argv[] )
 	{
 		// wb startup
 		gui_mode = TRUE;
+		cli_start = FALSE;
 	}
 	else 	if ( argc == 1 )
 	{
@@ -211,8 +213,6 @@ int main( int argc,char* argv[] )
 	}
 	#endif
 
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 	if ( ! gui_mode )
 	{
 		char* mode_ptr;
@@ -236,15 +236,11 @@ int main( int argc,char* argv[] )
 		}
 	}
 
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 	if ( ! OpenAHI() )
 	{
 		Printf( "Unable to open ahi.device version 4.\n" );
 		rc = 20;
 	}
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
 
 	if ( rc == 0 )
 	{
@@ -388,11 +384,11 @@ static BOOL OpenLibs( void )
 
 	if (ILibBlitter) 
 	{
-		Printf("found & using LibBlitter.library\n");
+		if (cli_start) Printf("found & using Libblitter.library\n");
 	}
 	else
 	{
-		Printf("NOT using LibBlitter.library, sorry\n");
+		if (cli_start) Printf(" Libblitter.library, not found sorry\n");
 	}
 
 	if ( IntuitionBase == NULL || LocaleBase == NULL )
