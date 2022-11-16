@@ -467,17 +467,17 @@ struct TagItem SchedulerState_tags[] = {
 	{GSITAG_SchedulerState, (ULONG) &SchedulerState},
  	{TAG_END,0L}};
 
+#define pFaultInst ((APTR)pContext->ip)
+
 ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd)
 {
 	struct ExecIFace *IExec = (struct ExecIFace *)pSysBase->MainInterface;
 	BOOL bHandled1 = FALSE;
 	BOOL bHandled2 = FALSE;
 	APTR pFaultAddress;
-//	APTR pFaultInst;
 
 	/* Read the faulting address */
 	pFaultAddress = (APTR)pContext->dar;
-//	pFaultInst = (APTR)pContext->ip;
 
 	if (PUH_ON &&
 		pFaultAddress >= (APTR)(0xdff000 + DMACONR) &&
