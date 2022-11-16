@@ -46,8 +46,11 @@
 
 #define INTF_AUDIO	( INTF_AUD3 | INTF_AUD2 | INTF_AUD1 | INTF_AUD0 )
 
-//#define DEBUG(...)	DebugPrintF(__VA_ARGS__)
+#if 0
+#define DEBUG(...)	DebugPrintF(__VA_ARGS__)
+#else
 #define DEBUG(...)
+#endif
 
 #define TDEBUG(...) DebugPrintF(__VA_ARGS__)
 
@@ -717,19 +720,23 @@ static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecB
 					{
 						if (te_start_set)
 						{
-							long long int ticks;
+							int ticks;
 							gettimeofday(&te, NULL);
 							timersub(&te,&te_start,&te_diff);
 
-							if (te_diff.tv_usec> 25) 
+							if (te_diff.tv_usec> 63) 
 							{
-								ticks = te_diff.tv_usec / 25;
+								ticks = te_diff.tv_usec / 63;
+
+								TDEBUG("te_diff.tv_usec %d, ticks: %ld\n",te_diff.tv_usec, ticks);
+
 								v+= ticks < 255 ? ticks : 1; 
 								h = 0;
 							}
 						}
 						else 
 						{
+//							TDEBUG("fallback\n");
 							v++;
 							h=0;
 						}
