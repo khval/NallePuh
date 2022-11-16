@@ -168,20 +168,27 @@ int main( int argc,char* argv[] )
 	ULONG frequency = 0;
 	ULONG level = 0;
 
-	if ( ! OpenLibs() )
-	{
-		return 20;
-	}
-
 	if ( argc == 0)
 	{
 		// wb startup
 		gui_mode = TRUE;
 		cli_start = FALSE;
+
+		if ( ! OpenLibs() )
+		{
+			CloseLibs();
+			return 20;
+		}
 	}
 	else 	if ( argc == 1 )
 	{
 		gui_mode = TRUE;
+
+		if ( ! OpenLibs() )
+		{
+			CloseLibs();
+			return 20;
+		}
 	}
 	else if ( argc != 3 )
 	{
@@ -189,6 +196,14 @@ int main( int argc,char* argv[] )
 		//Printf( "Level can be 0 (no patches), 1 (ROM patches) or 2 (appl. patches)\n" );
 		Printf( "Usage: %s [0x]<AHI mode ID> <Frequency>\n", argv[ 0 ] );
 		return 10;
+	}
+	else	// default CLI startup
+	{
+		if ( ! OpenLibs() )
+		{
+			CloseLibs();
+			return 20;
+		}
 	}
 
 	#ifdef __amigaos4__
