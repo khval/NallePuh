@@ -42,9 +42,6 @@ Nalle PUH (%d.%d)
 win_about_title (//)
 About Nalle Puh
 ;
-win_about_msg (//)
-replace this text
-;
 req_ok (//)
 _Ok
 ;

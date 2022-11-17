@@ -55,9 +55,8 @@
 #define str_contributers 12
 #define win_title 13
 #define win_about_title 14
-#define win_about_msg 15
-#define req_ok 16
-#define ID_END 17
+#define req_ok 15
+#define ID_END 16
 
 #endif /* CATCOMP_NUMBERS */
 

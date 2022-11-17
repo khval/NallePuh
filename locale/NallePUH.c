@@ -55,9 +55,8 @@
 #define str_contributers 12
 #define win_title 13
 #define win_about_title 14
-#define win_about_msg 15
-#define req_ok 16
-#define ID_END 17
+#define req_ok 15
+#define ID_END 16
 
 #endif /* CATCOMP_NUMBERS */
 
@@ -81,7 +80,6 @@
 #define str_contributers_STR "Contributers: Damien Stewart, Samir Hawamdeh"
 #define win_title_STR "Nalle PUH (%d.%d)"
 #define win_about_title_STR "About Nalle Puh"
-#define win_about_msg_STR "replace this text"
 #define req_ok_STR "_Ok"
 #define ID_END_STR ";"
 
@@ -115,7 +113,6 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {str_contributers,(CONST_STRPTR)str_contributers_STR},
     {win_title,(CONST_STRPTR)win_title_STR},
     {win_about_title,(CONST_STRPTR)win_about_title_STR},
-    {win_about_msg,(CONST_STRPTR)win_about_msg_STR},
     {req_ok,(CONST_STRPTR)req_ok_STR},
     {ID_END,(CONST_STRPTR)ID_END_STR},
 };
