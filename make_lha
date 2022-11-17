@@ -1,0 +1,32 @@
+.key target_lha
+.bra {
+.ket }
+
+setenv lhafile=ram:NallePuh.lha
+
+if exists ram:NallePuh
+	delete ram:NallePuh all
+endif
+
+makedir ram:NallePuh
+makedir ram:NallePuh/libs
+
+copy package ram:NallePuh all
+copy readme.txt ram:NallePuh/readme.txt
+
+IF EXISTS libblitter.library
+	copy libblitter.library ram:NallePuh/libs
+else
+	echo libblitter.library not found
+endif
+
+;cd /locale/
+;list  catalogs/ LFORMAT "makedir ram:NallePuh/locale/%p%n" > t:copy_catalogs
+;list  all LFORMAT "copy /locale/%p%n ram:NallePuh/locale/%p " | grep powerpacker.catalog >> t:copy_catalogs
+;cd /powerpacker_files/
+;protect t:copy_catalogs +s
+;t:copy_catalogs
+
+lha -er a $lhafile ram:NallePuh >NIL:
+;lha L $lhafile
+;delete ram:NallePuh all 

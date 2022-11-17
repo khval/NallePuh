@@ -1,0 +1,129 @@
+;*
+;* NallePuh for AmigaONE/Sam4x0/AmigaOS 4.x
+;*
+;*	http://github.com/khval/nallepuh
+;*
+
+;********* MESSAGES ***************************************
+
+(set MStartup
+  (cat  "\nWelcome to the\n\n"
+        "powerpacker installation\n\n\n"
+        "This project is open source and distributed as GPL.\n\n"
+        "https://github.com/khval/nallepuh"
+  )
+)
+
+(set POptions "What do you want to install?")
+(set HOptions
+  (cat  "Lots of text about what to installl\n\n"
+  )
+)
+(set SLibs    "Libraries")
+(set STools   "Tools")
+
+(set PLibDestDir "Where do you want to install the libraries?")
+(set HLibDestDir
+  (cat  "Choose the drawer for the system libraries. "
+        "Usually, this is \"LIBS:\"."
+  )
+)
+
+(set PToolDestDir "Where do you want to install the tools?")
+(set HToolDestDir
+  (cat  "Choose a drawer that is within the shell path. "
+        "Usually, this is \"sys:system\"."
+  )
+)
+
+(set PCopyLib     "Copying the NallePuh")
+
+;********* FILES ******************************************
+
+(set FIfyLibName "NallePuh")
+(set FIfyLib     "libs/libblitter.library")
+(set FTool       "c/")
+
+;********* INSTALLER SCRIPT *******************************
+
+(set @default-dest "")          ; currently no specific dir
+
+;------ Greetings to the user -----------------------------
+(message MStartup)
+
+;------ What should be installed --------------------------
+(set InstOpts                   ; ask what to install
+  (askoptions
+    (prompt  POptions)
+    (help    HOptions)
+    (choices SLibs STools)
+    (default -1)
+  )
+)
+
+
+(set FCopyIfyLib FIfyLib)
+
+;------ Ask for destinations ------------------------------
+(if (IN InstOpts 0)             ; Libs
+  (
+    (set LibDestDir "LIBS:")    ; Destination for the library
+    (if (= @user-level 2)
+      (
+        (set LibDestDir
+          (askdir
+            (prompt PLibDestDir)
+            (help   HLibDestDir)
+            (default LibDestDir)
+          )
+        )
+        (set FCopyIfyLib FIfyLib)
+      )
+    )
+  )
+)
+
+(if (IN InstOpts 1)             ; Tools
+  (
+    (set ToolDestDir "C:")
+    (if (= @user-level 2)
+      (set ToolDestDir
+        (askdir
+          (prompt PToolDestDir)
+          (help   HToolDestDir)
+          (default ToolDestDir)
+        )
+      )
+    )
+  )
+)
+
+;------ Copy all files ------------------------------------
+(if (IN InstOpts 0)             ; Libraries
+  (
+    (copylib
+      (prompt  PCopyLib)
+      (help    @copylib-help)
+      (confirm)
+      (source  FCopyIfyLib)
+      (dest    LibDestDir)
+      (newname FIfyLibName)
+    )
+  )
+)
+
+(if (IN InstOpts 1)             ; Tools
+  (
+    (copyfiles
+      (prompt PCopyTool)
+      (help   HCopyTool)
+      (confirm)
+      (choices FPowerPack)
+      (source FTool)
+      (dest   ToolDestDir)
+    )
+  )
+)
+
+
+(exit)
