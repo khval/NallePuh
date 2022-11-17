@@ -10,6 +10,8 @@ endif
 
 makedir ram:NallePuh
 makedir ram:NallePuh/libs
+makedir ram:NallePuh/locale
+makedir ram:NallePuh/locale/catalogs
 
 copy package ram:NallePuh all
 copy readme ram:NallePuh/readme.txt
@@ -23,12 +25,26 @@ else
 	echo libs:libblitter.library not found
 endif
 
-;cd /locale/
-;list  catalogs/ LFORMAT "makedir ram:NallePuh/locale/%p%n" > t:copy_catalogs
-;list  all LFORMAT "copy /locale/%p%n ram:NallePuh/locale/%p " | grep nallepuh.catalog >> t:copy_catalogs
-;cd /powerpacker_files/
-;protect t:copy_catalogs +s
-;t:copy_catalogs
+if exists locale/NallePUH.catalog
+delete locale/NallePUH.catalog
+endif
+
+cd locale
+list  catalogs/ LFORMAT "makedir ram:NallePuh/locale/%p%n" > t:copy_catalogs
+list  all LFORMAT "copy locale/%p%n ram:NallePuh/locale/%p " | grep NallePUH.catalog >> t:copy_catalogs
+cd /
+
+if exists t:copy_catalogs
+protect t:copy_catalogs +s
+echo "----------------------"
+type t:copy_catalogs
+t:copy_catalogs
+echo "----------------------"
+else
+bold
+echo "failed to copy catalogs"
+normal
+endif
 
 lha -er a $lhafile ram:NallePuh >NIL:
 ;lha L $lhafile

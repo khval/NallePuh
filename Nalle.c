@@ -427,7 +427,8 @@ static BOOL OpenLibs( void )
 		codeset_page = (ULONG *) ObtainCharsetInfo(DFCS_NUMBER, (ULONG) _locale -> loc_CodeSet , DFCS_MAPTABLE);
 	}
 
-	catalog = OpenCatalog(NULL, "basilisk.catalog", OC_BuiltInLanguage, "english", TAG_DONE);
+	catalog = OpenCatalog(NULL, "NallePUH.catalog", OC_BuiltInLanguage, "english", TAG_DONE);
+	if (catalog)	 _L = _L_catalog;
 
 	appID = FindApplication(FINDAPP_Name, "NallePuh", TAG_END);
 	if (appID != 0)
