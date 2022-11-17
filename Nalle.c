@@ -42,6 +42,7 @@
 #include <proto/diskfont.h>
 #include <proto/icon.h>
 #include <proto/wb.h>
+#include <proto/application.h>
 #include <diskfont/diskfonttag.h>
 
 #include <gadgets/integer.h>
@@ -87,7 +88,6 @@ static void CloseAHI( void );
 ** Global variables ***********************************************************
 ******************************************************************************/
 
-
 static struct MsgPort *AHImp = NULL;
 static struct AHIRequest *AHIio = NULL;
 static BYTE AHIDevice = IOERR_OPENFAIL;
@@ -101,6 +101,7 @@ struct Library *DiskfontBase = NULL;
 
 struct Library *IconBase = NULL;
 struct Library *WorkbenchBase = NULL;
+struct Library *ApplicationBase = NULL;
 
 struct DebugIFace *IDebug = NULL;
 struct LibBlitterIFace *ILibBlitter = NULL;
@@ -115,6 +116,7 @@ struct Library *ClickTabBase = NULL;
 struct Library *WindowBase = NULL;
 struct Library *CheckBoxBase = NULL;
 struct Library *RequesterBase = NULL;
+
 
 struct StringIFace *IString = NULL;
 struct LayoutIFace *ILayout = NULL;
@@ -141,9 +143,12 @@ struct AHIIFace *IAHI = NULL;
 struct IntuitionIFace *IIntuition = NULL;
 struct LocaleIFace *ILocale = NULL;
 struct UtilityIFace *IUtility = NULL;
+struct ApplicationIFace *IApplication = NULL;
 
 BOOL cli_start = TRUE;
 BOOL gui_mode = FALSE;
+
+uint32 appID = 0;
 
 /******************************************************************************
 ** Disable ctrl-c *************************************************************
@@ -153,8 +158,6 @@ void __chkabort( void )
 {
 	// Disable automatic ctrl-c handling
 }
-
-
 
 /******************************************************************************
 ** main ***********************************************************************
@@ -400,6 +403,7 @@ static BOOL OpenLibs( void )
 	if ( ! open_lib( "diskfont.library", 53 , "main", 1, &DiskfontBase, (struct Interface **) &IDiskfont ) ) return FALSE;
 	if ( ! open_lib( "icon.library", 53 , "main", 1, &IconBase, (struct Interface **) &IIcon ) ) return FALSE;
 	if ( ! open_lib( "workbench.library", 53 , "main", 1, &WorkbenchBase, (struct Interface **) &IWorkbench ) ) return FALSE;
+	if ( ! open_lib( "application.library", 53 , "application", 2, &ApplicationBase, (struct Interface **) &IApplication ) ) return FALSE;
 
 	if (ILibBlitter) 
 	{
@@ -424,6 +428,15 @@ static BOOL OpenLibs( void )
 	}
 
 	catalog = OpenCatalog(NULL, "basilisk.catalog", OC_BuiltInLanguage, "english", TAG_DONE);
+
+	appID = FindApplication(FINDAPP_Name, "NallePuh", TAG_END);
+	if (appID != 0)
+	{
+		appID = 0;	// we did not create this appid.
+		return FALSE;	// if already started.
+	}
+
+	if ( !( appID = RegisterApplication("NallePuh",REGAPP_LoadPrefs, FALSE,TAG_DONE)) ) return FALSE;
 
 	return TRUE;
 }
@@ -482,6 +495,12 @@ static void CloseClasses( void )
 
 static void CloseLibs( void )
 {
+	if (appID)
+	{
+		UnregisterApplication(appID, NULL);
+		appID = 0;
+	}
+
 	if (ILocale)	// check if lib is open...
 	{
 		if (catalog)
@@ -499,10 +518,12 @@ static void CloseLibs( void )
 
 	CloseClasses();
 
+	DROPIFACE(Application);
 	DROPIFACE(Intuition);
 	DROPIFACE(Utility);
 	DROPIFACE(Locale);
 
+	safe_CloseLibrary(ApplicationBase);
 	safe_CloseLibrary(LibBlitterBase);
 	safe_CloseLibrary(UtilityBase);
 	safe_CloseLibrary(IntuitionBase);
