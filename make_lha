@@ -12,17 +12,20 @@ makedir ram:NallePuh
 makedir ram:NallePuh/libs
 
 copy package ram:NallePuh all
-copy readme.txt ram:NallePuh/readme.txt
+copy readme ram:NallePuh/readme.txt
+copy COPYING ram:NallePuh/LICENCE.txt
+copy nallepuh ram:NallePuh
+copy nallepuh.info ram:nallepuh
 
-IF EXISTS libblitter.library
-	copy libblitter.library ram:NallePuh/libs
+IF EXISTS libs:libblitter.library
+	copy libs:libblitter.library ram:NallePuh/libs
 else
-	echo libblitter.library not found
+	echo libs:libblitter.library not found
 endif
 
 ;cd /locale/
 ;list  catalogs/ LFORMAT "makedir ram:NallePuh/locale/%p%n" > t:copy_catalogs
-;list  all LFORMAT "copy /locale/%p%n ram:NallePuh/locale/%p " | grep powerpacker.catalog >> t:copy_catalogs
+;list  all LFORMAT "copy /locale/%p%n ram:NallePuh/locale/%p " | grep nallepuh.catalog >> t:copy_catalogs
 ;cd /powerpacker_files/
 ;protect t:copy_catalogs +s
 ;t:copy_catalogs

@@ -8,7 +8,7 @@
 
 (set MStartup
   (cat  "\nWelcome to the\n\n"
-        "powerpacker installation\n\n\n"
+        "Nalle Puh installation\n\n\n"
         "This project is open source and distributed as GPL.\n\n"
         "https://github.com/khval/nallepuh"
   )
