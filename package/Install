@@ -19,8 +19,10 @@
   (cat  "Lots of text about what to installl\n\n"
   )
 )
+
 (set SLibs    "Libraries")
-(set STools   "Tools")
+(set SNallePuh   "NallePuh")
+(set SCatalog   "Catalog")
 
 (set PLibDestDir "Where do you want to install the libraries?")
 (set HLibDestDir
@@ -29,10 +31,17 @@
   )
 )
 
-(set PToolDestDir "Where do you want to install the tools?")
-(set HToolDestDir
+(set PNallePuhDestDir "Where do you want to install NallePuh")
+(set HNallePuhDestDir
   (cat  "Choose a drawer that is within the shell path. "
         "Usually, this is \"sys:system\"."
+  )
+)
+
+(set PCatDestDir "Where do you want to install the catalogs?")
+(set HCatDestDir
+  (cat  "Choose the drawer where you put all locale catalog files. "
+        "Usually, this is \"LOCALE:Catalogs/\"."
   )
 )
 
@@ -40,9 +49,11 @@
 
 ;********* FILES ******************************************
 
-(set FIfyLibName "NallePuh")
-(set FIfyLib     "libs/libblitter.library")
-(set FTool       "c/")
+(set LibName		"libblitter.library")
+(set Lib			"libs/libblitter.library")
+(set FNallePuh		"NallePuh")
+(set FNallePuhInfo	"NallePuh.info")
+(set FCat			"locale/catalogs/")
 
 ;********* INSTALLER SCRIPT *******************************
 
@@ -56,15 +67,15 @@
   (askoptions
     (prompt  POptions)
     (help    HOptions)
-    (choices SLibs STools)
+    (choices SLibs SNallePuh SCatalog)
     (default -1)
   )
 )
 
-
-(set FCopyIfyLib FIfyLib)
+(set FCopyLib Lib)
 
 ;------ Ask for destinations ------------------------------
+
 (if (IN InstOpts 0)             ; Libs
   (
     (set LibDestDir "LIBS:")    ; Destination for the library
@@ -77,21 +88,36 @@
             (default LibDestDir)
           )
         )
-        (set FCopyIfyLib FIfyLib)
+        (set FCopyLib Lib)
       )
     )
   )
 )
 
-(if (IN InstOpts 1)             ; Tools
+(if (IN InstOpts 1)             ; NallePuh
   (
-    (set ToolDestDir "C:")
+    (set NallePuhDestDir "sys:system/")
     (if (= @user-level 2)
-      (set ToolDestDir
+      (set NallePuhDestDir
         (askdir
-          (prompt PToolDestDir)
-          (help   HToolDestDir)
-          (default ToolDestDir)
+          (prompt PNallePuhDestDir)
+          (help   HNallePuhDestDir)
+          (default NallePuhDestDir)
+        )
+      )
+    )
+  )
+)
+
+(if (IN InstOpts 2)             ; Catalogs
+  (
+    (set CatDestDir "Locale:Catalogs/")
+    (if (= @user-level 2)
+      (set CatDestDir
+        (askdir
+          (prompt PCatDestDir)
+          (help   HCatDestDir)
+          (default CatDestDir)
         )
       )
     )
@@ -105,25 +131,41 @@
       (prompt  PCopyLib)
       (help    @copylib-help)
       (confirm)
-      (source  FCopyIfyLib)
+      (source  FCopyLib)
       (dest    LibDestDir)
-      (newname FIfyLibName)
+      (newname LibName)
     )
   )
 )
 
-(if (IN InstOpts 1)             ; Tools
+(if (IN InstOpts 1)             ; NallePuh
   (
     (copyfiles
-      (prompt PCopyTool)
-      (help   HCopyTool)
+      (prompt PCopyNallePuh)
+      (help   HCopyNallePuh)
       (confirm)
-      (choices FPowerPack)
-      (source FTool)
-      (dest   ToolDestDir)
+      (choices FNallePuh FNallePuhInfo)
+      (source FNallePuh)
+      (dest   NallePuhDestDir)
     )
   )
 )
 
+(set PCopyCat     "Copying the catalogs")
+
+(if (IN InstOpts 3)             ; Catalogs
+  (
+    (copyfiles
+      (prompt PCopyCat)
+      (help   @copyfiles-help)
+      (confirm)
+      (source FCat)
+      (dest   CatDestDir)
+      (all)
+      (infos)
+      (noposition)
+    )
+  )
+)
 
 (exit)
