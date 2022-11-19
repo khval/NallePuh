@@ -4,13 +4,16 @@ LD			= ppc-amigaos-ld
 STRIP		= ppc-amigaos-strip
 CATCOMP		= catcomp
 
+USE_DEBUG=0
+
 CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
 			-Wno-cast-function-type \
 			-Wno-incompatible-pointer-types \
 			-Wno-missing-braces \
 			-Wno-unused-parameter \
 			-gstabs \
-			-D__USE_INLINE__ -D__USE_BASETYPE__ -g -D__amigaos4__
+			-D__USE_INLINE__ -D__USE_BASETYPE__ -g -D__amigaos4__ \
+			-DUSE_DEBUG=$(USE_DEBUG)
 
 
 LDFLAGS	= 

@@ -15,7 +15,6 @@ const char *find_reg_name(ULONG id)
 	return "Unkown";
 }
 
-
 const char *id_names[max_table_size];
 
 void init_qfind_lookup()
@@ -23,9 +22,6 @@ void init_qfind_lookup()
 	int i;
 	for (i=0;i<max_table_size;i++) id_names[i] = find_reg_name( 0xDFF000 | (i<<1) );
 }
-
-#define qfind_reg_name(id) ((id <= last_reg_id) ? id_anmes[id>>1] : "Unkown")
-
 
 struct id_name reg_names[] = {
 	{0xDFF000,"BLTDDAT"},

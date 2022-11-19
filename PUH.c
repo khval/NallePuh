@@ -43,10 +43,11 @@
 #include <stdio.h>
 
 #include "PUH.h"
+#include "debug.h"
 
 #define INTF_AUDIO	( INTF_AUD3 | INTF_AUD2 | INTF_AUD1 | INTF_AUD0 )
 
-#if 0
+#if USE_DEBUG
 #define DEBUG(...)	DebugPrintF(__VA_ARGS__)
 #else
 #define DEBUG(...)
@@ -497,14 +498,14 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 		ULONG value;
 
 		DEBUG("**** PUH ****\n");
-		DEBUG("Data page fault at %p, instruction %p\n", pFaultAddress, pFaultInst);
+		DEBUG("Data page fault at %p (%s), instruction %p\n", pFaultAddress, qfind_reg_name( (((ULONG)pFaultAddress)&0x0FFF) ) , pFaultInst);
 		DEBUG("Stack Pointer: %p\n", pContext->gpr[1]);
 		DEBUG("Task: %p (%s)\n", pSysBase->ThisTask, pSysBase->ThisTask -> tc_Node.ln_Name);
 
 		// we need to know what we can't, can do!
 		GetSystemInfo(SchedulerState_tags);
 
-		DEBUG("SchedulerState: %d\n", SchedulerState);
+		DEBUG("SchedulerState: %s\n", SchedulerState ? "Forbided" : "Permited");
 
 		instruction = *(ULONG *)pContext->ip;
 		op_code = (instruction & 0xFC000000) >> 26;
@@ -1259,7 +1260,11 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 		case BLTSIZE:
 			
 			CustomData.bltsize = value;
-			if (ILibBlitter) doBlitter(&CustomData);
+			if (ILibBlitter)	
+			{
+				doBlitter(&CustomData);
+				*handled = TRUE;
+			}
 			break;
 
 		default:

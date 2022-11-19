@@ -171,6 +171,8 @@ int main( int argc,char* argv[] )
 	ULONG frequency = 0;
 	ULONG level = 0;
 
+	init_qfind_lookup();
+
 	if ( argc == 0)
 	{
 		// wb startup
