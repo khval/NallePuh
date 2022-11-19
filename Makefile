@@ -16,7 +16,7 @@ CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
 LDFLAGS	= 
 
 TARGET	= NallePUH
-OBJECTS	= Nalle.o PUH.o debug.o iconify.o gui.o req.o
+OBJECTS	= Nalle.o PUH.o debug.o iconify.o gui.o req.o file.o
 
 all:	make_locale $(TARGET) 
 

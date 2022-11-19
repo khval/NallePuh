@@ -534,6 +534,9 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 	init_rc( &rc, window, pd );
 	init_options( &options );
 
+	load("progdir:NallePuh.cfg",&rc);
+	update_gui( win_prefs, &rc );
+
 	window_signals = 1L << window -> UserPort -> mp_SigBit;
 
 //	log_data.m_Gadget = obj[ GAD_MESSAGES ];
@@ -601,6 +604,8 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 		}
 	}
 	
+	save("progdir:NallePuh.cfg",&rc);
+
 //	SetPUHLogger( NULL, pd );
 
 	if ( rc.messed_with_registers )
