@@ -1,12 +1,8 @@
 * Project to restore NallePuh *****************************
 
-TODO:
-
-	Lots of stuff, see issues on Github.
-
 About AmigaOS4.1 version
 
-	Orginaly created by Martin Blom
+	Originally created by Martin Blom
 	First ported by Stephan Rupprecht
 	Stephan Rupprecht has not been active since 2009 on OS4Depot.net.
 	it has gone 13 years without any updates, it’s now time to dust it off, and get it working again.
@@ -27,7 +23,7 @@ What does not work
 	(there is native version of Digibooster for AmigaOS4.1, so no need)
 	Octamed Soundstudio 1.03c does not work, need CIAA/B timers.
 	THX Sound System 2.3d, crashes badly, no idea why.
-	Delitracker 2.32 and Egalplayer do not work, freeze the system.
+	Delitracker 2.32 and Eagle Player do not work, freeze the system.
 	
 Not tested please report back.
 
@@ -41,12 +37,13 @@ Changes in Nov. 2022
 	* ADKCON/ADKCONR is now handled correct.
 	* libblitter.library is used.
 	* Deprecated functions replaced.
-	* code cleanup, std style format.
-	* Improved debuging (task name, etc).
-	* fixed/Added a new GUI
-	* fixed/added iconify support
-	* wbstartup support
-	
+	* Code cleanup, std style format.
+	* Improved debugging (task name, etc).
+	* Fixed/added a new GUI
+	* Fixed/added iconify support
+	* WB startup support
+	* Load/save config file
+	* Install script
 	
 Disclaimer:
 
@@ -64,12 +61,12 @@ Disclaimer:
 	If you run several mc680x0 programs at the same time, that all depends on NallePuh.
 	Then this can result in unpredictable results. I know nothing that can be done about it.
 
-Dependecies
+Dependencies
 
 	AmigaOS4.1 SDK can be downloaded from Hyperion Entertainment
 	https://www.hyperion-entertainment.com/index.php/downloads?view=details&file=127
 	
-	Flexcat - needed for building lanuage catalogs.
+	Flexcat - needed for building language catalogs.
 	http://os4depot.net/?function=showfile&file=development/misc/flexcat.lha
 	
 ******************************************************************
