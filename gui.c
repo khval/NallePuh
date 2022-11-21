@@ -355,33 +355,36 @@ void ClearList( struct LogData* d )
 }
 */
 
+#define cust_addr(x) (void *) (0xDFF000 | offsetof(struct Custom,x))
 
 void nallepuh_test()
 {
 	char *wave;
 	ULONG n;
 	BOOL bHandled;
-	ULONG wave_size = 512;
+	ULONG wave_size = 4096;
 
 	wave = (char *) malloc( wave_size );
 
-	for (n=0;n<wave_size;n++)
+	if (wave)
 	{
-		wave[n] = sin( (float) n / 500.0f ) * 126;
+		for (n=0;n<wave_size;n++)
+		{
+			wave[n] = sin( 2.0 *M_PI * (float) n / 10.0f ) * 126;
+		}
+
+		emu_WriteWord( &bHandled, cust_addr(dmacon), DMAF_AUD0 );
+		Delay( 1 );	// The infamous DMA-wait! ;-)
+		emu_WriteLong( &bHandled, cust_addr(aud[ 0 ].ac_ptr), (ULONG) wave );
+		emu_WriteWord( &bHandled, cust_addr(aud[ 0 ].ac_len), wave_size / 2);
+		emu_WriteWord( &bHandled, cust_addr(aud[ 0 ].ac_per), 161 );
+		emu_WriteWord( &bHandled, cust_addr(aud[ 0 ].ac_vol), 64 );
+		emu_WriteWord( &bHandled, cust_addr(dmacon), DMAF_SETCLR | DMAF_AUD0 );
+		emu_WriteWord( &bHandled, cust_addr(aud[ 0 ].ac_len), 1 );
+
+		Delay(20);
+		free(wave);
 	}
-
-	emu_WriteWord( &bHandled, &CustomData.dmacon, DMAF_AUD0 );
-	Delay( 1 );	// The infamous DMA-wait! ;-)
-	emu_WriteLong( &bHandled, &CustomData.aud[ 0 ].ac_ptr, (ULONG) wave );
-	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_len, wave_size / 2);
-	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_per, 161 );
-	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_vol, 64 );
-	emu_WriteWord( &bHandled, &CustomData.dmacon, DMAF_SETCLR | DMAF_AUD0 );
-	emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_len, 1 );
-
-	Wait(5);
-
-	FreeVec(wave);
 
 }
 

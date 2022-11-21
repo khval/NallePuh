@@ -1109,7 +1109,12 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 				if( pd->m_SoundLength[ channel ] == 2 )
 				{
 					// SoundTracker-style silece
-					AHI_SetSound( channel, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_NONE );
+					AHI_SetSound( channel, 
+								AHI_NOSOUND, 
+								0, 
+								0, 
+								pd->m_AudioCtrl, 
+								AHISF_NONE );
 				}
 				else
 				{
