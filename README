@@ -15,6 +15,7 @@ What works with NallePuh on AmigaOS4.1
 	HippoPLayer.
 	Dpaint4 (starts, you can do simple drawings, most of the tools are broken)
 	Payback (game sound now works)
+	SamplitudeOpus Light 3.5
 
 	if you find anything working, please report, 
 	lets make this list longer.
@@ -25,6 +26,7 @@ What does not work
 	Octamed Soundstudio 1.03c does not work, need CIAA/B timers.
 	THX Sound System 2.3d, crashes badly, no idea why.
 	Delitracker 2.32 and Eagle Player do not work, freeze the system.
+	SoundProbe (locks up when I press play.)
 	
 Not tested please report back.
 
