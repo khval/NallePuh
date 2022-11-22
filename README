@@ -17,7 +17,8 @@ What works with NallePuh on AmigaOS4.1
 	Payback (game sound now works)
 	SamplitudeOpus Light 3.5
 	Myst playable demo (CGX)
-	Symphonie player
+	Symphonie Pro player (Some sound quality issues, 14bit playback not supported)
+	Symphonie Pro Editor (works partally can be unstable, some sound issues.)
 
 	if you find anything working, please report, 
 	lets make this list longer.
