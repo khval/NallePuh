@@ -12,7 +12,7 @@ About AmigaOS4.1 version
 
 What works with NallePuh on AmigaOS4.1
 
-	HippoPLayer.
+	HippoPlayer.
 	Dpaint4 (starts, you can do simple drawings, most of the tools are broken)
 	Payback (game sound now works)
 	SamplitudeOpus Light 3.5
@@ -51,6 +51,8 @@ Changes in Nov. 2022
 	* WB startup support
 	* Load/save config file
 	* Install script
+	* Test button working (V0.6)
+	* BBUSY flag is now set & cleared (V0.6)
 	
 Disclaimer:
 
