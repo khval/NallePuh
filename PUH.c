@@ -125,47 +125,35 @@ uint32 SchedulerState;
 UWORD cd_ReadWord( void* address )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
-
-	DEBUG( "%s:%ld)\n", __FUNCTION__,__LINE__ );
 	return ((UWORD *) &CustomData)[offset/2];
 }
 
 ULONG cd_ReadLong( void* address )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
-
-	DEBUG( "%s:%ld)\n", __FUNCTION__,__LINE__ );
 	return ((UWORD *) &CustomData)[offset/4];
 }
 
 void cd_WriteWord( void* address, UWORD value )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
-
-	DEBUG( "%s:%ld)\n", __FUNCTION__,__LINE__ );
 	((UWORD *) &CustomData)[offset/2] = value;
 }
 
 void cd_WriteLong( BOOL *bHandled, void* address, ULONG value )
 {
 	ULONG offset = (ULONG)address & 0x1ff;
-
-	DEBUG( "%s:%ld)\n", __FUNCTION__,__LINE__ );
 	((ULONG *) &CustomData)[offset/4] = value;
 }
 
 void emu_WriteWord( BOOL *bHandled, void* address, UWORD value )
 {
-	DEBUG( "%s:%ld -- address: %p\n", __FUNCTION__,__LINE__, address);
-
 	PUHWrite(( (ULONG) address & 0x1ff), (ULONG) value,bHandled,pd,SysBase);
 }
 
 void emu_WriteLong( BOOL *bHandled, void* address, ULONG value )
 {
 	BOOL bHandled2;
-
-	DEBUG( "%s:%ld)\n", __FUNCTION__,__LINE__ );
 
 	PUHWrite(( (ULONG) address & 0x1ff),value>>16,bHandled,pd,SysBase);
 	PUHWrite(( (ULONG) address & 0x1ff)+2,value&0xffff,&bHandled2,pd,SysBase);
