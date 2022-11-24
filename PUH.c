@@ -461,7 +461,17 @@ struct TagItem SchedulerState_tags[] = {
 
 #define pFaultInst ((APTR)pContext->ip)
 
-ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd)
+
+void debug_info( struct ExceptionContext *pContext, struct ExecBase *pSysBase, APTR pFaultAddress )
+{
+	DebugPrintF("**** PUH ****\n");
+	DebugPrintF("Data page fault at %p (%s), instruction %p\n", pFaultAddress, qfind_reg_name( (((ULONG)pFaultAddress)&0x0FFF) ) , pFaultInst);
+	DebugPrintF("Stack Pointer: %p\n", pContext->gpr[1]);
+	DebugPrintF("Task: %p (%s)\n", pSysBase->ThisTask, pSysBase->ThisTask -> tc_Node.ln_Name);
+	DebugPrintF("SchedulerState: %s\n", SchedulerState ? "Forbided" : "Permited");
+}
+
+ULONG paula(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd)
 {
 	struct ExecIFace *IExec = (struct ExecIFace *)pSysBase->MainInterface;
 	BOOL bHandled1 = FALSE;
@@ -471,10 +481,6 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 	/* Read the faulting address */
 	pFaultAddress = (APTR)pContext->dar;
 
-	if (PUH_ON &&
-		pFaultAddress >= (APTR)(0xdff000 + DMACONR) &&
-		pFaultAddress <= (APTR)(0xdff000 + AUD3DAT))
-	{
 		ULONG op_code  = 0;
 		ULONG sub_code = 0;
 		ULONG d_reg = 0;
@@ -485,15 +491,16 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 		ULONG eff_addr;
 		ULONG value;
 
-		DEBUG("**** PUH ****\n");
-		DEBUG("Data page fault at %p (%s), instruction %p\n", pFaultAddress, qfind_reg_name( (((ULONG)pFaultAddress)&0x0FFF) ) , pFaultInst);
-		DEBUG("Stack Pointer: %p\n", pContext->gpr[1]);
-		DEBUG("Task: %p (%s)\n", pSysBase->ThisTask, pSysBase->ThisTask -> tc_Node.ln_Name);
-
-		// we need to know what we can't, can do!
+		// we need to know what we can, and can't do!
 		GetSystemInfo(SchedulerState_tags);
 
-		DEBUG("SchedulerState: %s\n", SchedulerState ? "Forbided" : "Permited");
+#ifdef DEBUG
+		bool debug = false;
+
+		if ( (ULONG) pFaultAddress == 0xDFF006) debug = false;
+
+		if (debug) debug_info( pContext, pSysBase, pFaultAddress );
+#endif
 
 		instruction = *(ULONG *)pContext->ip;
 		op_code = (instruction & 0xFC000000) >> 26;
@@ -630,7 +637,6 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 		{
 			DEBUG( "Didn't handle access!\n" );
 		}
-	}
 
 	/* call original handler, if we didn't handle it */
 	if (!bHandled1)
@@ -640,6 +646,27 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 	}
 
 	return TRUE;
+}
+
+ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd)
+{
+	struct ExecIFace *IExec = (struct ExecIFace *)pSysBase->MainInterface;
+
+	/* Read the faulting address */
+	APTR pFaultAddress = (APTR)pContext->dar;
+
+	if (PUH_ON)
+	{
+		if (pFaultAddress >= (APTR)(0xdff000 + DMACONR) && pFaultAddress <= (APTR)(0xdff000 + AUD3DAT))
+		{
+			return paula(pContext, pSysBase, pd);
+		}
+	}
+
+	// --------- NOT A NallePUH JOB ---------
+
+	return ((ULONG (*)(struct ExceptionContext *pContext, struct ExecBase *pSysBase, APTR userData))
+			pd->m_OldFaultInt->is_Code)(pContext, pSysBase, pd->m_OldFaultInt->is_Data);
 }
 
 
