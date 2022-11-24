@@ -112,6 +112,9 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 
 #define BLTSIZE 0x058
 
+
+#define BBUSY (1<<14)
+
 /******************************************************************************
 ** Read and write hardware registers ******************************************
 ******************************************************************************/
@@ -1277,19 +1280,22 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 			*handled = TRUE;
 			break;
 
+
 		case BLTSIZE:
 			
 			CustomData.bltsize = value;
 			if (ILibBlitter)	
 			{
+				CustomData.dmaconr |= BBUSY;	// blitter is busy.
 				doBlitter(&CustomData);
+				CustomData.dmaconr &= ~BBUSY;		// blitter is done.
+
 				*handled = TRUE;
 			}
 			break;
 
 		default:
 
-			DEBUG( "Not emulated chipset register\n");
 			cd_WriteWord( address, value );
 			*handled = TRUE;
 			break;
