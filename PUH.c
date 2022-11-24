@@ -48,7 +48,7 @@
 #define INTF_AUDIO	( INTF_AUD3 | INTF_AUD2 | INTF_AUD1 | INTF_AUD0 )
 
 #if USE_DEBUG
-#define DEBUG(...)	DebugPrintF(__VA_ARGS__)
+#define DEBUG(...)	if (debug) DebugPrintF(__VA_ARGS__)
 #else
 #define DEBUG(...)
 #endif
