@@ -22,6 +22,12 @@
 #ifndef NallePUH_PUH_h
 #define NallePUH_PUH_h
 
+#if USE_DEBUG
+#define DEBUG(...)	if (debug) DebugPrintF(__VA_ARGS__)
+#else
+#define DEBUG(...)
+#endif
+
 #ifndef __amigaos4__
 #include "CompilerSpecific.h"
 #endif
@@ -78,6 +84,15 @@ void emu_WriteLong( BOOL *bHandled, void *address, ULONG value );
 #define PUHB_PATCH_APPS	1
 #define PUHB_TOGGLE_LED 2
 
+enum
+{
+	HIT_NONE,
+	HIT_CUSTOM = 1,
+	HIT_CIAA = 2,
+	HIT_CIAB = 4
+};
+
+extern uint32 HIT_Flags, HIT_Last_Flags;
 
 struct PUHData
 {

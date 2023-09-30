@@ -44,14 +44,14 @@
 
 #include "PUH.h"
 #include "debug.h"
+#include "emu_cia.h"
+
+#undef __USE_INLINE__
+
+#include <proto/ciaa.h>
+#include <proto/ciab.h>
 
 #define INTF_AUDIO	( INTF_AUD3 | INTF_AUD2 | INTF_AUD1 | INTF_AUD0 )
-
-#if USE_DEBUG
-#define DEBUG(...)	if (debug) DebugPrintF(__VA_ARGS__)
-#else
-#define DEBUG(...)
-#endif
 
 #define TDEBUG(...) DebugPrintF(__VA_ARGS__)
 
@@ -61,10 +61,16 @@ SAVEDS static void PUHSoundFunc( REG( a0, struct Hook *hook ), REG( a2, struct A
 
 struct PUHData* pd = NULL;
 
- SAVEDS static void
-PUHSoftInt( struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd );
+uint32 HIT_Flags = 0;
+uint32 HIT_Last_Flags = 0;
 
+ SAVEDS static void PUHSoftInt( struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd );
 ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd);
+
+extern struct ciaaIFace *Iciaa;
+extern struct ciabIFace *Iciab;
+extern struct chip chip_ciaa ;
+extern struct chip chip_ciab ;
 
 
 /******************************************************************************
@@ -423,6 +429,17 @@ STATIC BOOL PUH_ON = FALSE;
 BOOL ActivatePUH( struct PUHData* pd )
 {
 	PUH_ON = TRUE;
+
+	if (Iciaa)
+	{
+		Iciaa -> NallePuh(0x8001, &chip_ciaa);
+	}
+
+	if (Iciab)
+	{
+		Iciab -> NallePuh(0x8001, &chip_ciab);
+	}
+
 	return TRUE;
 }
 
@@ -431,9 +448,21 @@ BOOL ActivatePUH( struct PUHData* pd )
 ** Deactivate PUH *************************************************************
 ******************************************************************************/
 
-void DeactivatePUH( struct PUHData* pd )
+BOOL DeactivatePUH( struct PUHData* pd )
 {
 	PUH_ON = FALSE;
+
+	if (Iciaa)
+	{
+		Iciaa -> NallePuh(0x0001, NULL);
+	}
+
+	if (Iciab)
+	{
+		Iciab -> NallePuh(0x0001, NULL);
+	}
+
+	return TRUE;
 }
 
 
@@ -565,8 +594,13 @@ ULONG paula(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct
 			case 34: /* lbz */
 				eff_addr = (a_reg==0?0:pContext->gpr[a_reg]) + offset;
 
-				pContext->gpr[d_reg] = (int32)PUHRead( (eff_addr & 0x1ff),&bHandled1,pd,pSysBase) & 0xFF;
+				value = pContext->gpr[offset] = (int32)PUHRead( (eff_addr & 0x1ff),&bHandled1,pd,pSysBase) & 0xFF;
+
+				pContext->gpr[d_reg] = 13;
+
 				DEBUG( "lbz r%ld,%ld(r%ld) (ea: %lx	data: %lx)\n", d_reg, offset, a_reg, eff_addr, value );
+
+
 				break;
 
 			case 36: /* stw */
@@ -653,16 +687,35 @@ ULONG paula(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct
 
 ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd)
 {
-	struct ExecIFace *IExec = (struct ExecIFace *)pSysBase->MainInterface;
+//	struct ExecIFace *IExec = (struct ExecIFace *)pSysBase->MainInterface;
 
 	/* Read the faulting address */
 	APTR pFaultAddress = (APTR)pContext->dar;
 
 	if (PUH_ON)
 	{
-		if (pFaultAddress >= (APTR)(0xdff000 + DMACONR) && pFaultAddress <= (APTR)(0xdff000 + AUD3DAT))
+		ULONG SEG = ( (ULONG) pFaultAddress & 0xFFFFF001 );
+
+		switch (SEG)
 		{
-			return paula(pContext, pSysBase, pd);
+			case 0x00BFE001:	
+
+//				DebugPrintF("**** WHAT: %08x, REG: %04x ****\n", SEG, (ULONG) pFaultAddress & 0xFFE );
+
+				HIT_Flags |= HIT_CIAA;
+				return CIAA(pContext, pSysBase, pd);
+				break;
+
+			case 0x00BFD000:	
+				HIT_Flags |= HIT_CIAB;
+				return CIAB(pContext, pSysBase, pd);
+				break;
+
+			case 0x00DFF000:
+			case 0x00DFF001:
+				HIT_Flags |= HIT_CUSTOM;
+				return paula(pContext, pSysBase, pd);
+				break;
 		}
 	}
 
@@ -696,6 +749,14 @@ struct timeval te_start ;
 struct timeval te_diff ;
 long long int us_start;
 bool te_start_set = false;
+
+int get_usec()
+{
+	gettimeofday(&te, NULL);
+	timersub(&te,&te_start,&te_diff);
+	return (te_diff.tv_sec * 1000) - te_diff.tv_usec ;
+}
+
 
 static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase )
 {
@@ -740,17 +801,14 @@ static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecB
 						if (te_start_set)
 						{
 							int ticks;
-							gettimeofday(&te, NULL);
-							timersub(&te,&te_start,&te_diff);
+							int usec = get_usec();
 
-							if (te_diff.tv_usec> 63) 
+							if (usec> 63) 
 							{
 								ticks = te_diff.tv_usec / 63;
-
-								TDEBUG("te_diff.tv_usec %d, ticks: %ld\n",te_diff.tv_usec, ticks);
-
 								v+= ticks < 255 ? ticks : 1; 
 								h = 0;
+								te_start = te;
 							}
 						}
 						else 
