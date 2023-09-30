@@ -1,4 +1,4 @@
-## version $VER: XX.catalog XX.XX (23.09.2023)
+## version $VER: XX.catalog XX.XX (XX.XX.20XX)
 ## codeset 1
 ## language 1
 ;
@@ -57,6 +57,22 @@ LIST_Chips_CIA
 LIST_Frequency
 
 ; Frequency
+;
+GAD_JOY1_BUTTON1
+
+; Button1
+;
+GAD_JOY1_BUTTON2
+
+; Button2
+;
+GAD_JOY2_BUTTON1
+
+; Button1
+;
+GAD_JOY2_BUTTON2
+
+; Button2
 ;
 str_copyright_by
 

@@ -16,6 +16,7 @@
 #include <proto/resource.h>
 #include <proto/locale.h>
 #include <proto/intuition.h>
+#include <proto/utility.h>
 #include <proto/ahi.h>
 
 #include <exec/emulation.h>
@@ -70,6 +71,9 @@ extern struct chip chip_ciaa ;
 extern struct chip chip_ciab ;
 
 extern struct TagItem SchedulerState_tags[];
+
+// workaround for reaction sucks!!
+struct timeval button_press_time[4];
 
 enum
 {
@@ -274,7 +278,7 @@ void init_prefs(int win_nr)
 			WA_Activate,     TRUE,
 			WA_SmartRefresh, TRUE,
 			WA_Width, 400,
-			WA_IDCMP, IDCMP_INTUITICKS | IDCMP_CLOSEWINDOW | IDCMP_GADGETUP  ,
+			WA_IDCMP, IDCMP_INTUITICKS | IDCMP_CLOSEWINDOW |  IDCMP_GADGETDOWN | IDCMP_GADGETUP ,
 
 			WINDOW_IconifyGadget, TRUE,
 			WINDOW_Iconifiable, TRUE,
@@ -517,7 +521,11 @@ ULONG getv( ULONG id, ULONG arg )
 	return ret; 
 }
 
-void HandleGadgets(ULONG input_flags , struct rc *rc)
+void IO_BUTTONS_UP( void );
+void IO_BUTTONS_DOWN(ULONG ID);
+
+
+void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 {
 	switch( input_flags & RL_GADGETMASK )
 	{
@@ -618,12 +626,83 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 			}
 			break;
 
-
 		case GAD_ABOUT:
 			about();
 			break;
 	}
+
+	 IO_BUTTONS_DOWN(input_flags & RL_GADGETMASK);
 }
+
+void IO_BUTTONS_DOWN(ULONG ID)
+{
+	switch( ID )
+	{
+		case GAD_JOY1_BUTTON1:
+			gettimeofday(&button_press_time[0], NULL); 
+			ciaa_pra |= PA6; 
+
+			break;
+
+		case GAD_JOY1_BUTTON2:
+			gettimeofday(&button_press_time[1], NULL); 
+			potgor |= B10; 
+
+			break;
+
+		case GAD_JOY2_BUTTON1:
+			gettimeofday(&button_press_time[2], NULL); 
+			ciaa_pra |= PA7; 
+			break;
+
+		case GAD_JOY2_BUTTON2:
+			gettimeofday(&button_press_time[3], NULL); 
+			potgor |= B14; 
+			break;
+	}
+}
+
+// work around for reaction not supporting button down!!!!!!! f**k reaction!!!
+
+bool is_button_time( struct timeval *current_time, int n, int min_usec )
+{
+	int usec;
+	struct timeval diff ;
+
+	timersub(current_time,  &button_press_time[n] ,&diff);
+	usec = (diff.tv_sec * 1000) + diff.tv_usec ;
+
+	return usec > min_usec;
+}
+
+void IO_BUTTONS_UP()
+{
+	int timeout = 500000;
+
+	struct timeval current_time;
+	gettimeofday(&current_time, NULL); 
+
+	if ( (ciaa_pra & PA6) && (is_button_time( &current_time, 0, timeout )) )
+	{
+		ciaa_pra &= ~PA6; 
+	}
+
+	if ( (potgor & B10 ) && is_button_time( &current_time, 1, timeout) )
+	{
+		potgor &= ~B10; 
+	}
+
+	if ( (ciaa_pra & PA7) && is_button_time( &current_time, 2, timeout) )
+	{
+		ciaa_pra &= ~PA7; 
+	}
+
+	if ( (potgor & B14) && is_button_time( &current_time, 3, timeout) )
+	{
+		potgor &= ~B14;
+	}
+}
+
 
 struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 {
@@ -711,7 +790,7 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 						break;
 
 					case WMHI_GADGETUP:
-						HandleGadgets(input_flags, &rc);
+						HandleGadgetsUp(input_flags, &rc);
 						break;
 
 					default:

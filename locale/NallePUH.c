@@ -55,6 +55,10 @@
 #define LIST_Chips_Paula 209
 #define LIST_Chips_CIA 210
 #define LIST_Frequency 211
+#define GAD_JOY1_BUTTON1 212
+#define GAD_JOY1_BUTTON2 213
+#define GAD_JOY2_BUTTON1 214
+#define GAD_JOY2_BUTTON2 215
 #define str_copyright_by 300
 #define str_ported_by 301
 #define str_updated_by 302
@@ -85,6 +89,10 @@
 #define LIST_Chips_Paula_STR "Paula"
 #define LIST_Chips_CIA_STR "CIA"
 #define LIST_Frequency_STR "Frequency"
+#define GAD_JOY1_BUTTON1_STR "Button1"
+#define GAD_JOY1_BUTTON2_STR "Button2"
+#define GAD_JOY2_BUTTON1_STR "Button1"
+#define GAD_JOY2_BUTTON2_STR "Button2"
 #define str_copyright_by_STR "(c)2001 Martin Blom <martin@blom.org>"
 #define str_ported_by_STR "Ported to AmigaOS4.0 by: Stephan Rupprecht (2004)"
 #define str_updated_by_STR "Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)"
@@ -123,6 +131,10 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {LIST_Chips_Paula,(CONST_STRPTR)LIST_Chips_Paula_STR},
     {LIST_Chips_CIA,(CONST_STRPTR)LIST_Chips_CIA_STR},
     {LIST_Frequency,(CONST_STRPTR)LIST_Frequency_STR},
+    {GAD_JOY1_BUTTON1,(CONST_STRPTR)GAD_JOY1_BUTTON1_STR},
+    {GAD_JOY1_BUTTON2,(CONST_STRPTR)GAD_JOY1_BUTTON2_STR},
+    {GAD_JOY2_BUTTON1,(CONST_STRPTR)GAD_JOY2_BUTTON1_STR},
+    {GAD_JOY2_BUTTON2,(CONST_STRPTR)GAD_JOY2_BUTTON2_STR},
     {str_copyright_by,(CONST_STRPTR)str_copyright_by_STR},
     {str_ported_by,(CONST_STRPTR)str_ported_by_STR},
     {str_updated_by,(CONST_STRPTR)str_updated_by_STR},

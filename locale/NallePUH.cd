@@ -42,6 +42,18 @@ CIA
 LIST_Frequency (//)
 Frequency
 ;
+GAD_JOY1_BUTTON1 (//)
+Button1
+;
+GAD_JOY1_BUTTON2 (//)
+Button2
+;
+GAD_JOY2_BUTTON1 (//)
+Button1
+;
+GAD_JOY2_BUTTON2 (//)
+Button2
+;
 str_copyright_by (300//)
 (c)2001 Martin Blom <martin@blom.org>
 ;

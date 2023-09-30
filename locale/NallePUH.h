@@ -55,6 +55,10 @@
 #define LIST_Chips_Paula 209
 #define LIST_Chips_CIA 210
 #define LIST_Frequency 211
+#define GAD_JOY1_BUTTON1 212
+#define GAD_JOY1_BUTTON2 213
+#define GAD_JOY2_BUTTON1 214
+#define GAD_JOY2_BUTTON2 215
 #define str_copyright_by 300
 #define str_ported_by 301
 #define str_updated_by 302

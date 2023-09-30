@@ -1,7 +1,21 @@
 
 PAGE_Add,  VGroupObject,
 
-	LAYOUT_AddChild, HGroupObject,
+	LAYOUT_AddChild, VGroupObject,
+
+		LAYOUT_AddChild, HGroupObject, 
+			GFrame("JOY1"),
+			LAYOUT_AddChild, MakeButton(GAD_JOY1_BUTTON1),
+			LAYOUT_AddChild, MakeButton(GAD_JOY1_BUTTON2),
+
+		LayoutEnd,
+
+		LAYOUT_AddChild, HGroupObject, 
+			GFrame("JOY2 / Mouse"),
+			LAYOUT_AddChild, MakeButton(GAD_JOY2_BUTTON1),
+			LAYOUT_AddChild, MakeButton(GAD_JOY2_BUTTON2),
+
+		LayoutEnd,
 
 		LAYOUT_AddChild, MakeCycle(LIST_Frequency, frequency_names),
 			CHILD_MinWidth, 200,

@@ -70,6 +70,8 @@ void close_timer()
 
 }
 
+extern void IO_BUTTONS_UP( void );
+
 void handel_timer( void )
 {
 	// Restart timer
@@ -87,5 +89,7 @@ void handel_timer( void )
 		if ( (chip_ciaa.a.cr  |  chip_ciaa.b.cr)  & 1)  update_timer_ciaa();
 		if ( (chip_ciab.a.cr  |  chip_ciab.b.cr)  & 1)  update_timer_ciab();
 	}
+
+	IO_BUTTONS_UP( );
 }
 

@@ -55,6 +55,8 @@ struct timeval cia_te_start ;
 extern struct Process *MainTask;
 extern uint32 SchedulerState;
 
+ULONG ciaa_pra = 0;
+
 static bool cia_get_usec( int *out_usec )
 {
 	if (! SchedulerState)		// not in forbid state
@@ -146,8 +148,16 @@ static UWORD CIAARead( UWORD reg, BOOL *handled, struct PUHData *pd, struct Exec
 {
 	UWORD	result;
 
+	DebugPrintF("CIAA REG: %08lx\n", reg);
+
 	switch( reg )
 	{
+
+		case PRA:
+		case 0xFE:			// think its a mirror.
+			result = ciaa_pra;
+			*handled = TRUE;
+			break;
 
 //***********************************************************************//
 

@@ -72,6 +72,7 @@ extern struct ciabIFace *Iciab;
 extern struct chip chip_ciaa ;
 extern struct chip chip_ciab ;
 
+ULONG potgor;
 
 /******************************************************************************
 ** The chip registers we trigger on *******************************************
@@ -81,6 +82,9 @@ extern struct chip chip_ciab ;
 #define VPOSR	0x004
 #define VHPOSR 0x006
 #define ADKCONR 0x010
+
+#define POTGOR 0x016
+
 #define INTENAR 0x01c
 #define INTREQR 0x01e
 #define DMACON 0x096
@@ -700,7 +704,7 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 		{
 			case 0x00BFE001:	
 
-//				DebugPrintF("**** WHAT: %08x, REG: %04x ****\n", SEG, (ULONG) pFaultAddress & 0xFFE );
+				DebugPrintF("**** WHAT: %08x, REG: %04x ****\n", SEG, (ULONG) pFaultAddress & 0xFFE );
 
 				HIT_Flags |= HIT_CIAA;
 				return CIAA(pContext, pSysBase, pd);
@@ -763,10 +767,19 @@ static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecB
 	UWORD	result;
 	UWORD* address = (UWORD*) ( (ULONG) pd->m_CustomDirect + reg );
 
+//	DebugPrintF("CUSTOM REG: %08x\n",reg);
+
 	switch( reg )
 	{
+		case POTGOR:
+			result = potgor;
+			*handled = TRUE;
+//			DebugPrintF("CUSTOM REG: %08x result: %08x\n",reg, result);
+			break;
+
 		case VPOSR:
 			result = 0x3300;	// Alice PAL
+			*handled = TRUE;
 			break;
 
 		case VHPOSR:

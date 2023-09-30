@@ -25,6 +25,10 @@ OBJECTS	= Nalle.o PUH.o debug.o iconify.o gui.o req.o file.o ciaa.o ciab.o emu_c
 
 all:	make_locale $(TARGET) 
 
+
+gui.o:	gui.c    gui_cia.c   gui_paula.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
+
 %.o:	%.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
 

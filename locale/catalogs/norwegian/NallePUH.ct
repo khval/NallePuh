@@ -50,6 +50,22 @@ LIST_Frequency
 Frekvens
 ; Frequency
 ;
+GAD_JOY1_BUTTON1
+Knapp 1
+; Button 1
+;
+GAD_JOY1_BUTTON2
+Knapp 2
+; Button 2
+;
+GAD_JOY2_BUTTON1
+Knapp 1
+; Button 1
+;
+GAD_JOY2_BUTTON2
+Knapp 2
+; Button 2
+;
 str_copyright_by
 (c)2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>

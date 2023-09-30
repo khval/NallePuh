@@ -35,8 +35,14 @@ ULONG CIAB(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct 
 #define SET 1
 #define CLR 0
 
-#define CRB5 (1<5)
-#define CRB6 (1<6)
+#define PA6 (1<<6)
+#define PA7 (1<<7)
+
+#define CRB5 (1<<5)
+#define CRB6 (1<<6)
+
+#define B10 (1<<10)
+#define B14 (1<<14)
 
 #define INMODE_A(n) ((n&(CRB5)) >> 5)
 #define INMODE_B(n) ((n&(CRB5|CRB6))>>5)
@@ -56,6 +62,8 @@ enum CTRL_REG
 #define SET_REG_BIT(chip_reg,bit,set)	chip_reg = set ? (chip_reg | (1<<bit)) : (chip_reg & ~(1<<bit));
 
 // joy ports... just ignore...
+
+#define PRA 0x000
 
 #define DDRA 0x200
 #define DDRB 0x300
@@ -87,4 +95,8 @@ extern int VSYNC_HZ;
 extern void update_hz();
 
 extern double CIA_TIMER_UNIT;
+
+extern ULONG potgor;
+extern ULONG ciaa_pra;
+
 
