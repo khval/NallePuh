@@ -5,7 +5,7 @@ About AmigaOS4.1 version
 	Originally created by Martin Blom
 	First ported by Stephan Rupprecht
 	Stephan Rupprecht has not been active since 2009 on OS4Depot.net.
-	it has gone 13 years without any updates, it’s now time to dust it off, and get it working again.
+	it has gone 13 years without any updates, it's now time to dust it off, and get it working again.
 	We (Damien Stewart and Kjetil Hvalstrand) believe something changed in the Petunia JIT compiler, 
 	and possibly some of the OS4.1 internal emulation of the custom chips where removed. 
 	This left NallePuh in a horrible state.
@@ -17,25 +17,39 @@ What works with NallePuh on AmigaOS4.1
 	Payback (game sound now works)
 	SamplitudeOpus Light 3.5
 	Myst playable demo (CGX)
-	Symphonie Pro player (Some sound quality issues, 14bit playback not supported)
-	Symphonie Pro Editor (works partally can be unstable, some sound issues.)
+	Symphonie Pro player (Some sound quality issues, 15bit playback not supported.)
+	Symphonie Pro Editor (Works partally can be unstable, some sound issues.)
+	Deluxe Music 2.0 (it does mess around in Custom, but not CIAA/CIAB, its slow is this normal?)
 
 	if you find anything working, please report, 
 	lets make this list longer.
 
-What does not work
+What does not work as of Nov. 2022
 
 	(there is native version of Digibooster for AmigaOS4.1, so no need)
 	Octamed Soundstudio 1.03c does not work, need CIAA/B timers. (use Matrix insted.)
 	THX Sound System 2.3d, crashes badly, no idea why.
 	Delitracker 2.32 and Eagle Player do not work, freeze the system.
-	SoundProbe (locks up when I press play.)
+	SoundProbe (locks up when I press play. this might need CIAA/B Timers, please retest)
 	SoundFX (loads 14%, and crashes with DSI error)
 	
-Not tested please report back.
+Not tested please report back. (2022)
 
 	Music-X
 	Musicline Editor 1.5
+
+Changes in Sep. 2023
+
+	* Added CIAA / Timer A
+	* Added CIAA / Timer B
+	* Added CIAA / Timer VSync
+	* Added CIAB / Timer A
+	* Added CIAB / Timer B
+	* Added CIAB / Timer HSync
+	(No support for Serial, Parallel Port, Joy Port A, Joy Port B)
+
+	Candidates that might work with this addition are Games / Demos and Music programs
+	that freeze and locks up, (Please retest these programs.)
 
 Changes in Nov. 2022
 
@@ -59,7 +73,7 @@ Disclaimer:
 	NallePuh for AmigaOS4.1 is not an Amiga hardware replacement project in software,
 	it can never do what hardware does, because it depends on multitasking for time keeping, 
 	if multitasking is disabled, it will try its best to get out of nano/micro waits in forbid states,
-	but can’t do any real time keeping if that happens.
+	but can't do any real time keeping if that happens.
 
 	NallePuh for AmigaOS4.1 is an exception handle, it does not hack function calls, 
 	it does not depend on external MMU libs, I wont call it a hack exactly.
@@ -68,7 +82,23 @@ Disclaimer:
 	has bugs, there is nothing NallePuh can do to solve this issues.
 
 	If you run several mc680x0 programs at the same time, that all depends on NallePuh.
-	Then this can result in unpredictable results. I know nothing that can be done about it.
+	Then this can result in a unpredictable results. I know nothing that can be done about it.
+
+	Programs that crash with DSI or ISI error, are unlikely to work, but plase check
+	snoopy log, and make sure programs / demos / games are correctly installed.
+	some programs has poor sanity checks when opening libraries.
+
+	Please install this libs from os4depot.net
+
+	* ptreplayer.library 
+	* powerpacker.library
+	* reqtools.library
+	
+	Keep in mind cia.resource / misc.resource is not included, so some programs
+	might refuse to run.
+
+	Always start Nalle Puh first, if you don't timers might not be setup correct.
+	(when program has frozen its already too late...)
 
 Dependencies
 
