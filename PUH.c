@@ -1365,7 +1365,7 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 ** Audio interrupt simulation *************************************************
 ******************************************************************************/
 
-STATIC ULONG CallInt(UWORD irq, UWORD mask, struct ExceptionContext *pContext, struct ExecBase *SysBase)
+ULONG CallInt(UWORD irq, UWORD mask, struct ExceptionContext *pContext, struct ExecBase *SysBase)
 {
 	struct IntVector	*iv = &SysBase->IntVects[irq];
 	struct Interrupt	*is = (struct Interrupt *) iv->iv_Node;
@@ -1376,15 +1376,22 @@ STATIC ULONG CallInt(UWORD irq, UWORD mask, struct ExceptionContext *pContext, s
 
 	if (is->is_Node.ln_Type != NT_EXTINTERRUPT)
 	{
-		result = EmulateTags( is->is_Code,
-			ET_SaveParamRegs, TRUE,
-			ET_SuperState,	TRUE,
-			ET_RegisterA0, 0xdff000,
-			ET_RegisterD1, mask,
-			ET_RegisterA1, is->is_Data,
-			ET_RegisterA5, is->is_Code,
-			ET_RegisterA6, SysBase,
-			TAG_DONE );
+		if (IsNative ( is->is_Code ))
+		{
+			result = ((ULONG (*)(struct ExceptionContext *, struct ExecBase *, APTR))is->is_Code)(pContext, SysBase, is->is_Data);
+		}
+		else
+		{
+			result = EmulateTags( is->is_Code,
+				ET_SaveParamRegs, TRUE,
+				ET_SuperState,	TRUE,
+				ET_RegisterA0, 0xdff000,
+				ET_RegisterD1, mask,
+				ET_RegisterA1, is->is_Data,
+				ET_RegisterA5, is->is_Code,
+				ET_RegisterA6, SysBase,
+				TAG_DONE );
+		}
 	}
 	else
 	{
