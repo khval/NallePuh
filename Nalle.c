@@ -77,8 +77,9 @@ STATIC CONST UBYTE USED verstag[] = VERSTAG;
 extern UBYTE pooh11_sb[];
 extern ULONG pooh11_sblen;
 
-static BOOL OpenLibs( void );
-static void CloseLibs( void );
+extern BOOL OpenLibs( void );
+extern void CloseLibs( void );
+
 static BOOL OpenAHI( void );
 static void CloseAHI( void );
 
@@ -92,58 +93,7 @@ static struct MsgPort *AHImp = NULL;
 static struct AHIRequest *AHIio = NULL;
 static BYTE AHIDevice = IOERR_OPENFAIL;
 
-struct Library * AHIBase = NULL;
-struct IntuitionBase* IntuitionBase = NULL;
-struct Library *LocaleBase = NULL;
-struct Library *MMUBase = NULL;
-struct Library *LibBlitterBase = NULL;
-struct Library *DiskfontBase = NULL;
 
-struct Library *IconBase = NULL;
-struct Library *WorkbenchBase = NULL;
-struct Library *ApplicationBase = NULL;
-
-struct DebugIFace *IDebug = NULL;
-struct LibBlitterIFace *ILibBlitter = NULL;
-
-struct Library *StringBase = NULL;
-struct Library *LayoutBase = NULL;
-struct Library *LabelBase = NULL;
-struct Library *ChooserBase = NULL;
-struct Library *IntegerBase = NULL;
-struct Library *ListBrowserBase = NULL;
-struct Library *ClickTabBase = NULL;
-struct Library *WindowBase = NULL;
-struct Library *CheckBoxBase = NULL;
-struct Library *RequesterBase = NULL;
-
-
-struct StringIFace *IString = NULL;
-struct LayoutIFace *ILayout = NULL;
-struct LabelIFace *ILabel = NULL;
-struct ChooserIFace *IChooser = NULL;
-struct IntegerIFace *IInteger = NULL;
-struct ListBrowserIFace *IListBrowser = NULL;
-struct ClickTabIFace *IClickTab = NULL;
-struct WindowIFace *IWindow = NULL;
-struct CheckBoxIFace *ICheckBox = NULL;
-struct RequesterIFace *IRequester = NULL;
-struct DiskfontIFace *IDiskfont = NULL;
-
-struct IconIFace * IIcon = NULL;
-struct WorkbenchIFace *IWorkbench = NULL;
-
-struct Catalog *catalog = NULL;
-struct Locale *_locale = NULL;
-ULONG *codeset_page = NULL;
-
-struct UtilityBase *UtilityBase;
-
-struct AHIIFace *IAHI = NULL;
-struct IntuitionIFace *IIntuition = NULL;
-struct LocaleIFace *ILocale = NULL;
-struct UtilityIFace *IUtility = NULL;
-struct ApplicationIFace *IApplication = NULL;
 
 BOOL cli_start = TRUE;
 BOOL gui_mode = FALSE;
@@ -163,6 +113,10 @@ void __chkabort( void )
 ** main ***********************************************************************
 ******************************************************************************/
 
+//extern struct chip chip_ciaa ;
+//extern struct chip chip_ciab ;
+
+
 int main( int argc,char* argv[] )
 {
 	int	rc = 0;
@@ -173,42 +127,34 @@ int main( int argc,char* argv[] )
 
 	init_qfind_lookup();
 
+	if ( ! OpenLibs() )
+	{
+		CloseLibs();
+		return 20;
+	}
+
 	if ( argc == 0)
 	{
 		// wb startup
 		gui_mode = TRUE;
 		cli_start = FALSE;
-
-		if ( ! OpenLibs() )
-		{
-			CloseLibs();
-			return 20;
-		}
 	}
 	else 	if ( argc == 1 )
 	{
 		gui_mode = TRUE;
-
-		if ( ! OpenLibs() )
-		{
-			CloseLibs();
-			return 20;
-		}
 	}
 	else if ( argc != 3 )
 	{
 		//Printf( "Usage: %s [0x]<AHI mode ID> <Frequency> <Level>\n", argv[ 0 ] );
 		//Printf( "Level can be 0 (no patches), 1 (ROM patches) or 2 (appl. patches)\n" );
 		Printf( "Usage: %s [0x]<AHI mode ID> <Frequency>\n", argv[ 0 ] );
+
+		CloseLibs();
 		return 10;
 	}
 	else	// default CLI startup
 	{
-		if ( ! OpenLibs() )
-		{
-			CloseLibs();
-			return 20;
-		}
+
 	}
 
 	#ifdef __amigaos4__
@@ -232,6 +178,7 @@ int main( int argc,char* argv[] )
 		if (Classic)
 		{
 			Printf( "Sorry, this program doesn't work on classic hardware\n" );
+			CloseLibs();
 			return 10;
 		}
 	}
@@ -250,12 +197,14 @@ int main( int argc,char* argv[] )
 		if ( *mode_ptr != 0 || *freq_ptr != 0 || *levl_ptr != 0 )
 		{
 			Printf( "All arguments must be numbers.\n" );
+			CloseLibs();
 			return 10;
 		}
 
 		if ( level > 2 )
 		{
 			Printf( "Invalid value for Level.\n" );
+			CloseLibs();
 			return 10;
 		}
 	}
@@ -356,182 +305,6 @@ int main( int argc,char* argv[] )
 	return rc;
 }
 
-
-/******************************************************************************
-** OpenLibs *******************************************************************
-******************************************************************************/
-
-BOOL open_lib( const char *name, int ver , const char *iname, int iver, struct Library **base, struct Interface **interface)
-{
-	*interface = NULL;
-	*base = OpenLibrary( name , ver);
-
-	if (*base)
-	{
-		 *interface = GetInterface( *base,  iname , iver, TAG_END );
-		if (!*interface) printf("Unable to getInterface %s for %s %d!\n",iname,name,ver);
-	}
-	else
-	{
-	   	printf("Unable to open the %s %d!\n",name,ver);
-	}
-	return (*interface) ? TRUE : FALSE;
-}
-
-
-static BOOL OpenLibs( void )
-{
-	IntuitionBase = (struct IntuitionBase*) OpenLibrary( "intuition.library", 39 );
-	LocaleBase = (struct LocaleBase*) OpenLibrary( "locale.library", 39 );
-	UtilityBase = (struct UtilityBase*) OpenLibrary( "utility.library", 39 );
-	LibBlitterBase = (struct Library *) OpenLibrary( "libblitter.library", 1 );
-
-	GETIFACE(LibBlitter);
-	GETIFACE(Intuition);
-	GETIFACE(Locale);
-	GETIFACE(Utility);
-
-	if ( ! open_lib( "string.gadget", 53, "main", 1, &StringBase, (struct Interface **) &IString) ) return FALSE;
-	if ( ! open_lib( "layout.gadget", 53, "main", 1, &LayoutBase, (struct Interface **) &ILayout) ) return FALSE;
-	if ( ! open_lib( "label.image", 53, "main", 1, &LabelBase, (struct Interface **) &ILabel) ) return FALSE;
-	if ( ! open_lib( "chooser.gadget", 53, "main", 1, &ChooserBase, (struct Interface **) &IChooser) ) return FALSE;
-	if ( ! open_lib( "integer.gadget", 53, "main", 1, &IntegerBase, (struct Interface **) &IInteger) ) return FALSE;
-	if ( ! open_lib( "listbrowser.gadget", 53, "main", 1, &ListBrowserBase, (struct Interface **) &IListBrowser) ) return FALSE;
-	if ( ! open_lib( "clicktab.gadget", 53, "main", 1, &ClickTabBase, (struct Interface **) &IClickTab) ) return FALSE;
-	if ( ! open_lib( "window.class", 53, "main", 1, &WindowBase, (struct Interface **) &IWindow) ) return FALSE;
-	if ( ! open_lib( "checkbox.gadget", 53, "main", 1, &CheckBoxBase, (struct Interface **) &ICheckBox) ) return FALSE;
-	if ( ! open_lib( "requester.class", 53, "main", 1, &RequesterBase, (struct Interface **) &IRequester) ) return FALSE;
-	if ( ! open_lib( "locale.library", 53 , "main", 1, &LocaleBase, (struct Interface **) &ILocale  ) ) return FALSE;
-	if ( ! open_lib( "diskfont.library", 53 , "main", 1, &DiskfontBase, (struct Interface **) &IDiskfont ) ) return FALSE;
-	if ( ! open_lib( "icon.library", 53 , "main", 1, &IconBase, (struct Interface **) &IIcon ) ) return FALSE;
-	if ( ! open_lib( "workbench.library", 53 , "main", 1, &WorkbenchBase, (struct Interface **) &IWorkbench ) ) return FALSE;
-	if ( ! open_lib( "application.library", 53 , "application", 2, &ApplicationBase, (struct Interface **) &IApplication ) ) return FALSE;
-
-	if (ILibBlitter) 
-	{
-		if (cli_start) Printf("found & using Libblitter.library\n");
-	}
-	else
-	{
-		if (cli_start) Printf(" Libblitter.library, not found sorry\n");
-	}
-
-	if ( IntuitionBase == NULL || LocaleBase == NULL )
-	{
-		CloseLibs();
-		return FALSE;
-	}
-
-	_locale = (struct Locale *) OpenLocale(NULL);
-
-	if (_locale)
-	{
-		codeset_page = (ULONG *) ObtainCharsetInfo(DFCS_NUMBER, (ULONG) _locale -> loc_CodeSet , DFCS_MAPTABLE);
-	}
-
-	catalog = OpenCatalog(NULL, "NallePUH.catalog", OC_BuiltInLanguage, "english", TAG_DONE);
-	if (catalog)	 _L = _L_catalog;
-
-	appID = FindApplication(FINDAPP_Name, "NallePuh", TAG_END);
-	if (appID != 0)
-	{
-		appID = 0;	// we did not create this appid.
-		return FALSE;	// if already started.
-	}
-
-	if ( !( appID = RegisterApplication("NallePuh",REGAPP_LoadPrefs, FALSE,TAG_DONE)) ) return FALSE;
-
-	return TRUE;
-}
-
-
-/******************************************************************************
-** CloseLibs ******************************************************************
-******************************************************************************/
-
-#define safe_CloseLibrary(b) if (b) { CloseLibrary( (struct Library *) b ); b = NULL;}
-
-static void CloseClasses( void )
-{
-	if (StringBase) CloseLibrary(StringBase); StringBase = 0;
-	if (IString) DropInterface((struct Interface*) IString); IString = 0;
-
-	if (LayoutBase) CloseLibrary(LayoutBase); LayoutBase = 0;
-	if (ILayout) DropInterface((struct Interface*) ILayout); ILayout = 0;
-
-	if (LabelBase) CloseLibrary(LabelBase); LabelBase = 0;
-	if (ILabel) DropInterface((struct Interface*) ILabel); ILabel = 0;
-
-	if (ChooserBase) CloseLibrary(ChooserBase); ChooserBase = 0;
-	if (IChooser) DropInterface((struct Interface*) IChooser); IChooser = 0;
-
-	if (IntegerBase) CloseLibrary(IntegerBase); IntegerBase = 0;
-	if (IInteger) DropInterface((struct Interface*) IInteger); IInteger = 0;
-
-	if (ListBrowserBase) CloseLibrary(ListBrowserBase); ListBrowserBase = 0;
-	if (IListBrowser) DropInterface((struct Interface*) IListBrowser); IListBrowser = 0;
-
-	if (ClickTabBase) CloseLibrary(ClickTabBase); ClickTabBase = 0;
-	if (IClickTab) DropInterface((struct Interface*) IClickTab); IClickTab = 0;
-
-	if (WindowBase) CloseLibrary(WindowBase); WindowBase = 0;
-	if (IWindow) DropInterface((struct Interface*) IWindow); IWindow = 0;
-
-	if (ClickTabBase) CloseLibrary(ClickTabBase); ClickTabBase = 0;
-	if (IClickTab) DropInterface((struct Interface*) IClickTab); IClickTab = 0;
-
-	if (CheckBoxBase) CloseLibrary(CheckBoxBase); CheckBoxBase = 0;
-	if (ICheckBox) DropInterface((struct Interface*) ICheckBox); ICheckBox = 0;
-
-	if (RequesterBase) CloseLibrary(RequesterBase); RequesterBase = 0;
-	if (IRequester) DropInterface((struct Interface*) IRequester); IRequester = 0;
-
-	if (DiskfontBase) CloseLibrary(DiskfontBase); DiskfontBase = 0;
-	if (IDiskfont) DropInterface((struct Interface*) IDiskfont); IDiskfont = 0;
-
-	if (IconBase) CloseLibrary(IconBase); IconBase = 0;
-	if (IIcon) DropInterface((struct Interface*) IIcon); IIcon = 0;
-
-	if (WorkbenchBase) CloseLibrary(WorkbenchBase); WorkbenchBase = 0;
-	if (IWorkbench) DropInterface((struct Interface*) IWorkbench); IWorkbench = 0;
-}
-
-static void CloseLibs( void )
-{
-	if (appID)
-	{
-		UnregisterApplication(appID, NULL);
-		appID = 0;
-	}
-
-	if (ILocale)	// check if lib is open...
-	{
-		if (catalog)
-		{
-			CloseCatalog(catalog); 
-			catalog = NULL;
-		}
-	
-		if (_locale)
-		{
-			CloseLocale(_locale); 
-			_locale = NULL;
-		}
-	}
-
-	CloseClasses();
-
-	DROPIFACE(Application);
-	DROPIFACE(Intuition);
-	DROPIFACE(Utility);
-	DROPIFACE(Locale);
-
-	safe_CloseLibrary(ApplicationBase);
-	safe_CloseLibrary(LibBlitterBase);
-	safe_CloseLibrary(UtilityBase);
-	safe_CloseLibrary(IntuitionBase);
-	safe_CloseLibrary(LocaleBase);
-}
 
 
 /******************************************************************************
