@@ -1,4 +1,8 @@
 
+/*
+	Copyright (C) 2023: Kjetil Hvalstrand
+*/
+
 
 
 #define MakeSlider(n,a,b) obj[n] = (Object*) SliderObject, \
@@ -136,4 +140,4 @@
 	if (win[win_nr]) SetGadgetAttrs( (struct Gadget *) obj[index], win[win_nr], NULL, \
 	LISTBROWSER_Labels, list, TAG_DONE); 
 
-extern ULONG getv( Object *obj, ULONG arg ) ;
+extern ULONG getv( ULONG id, ULONG arg ) ;

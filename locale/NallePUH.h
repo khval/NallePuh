@@ -41,22 +41,27 @@
 
 #ifdef CATCOMP_NUMBERS
 
-#define GAD_ACTIVATE 1
-#define GAD_DEACTIVATE 2
-#define GAD_MESSAGES 3
-#define GAD_MODE_ID 4
-#define GAD_MODE_INFO 5
-#define GAD_SELECT_MODE 6
-#define GAD_TEST 7
-#define GAD_ABOUT 8
-#define str_copyright_by 9
-#define str_ported_by 10
-#define str_updated_by 11
-#define str_contributers 12
-#define win_title 13
-#define win_about_title 14
-#define req_ok 15
-#define ID_END 16
+#define win_title 100
+#define win_about_title 101
+#define GAD_ACTIVATE 200
+#define GAD_DEACTIVATE 201
+#define GAD_MESSAGES 202
+#define GAD_MODE_ID 203
+#define GAD_MODE_INFO 204
+#define GAD_SELECT_MODE 205
+#define GAD_TEST 206
+#define GAD_ABOUT 207
+#define PAGES_CHIP_ID 208
+#define LIST_Chips_Paula 209
+#define LIST_Chips_CIA 210
+#define LIST_Frequency 211
+#define str_copyright_by 300
+#define str_ported_by 301
+#define str_updated_by 302
+#define str_ciaa_ciab 303
+#define str_contributers 304
+#define req_ok 400
+#define ID_END 401
 
 #endif /* CATCOMP_NUMBERS */
 

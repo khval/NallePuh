@@ -43,6 +43,22 @@ GAD_ABOUT
 _Informazioni
 ; A_bout
 ;
+PAGES_CHIP_ID
+Patatine fritte
+; Chips
+;
+LIST_Chips_Paula
+Paula
+; Paula
+;
+LIST_Chips_CIA
+CIA
+; CIA
+;
+LIST_Frequency
+Frequenza
+; Frequency
+;
 str_copyright_by
 (c) 2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>
@@ -55,13 +71,17 @@ str_updated_by
 Aggiornato per AmigaOS 4.1 FE da Kjetil Hvalstrand (2022)
 ; Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)
 ;
+str_ciaa_ciab
+CIAA/CIAB supporto aggiunto
+; str_ciaa_ciab
+;
 str_contributers
 Contributi a cura di Damien Stewart e Samir Hawamdeh
 ; Contributers: Damien Stewart, Samir Hawamdeh
 ;
 win_title
-NallePUH (%d.%d)
-; Nalle PUH (%d.%d)
+Winnie the Pooh
+; Nalle Puh
 ;
 win_about_title
 Informazioni su NallePUH

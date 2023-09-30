@@ -1,4 +1,4 @@
-## version $VER: NallePUH.catalog 0.5 (17.11.2022)
+## version $VER: NallePUH.catalog 0.5 (23.09.2023)
 ## codeset 0
 ## language Norwegian
 ;
@@ -34,6 +34,22 @@ GAD_ABOUT
 Om
 ; A_bout
 ;
+PAGES_CHIP_ID
+Chips
+; Chips
+;
+LIST_Chips_Paula
+Paula
+; Paula
+;
+LIST_Chips_CIA
+CIA
+; CIA
+;
+LIST_Frequency
+Frekvens
+; Frequency
+;
 str_copyright_by
 (c)2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>
@@ -46,13 +62,17 @@ str_updated_by
 Oppdatert for AmigaOS4.1 FE av: Kjetil Hvalstrand (2022)
 ; Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)
 ;
+str_ciaa_ciab
+CIAA/CIAB støtte lagt til (2023)
+; CIAA/CIAB support added (2023)
+;
 str_contributers
 Bidragsytere: Damien Stewart, Samir Hawamdeh
 ; Contributers: Damien Stewart, Samir Hawamdeh
 ;
 win_title
-Nalle Puh (%d.%d)
-; Nalle PUH (%d.%d)
+Ole Brumm
+; Nalle PUH
 ;
 win_about_title
 Om Nalle Puh

@@ -118,6 +118,12 @@ struct PUHData
 
 };
 
+struct options
+{
+	BOOL installed;
+	BOOL activated;
+} ;
+
 struct PUHData *AllocPUH( void );
 void FreePUH( struct PUHData* pd );
 void SetPUHLogger( struct Hook*    hook,    struct PUHData* pd );
@@ -125,6 +131,6 @@ void VARARGS68K LogPUH( struct PUHData* pd, STRPTR fmt,   ... );
 BOOL InstallPUH( ULONG  flags, ULONG audio_mode, ULONG frequency );
 void UninstallPUH( struct PUHData* pd );
 BOOL ActivatePUH( struct PUHData* pd );
-void DeactivatePUH( struct PUHData* pd );
+BOOL DeactivatePUH( struct PUHData* pd );
 
 #endif /* NallePUH_PUH_h */

@@ -1,6 +1,12 @@
 ; *** catalog description file of "NallePUH.res"
 ;
-GAD_ACTIVATE  (1//)
+win_title (100//)
+Nalle Puh
+;
+win_about_title (//)
+About Nalle Puh
+;
+GAD_ACTIVATE  (200//)
 _Activate
 ;
 GAD_DEACTIVATE  (//)
@@ -24,7 +30,19 @@ _Test
 GAD_ABOUT  (//)
 A_bout
 ;
-str_copyright_by (//)
+PAGES_CHIP_ID (//)
+Chips
+;
+LIST_Chips_Paula (//)
+Paula
+;
+LIST_Chips_CIA (//)
+CIA
+;
+LIST_Frequency (//)
+Frequency
+;
+str_copyright_by (300//)
 (c)2001 Martin Blom <martin@blom.org>
 ;
 str_ported_by (//)
@@ -33,16 +51,13 @@ Ported to AmigaOS4.0 by: Stephan Rupprecht (2004)
 str_updated_by (//)
 Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)
 ;
+str_ciaa_ciab (//)
+CIAA/CIAB support added (2023)
+;
 str_contributers (//)
 Contributers: Damien Stewart, Samir Hawamdeh
 ;
-win_title (//)
-Nalle PUH (%d.%d)
-;
-win_about_title (//)
-About Nalle Puh
-;
-req_ok (//)
+req_ok (400//)
 _Ok
 ;
 ID_END (//)

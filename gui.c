@@ -1,9 +1,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <math.h>
-
 
 #include <classes/window.h>
 #include <gadgets/listbrowser.h>
@@ -18,6 +18,8 @@
 #include <proto/intuition.h>
 #include <proto/ahi.h>
 
+#include <exec/emulation.h>
+
 #include <devices/ahi.h>
 
 #include <hardware/custom.h>
@@ -27,13 +29,21 @@
 #define CATCOMP_STRINGS
 #define CATCOMP_ARRAY
 
+#include "NallePUH_rev.h"
 #include "locale/NallePUH.c"
 #include "PUH.h"
 #include "gui.h"
+#include "file.h"
 
 #define ALL_REACTION_CLASSES
 #include <reaction/reaction.h>
 #include <reaction/reaction_macros.h>
+
+#include <proto/clicktab.h>
+#include <gadgets/clicktab.h>
+#include <proto/chooser.h>
+#include <gadgets/chooser.h>
+
 #include <proto/window.h>
 #include <proto/integer.h>
 #include <proto/layout.h>
@@ -45,8 +55,21 @@
 
 #include "reaction_macros.h"
 #include "nallepuh_rev.h"
+#include "emu_cia.h"
+
+STATIC CONST UBYTE USED verstag[] = VERSTAG;
 
 extern struct Custom CustomData;
+extern int ciaa_signal;
+extern int ciab_signal;
+
+extern void update_timer_ciaa();
+extern void update_timer_ciab();
+
+extern struct chip chip_ciaa ;
+extern struct chip chip_ciab ;
+
+extern struct TagItem SchedulerState_tags[];
 
 enum
 {
@@ -61,17 +84,15 @@ Object *			obj[ID_END];
 extern UBYTE pooh11_sb[];
 extern struct Catalog *catalog;
 
+extern int cia_frequency_select;
+
 struct kIcon
 {
 	struct Gadeget *gadget ;
 	struct Image *image ;
 };
 
-struct options
-{
-	BOOL installed;
-	BOOL activated;
-} options;
+struct options options;
 
 void init_options( struct options *o)
 {
@@ -115,6 +136,29 @@ extern struct MsgPort *iconifyPort ;
 extern void enable_Iconify();
 extern void disable_Iconify();
 
+extern ULONG  timer_mask;
+extern void handel_timer( void ); 
+
+extern void event_cia( ULONG mask );
+
+ULONG local_Chips[]=
+{
+	LIST_Chips_Paula,
+	LIST_Chips_CIA,
+	0
+};
+
+CONST_STRPTR Chips
+		[	sizeof(local_Chips)		/ sizeof(ULONG)	];
+
+
+CONST_STRPTR frequency_names[] =
+		{
+			"50Hz (PAL)",
+			"60Hz (NTSC)",
+			NULL
+		};
+
 void handel_iconify()
 {
 	struct Message *msg;
@@ -123,15 +167,26 @@ void handel_iconify()
 	enable_Iconify();
 	if (iconifyPort)
 	{
+		ULONG mask;
+		int iconifyPort_signal = 1L << iconifyPort -> mp_SigBit;
+
 		do
 		{
-			Wait( 1L << iconifyPort -> mp_SigBit);
+			mask =Wait( iconifyPort_signal | chip_ciaa.signal | chip_ciab.signal | timer_mask );
 
-			while ((msg = (struct Message *) GetMsg( iconifyPort ) ))
+			if (mask & timer_mask) handel_timer();
+
+			event_cia( mask);
+
+			if (mask & iconifyPort_signal)
 			{
-				ReplyMsg( (struct Message*) msg );
-				disabled = TRUE;
+				while ((msg = (struct Message *) GetMsg( iconifyPort ) ))
+				{
+					ReplyMsg( (struct Message*) msg );
+					disabled = TRUE;
+				}
 			}
+
 		} while (disabled == FALSE );
 	}
 
@@ -152,7 +207,7 @@ void update_gui( int win_nr, struct rc *rc )
 				{
 					char tmp[100];
 
-					sprintf(tmp,"%08x", rc -> audio_mode );
+					sprintf(tmp,"%08lx", rc -> audio_mode );
 					RefreshSetGadgetAttrs( obj[ GAD_MODE_ID ], win[ win_nr ], NULL,
 						STRINGA_TextVal, (ULONG) tmp, 
 						TAG_DONE );
@@ -177,20 +232,41 @@ void update_gui( int win_nr, struct rc *rc )
 				RefreshSetGadgetAttrs( obj[ GAD_TEST ], win[ win_nr ], NULL,
 					GA_Disabled, options.activated ? FALSE : TRUE, 
 					TAG_DONE );
+
+
+				RefreshSetGadgetAttrs( obj[ LIST_Frequency ], win[ win_nr ], NULL,
+					CHOOSER_Selected , cia_frequency_select,
+					TAG_DONE);
+
 			}
 			break;
 	}
 }
 
+void init_STRPTR_list( ULONG *local_array, CONST_STRPTR *str_array )
+{
+	ULONG *local_item;
+	CONST_STRPTR *str_array_item = str_array;
+
+	for (local_item = local_array; *local_item ; local_item++, str_array_item++ )
+	{
+		*str_array_item = _L( (unsigned int) *local_item );
+	}
+	*str_array_item = NULL;
+
+}
+
 void init_prefs(int win_nr)
 {
 
-	sprintf(window_title_name,_L(win_title),VERSION,REVISION);
+	sprintf(window_title_name,"%s (V%d,%d)",_L(win_title),VERSION,REVISION);
+
+	init_STRPTR_list( local_Chips, Chips );
+
 
 	layout[win_nr] = (Object*) WindowObject,
 			WA_Title,       window_title_name,
 			WA_ScreenTitle, window_title_name,
-
 			WA_SizeGadget,   TRUE,
 			WA_DepthGadget,  TRUE,
 			WA_DragBar,      TRUE,
@@ -198,25 +274,30 @@ void init_prefs(int win_nr)
 			WA_Activate,     TRUE,
 			WA_SmartRefresh, TRUE,
 			WA_Width, 400,
+			WA_IDCMP, IDCMP_INTUITICKS | IDCMP_CLOSEWINDOW | IDCMP_GADGETUP  ,
+
 			WINDOW_IconifyGadget, TRUE,
 			WINDOW_Iconifiable, TRUE,
 			WINDOW_Position, WPOS_CENTERSCREEN,
+
 			WINDOW_ParentGroup, VLayoutObject,
 				LAYOUT_SpaceOuter, TRUE,
 				LAYOUT_DeferLayout, TRUE,
 
-				LAYOUT_AddChild, VGroupObject,
+				LAYOUT_AddChild,  ClickTabObject,
+					GA_RelVerify, TRUE,
+					GA_Text, Chips,
+					GA_ID, PAGES_CHIP_ID ,
 
-					LAYOUT_AddChild, MakeString(GAD_MODE_ID),
-					CHILD_Label, MakeLabel(GAD_MODE_ID),
+					CLICKTAB_PageGroup,  PageObject,
 
-					LAYOUT_AddChild, MakeString(GAD_MODE_INFO),
-					CHILD_Label, MakeLabel(GAD_MODE_INFO),
+						LAYOUT_DeferLayout, TRUE,
 
-					LAYOUT_AddChild, MakeButton(GAD_SELECT_MODE),
+#include "gui_paula.c"
+#include "gui_cia.c"
+					PageEnd,
 
-				LayoutEnd,
-				CHILD_WeightedHeight, 0,
+				ClickTabEnd,
 
 				LAYOUT_AddChild, HGroupObject,
 
@@ -254,6 +335,7 @@ BOOL open_window(ULONG win_id )
 		case win_prefs:
 			RSetAttrO( win_prefs, GAD_MODE_ID, GA_Disabled, TRUE);
 			RSetAttrO( win_prefs, GAD_MODE_INFO, GA_Disabled, TRUE);
+			RSetAttrO( win_prefs, LIST_Frequency, CHOOSER_Selected , cia_frequency_select);
 			break;
 	}
 
@@ -410,14 +492,16 @@ void about()
 	about_text_size = strlen(_L(str_copyright_by) )+1;
 	about_text_size += strlen(_L(str_ported_by) )+1;
 	about_text_size += strlen(_L(str_updated_by) )+1;
+	about_text_size += strlen(_L(str_ciaa_ciab) )+1;
 	about_text_size += strlen(_L(str_contributers) )+1;
 
 	about_text = malloc( about_text_size );
 
-	snprintf(about_text, about_text_size, "%s\n%s\n%s\n%s",
+	snprintf(about_text, about_text_size, "%s\n%s\n%s\n%s\n%s",
 			_L(str_copyright_by),
 			_L(str_ported_by),
 			_L(str_updated_by),
+			_L(str_ciaa_ciab),
 			_L(str_contributers));
 
 	req( _L(win_about_title), about_text,_L(req_ok), 0);
@@ -425,15 +509,29 @@ void about()
 	free(about_text);
 }
 
+ULONG getv( ULONG id, ULONG arg ) 
+{
+	ULONG ret;
+
+	GetAttr( arg, obj[ id ], &ret );
+	return ret; 
+}
+
 void HandleGadgets(ULONG input_flags , struct rc *rc)
 {
 	switch( input_flags & RL_GADGETMASK )
 	{
+		case LIST_Frequency:
+			update_hz();
+			cia_frequency_select = getv( LIST_Frequency, CHOOSER_Selected );
+			break;
+
+
 		case GAD_SELECT_MODE:
 			{
 				struct AHIAudioModeRequester* req = NULL;
 								
-				struct TagItem								filter_tags[] =
+				struct TagItem	filter_tags[] =
 				{
 					{ AHIDB_Realtime, 	TRUE },
 					{ AHIDB_MaxChannels, 4		},
@@ -527,10 +625,9 @@ void HandleGadgets(ULONG input_flags , struct rc *rc)
 	}
 }
 
-
-
 struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 {
+	ULONG mask;
 	struct rc rc;
 	ULONG	window_signals = 0;
 
@@ -548,10 +645,12 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 
 	while( ! rc.quit )
 	{
-		ULONG mask;
+		mask = Wait( window_signals | SIGBREAKF_CTRL_C | chip_ciaa.signal | chip_ciab.signal | timer_mask );
 		
-		mask = Wait( window_signals | SIGBREAKF_CTRL_C );
-		
+		if (mask & timer_mask) handel_timer();
+
+		event_cia( mask);
+
 		if ( mask & SIGBREAKF_CTRL_C )
 		{
 			rc.quit = TRUE;
@@ -570,6 +669,21 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 					case WMHI_CLOSEWINDOW:
 						rc.quit = TRUE;
 						rc.rc	= TRUE;
+						break;
+
+					case WMHI_INTUITICK:
+
+						if (HIT_Last_Flags != HIT_Flags)
+						{
+							char buffer[1000];
+							snprintf(buffer,sizeof(buffer),"%s",window_title_name);
+							if (HIT_Flags & HIT_CUSTOM) 	snprintf(buffer,sizeof(buffer),"%s %s", buffer, " [CUSTOM]");
+							if (HIT_Flags & HIT_CIAA) 	snprintf(buffer,sizeof(buffer),"%s %s", buffer, " [CIA A]");
+							if (HIT_Flags & HIT_CIAB) 	snprintf(buffer,sizeof(buffer),"%s %s", buffer, " [CIA B]");
+							SetWindowTitles(window, buffer, buffer);
+						}
+						HIT_Last_Flags = HIT_Flags;
+						HIT_Flags = 0;
 						break;
 
 					case WMHI_ICONIFY:
@@ -620,3 +734,4 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 
 	return rc;
 }
+

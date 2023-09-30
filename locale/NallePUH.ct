@@ -1,6 +1,14 @@
-## version $VER: XX.catalog XX.XX (XX.XX.20XX)
-## codeset 0
-## language English
+## version $VER: XX.catalog XX.XX (23.09.2023)
+## codeset 1
+## language 1
+;
+win_title
+
+; Nalle Puh
+;
+win_about_title
+
+; About Nalle Puh
 ;
 GAD_ACTIVATE
 
@@ -34,6 +42,22 @@ GAD_ABOUT
 
 ; A_bout
 ;
+PAGES_CHIP_ID
+
+; Chips
+;
+LIST_Chips_Paula
+
+; Paula
+;
+LIST_Chips_CIA
+
+; CIA
+;
+LIST_Frequency
+
+; Frequency
+;
 str_copyright_by
 
 ; (c)2001 Martin Blom <martin@blom.org>
@@ -46,17 +70,13 @@ str_updated_by
 
 ; Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)
 ;
+str_ciaa_ciab
+
+; CIAA/CIAB support added (2023)
+;
 str_contributers
 
 ; Contributers: Damien Stewart, Samir Hawamdeh
-;
-win_title
-
-; Nalle PUH (%d.%d)
-;
-win_about_title
-
-; About Nalle Puh
 ;
 req_ok
 
