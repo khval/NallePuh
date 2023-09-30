@@ -56,11 +56,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "locale/NallePUH.h"
 #include "PUH.h"
 #include "debug.h"
+#include "emu_cia.h"
 
 /* Version Tag */
 #include "nallepuh_rev.h"

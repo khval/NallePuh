@@ -18,8 +18,10 @@ CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
 
 LDFLAGS	= 
 
+VERSION = 1
+
 TARGET	= NallePUH
-OBJECTS	= Nalle.o PUH.o debug.o iconify.o gui.o req.o file.o
+OBJECTS	= Nalle.o PUH.o debug.o iconify.o gui.o req.o file.o ciaa.o ciab.o emu_cia.o warn.o init.o timer.o
 
 all:	make_locale $(TARGET) 
 
@@ -43,6 +45,10 @@ clean:
 $(TARGET): 	$(OBJECTS)
 	$(CC) $(LDFLAGS) -o $@.debug $^
 	$(STRIP) -R .comment $@.debug -o $@
+
+.PHONY: revision
+revision:
+	bumprev $(VERSION) $(TARGET)
 
 Nalle.o:	Nalle.c PUH.h locale/NallePUH.h
 
