@@ -49,8 +49,18 @@
 
 ;********* FILES ******************************************
 
-(set LibName		"libblitter.library")
-(set Lib			"libs/libblitter.library")
+(set LibName1	 "libblitter.library")
+(set LibName2	 "ciaa.resource")
+(set LibName3	 "ciab.resource")
+
+(set PCopyLib1 (cat "Copying " LibName1))
+(set PCopyLib2 (cat "Copying " LibName2))
+(set PCopyLib3 (cat "Copying " LibName3))
+
+(set FCopyLib1	(tackon "libs" LibName1))
+(set FCopyLib2 (tackon "libs" LibName2))
+(set FCopyLib3 (tackon "libs" LibName3))
+
 (set FNallePuh		"NallePuh")
 (set FNallePuhInfo	"NallePuh.info")
 (set FCat			"locale/catalogs/")
@@ -72,8 +82,6 @@
   )
 )
 
-(set FCopyLib Lib)
-
 ;------ Ask for destinations ------------------------------
 
 (if (IN InstOpts 0)             ; Libs
@@ -88,7 +96,7 @@
             (default LibDestDir)
           )
         )
-        (set FCopyLib Lib)
+        (set FCopyLib1 Lib)
       )
     )
   )
@@ -127,14 +135,34 @@
 ;------ Copy all files ------------------------------------
 (if (IN InstOpts 0)             ; Libraries
   (
+
     (copylib
-      (prompt  PCopyLib)
+      (prompt  PCopyLib1)
       (help    @copylib-help)
       (confirm)
-      (source  FCopyLib)
+      (source  "libs/libblitter.library")
       (dest    LibDestDir)
-      (newname LibName)
+      (newname LibName1)
     )
+
+    (copylib
+      (prompt  PCopyLib2)
+      (help    @copylib-help)
+      (confirm)
+      (source  "libs/ciaa.resource")
+      (dest    LibDestDir)
+      (newname LibName1)
+    )
+
+    (copylib
+      (prompt  PCopyLib3)
+      (help    @copylib-help)
+      (confirm)
+      (source  "libs/ciab.resource")
+      (dest    LibDestDir)
+      (newname LibName1)
+    )
+
   )
 )
 
