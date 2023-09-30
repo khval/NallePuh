@@ -19,6 +19,9 @@ copy COPYING ram:NallePuh/LICENCE.txt
 copy nallepuh ram:NallePuh
 copy nallepuh.info ram:nallepuh
 
+copy libs:ciaa.resource ram:NallePuh/libs
+copy libs:ciab.resource ram:NallePuh/libs
+
 IF EXISTS libs:libblitter.library
 	copy libs:libblitter.library ram:NallePuh/libs
 else
