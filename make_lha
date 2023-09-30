@@ -4,9 +4,18 @@
 
 setenv lhafile=ram:NallePuh.lha
 
+echo "----------------------"
+echo "**** CLEANUP PACKAGE ****"
 if exists ram:NallePuh
 	delete ram:NallePuh all
 endif
+
+if exists $lhafile
+	delete $lhafile
+endif
+
+echo "----------------------"
+echo "**** CREATING PACKAGE ****"
 
 makedir ram:NallePuh
 makedir ram:NallePuh/libs
@@ -51,4 +60,4 @@ endif
 
 lha -er a $lhafile ram:NallePuh >NIL:
 ;lha L $lhafile
-;delete ram:NallePuh all 
+
