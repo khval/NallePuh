@@ -1,8 +1,8 @@
-# List of unsupported games and programs, just because they are in this list does not mean you can’t use these programs, it just means you need to use EUAE instead.
+List of unsupported games and programs, just because they are in this list does not mean you can’t use these programs, it just means you need to use EUAE instead.
 
 ## Games
 
-# The games that are tested are HD installable games, and workbench games.
+The games that are tested are HD installable games, and workbench games.
 
     SpaceQuest 1 – Not working, refuse to start (too old)
 
@@ -24,7 +24,7 @@
 
     T-zerO-Demo - black screen.
 
-# Music players
+## Music players
 
     303TrackerV0.12 - Black Screen.
 
