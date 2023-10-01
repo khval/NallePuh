@@ -1,5 +1,24 @@
 List of unsupported games and programs, just because they are in this list does not mean you can’t use these programs, it just means you need to use EUAE instead.
 
+Terminology for newbies
+
+	DSI - Data storage Interrupt (software bugs)
+
+		Most commone couses.
+
+		* Reads outside of allocated memory
+	  	* Assuming this are load that’s not (data files, fonts, libraries)
+	 	* Accessing part of OS that’s not allowed.
+
+	ISI - Instruction interrrupt
+
+		Most commone couses.
+ 
+ 		* Missing JMP tables or trying to access code, is not there.
+   		* Broken function pointers.
+     
+	Black Screen - Uses copper to setup screen, can't be displayed in RTG modes.
+ 
 ## Games
 
 The games that are tested are HD installable games, and workbench games.
