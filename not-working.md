@@ -1,29 +1,33 @@
-SpaceQuest 1 – Not working, refuse to start (too old)
+## Games
 
-SpaceQuest 4 – Not working, refuse to start (too old)
+    SpaceQuest 1 – Not working, refuse to start (too old)
 
-SimCity 2000 – Tested refuse to start.
+    SpaceQuest 4 – Not working, refuse to start (too old)
 
-Deluxe Galaga AGA – shows trainer, it asks for mouse press.
-Mouse press is working from Nalle Puh 1.2, games continue and does something… 
-(not really working)
+    SimCity 2000 – Tested refuse to start.
 
-Simon the Scorcerer - starts DSI error, and ends up at a back screen.
+    Deluxe Galaga AGA – shows trainer, it asks for mouse press.
+    Mouse press is working from Nalle Puh 1.2, games continue and does something… 
+    (not really working)
 
-The Shadow of time - starts and ends up on a black screen.
+    Simon the Scorcerer - starts DSI error, and ends up at a back screen.
 
-BloodNet AGA - crashes after a window is displayed. 
-they have some kind antipiracy code in there, that might cause problems.
-code is encrypted.
+    The Shadow of time - starts and ends up on a black screen.
 
-T-zerO-Demo - black screen.
+    BloodNet AGA - crashes after a window is displayed. 
+    they have some kind antipiracy code in there, that might cause problems.
+    code is encrypted.
 
-303TrackerV0.12 - Black Screen.
+    T-zerO-Demo - black screen.
 
-Beatblox - Black Screen
+# Music players
 
-OctamedPLayer - DSI error crashes.
+    303TrackerV0.12 - Black Screen.
 
-FutureComposer - DSI error crashes.
+    Beatblox - Black Screen
 
-AHX - DSI error crashes.
+    OctamedPLayer - DSI error crashes.
+
+    FutureComposer - DSI error crashes.
+
+    AHX - DSI error crashes.
