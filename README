@@ -5,9 +5,10 @@ About AmigaOS4.1 version
 	Originally created by Martin Blom
 	First ported by Stephan Rupprecht
 	Stephan Rupprecht has not been active since 2009 on OS4Depot.net.
-	it has gone 13 years without any updates, it's now time to dust it off, and get it working again.
-	We (Damien Stewart and Kjetil Hvalstrand) believe something changed in the Petunia JIT compiler, 
-	and possibly some of the OS4.1 internal emulation of the custom chips where removed. 
+	it has gone 13 years without any updates, it's now time to dust it off, 
+	and get it working again. We (Damien Stewart and Kjetil Hvalstrand)
+	believe something changed in the Petunia JIT compiler, and possibly some
+	 of the OS4.1 internal emulation of the custom chips where removed. 
 	This left NallePuh in a horrible state.
 
 What works with NallePuh on AmigaOS4.1
@@ -33,8 +34,11 @@ List of tested - unsupported is here:
 Not tested please report back. (2023)
 
 	Music-X
+
 	Musicline Editor 1.5
-	SoundProbe (locks up when I press play. this might need CIAA/B Timers, please retest)
+
+	SoundProbe
+		(locks up when I press play. this might need CIAA/B Timers)
 
 Changes in Sep. 2023
 
@@ -68,10 +72,11 @@ Changes in Nov. 2022
 	
 Disclaimer:
 
-	NallePuh for AmigaOS4.1 is not an Amiga hardware replacement project in software,
-	it can never do what hardware does, because it depends on multitasking for time keeping, 
-	if multitasking is disabled, it will try its best to get out of nano/micro waits in forbid states,
-	but can't do any real time keeping if that happens.
+	NallePuh for AmigaOS4.1 is not an Amiga hardware replacement project in
+	software, it can never do what hardware does, because it depends on multitasking
+	for time keeping, if multitasking is disabled, it will try its best to get out
+	of nano/micro waits in forbid states, but can't do any real time keeping if that
+	happens.
 
 	NallePuh for AmigaOS4.1 is an exception handle, it does not hack function calls, 
 	it does not depend on external MMU libs, I wont call it a hack exactly.
@@ -79,11 +84,12 @@ Disclaimer:
 	NallePuh does not fix broken software, if the mc680x0 game/application/demo,
 	has bugs, there is nothing NallePuh can do to solve this issues.
 
-	If you run several mc680x0 programs at the same time, that all depends on NallePuh.
-	Then this can result in a unpredictable results. I know nothing that can be done about it.
+	If you run several mc680x0 programs at the same time, that all depends on
+	NallePuh. Then this can result in a unpredictable results. I know nothing
+	that can be done about it.
 
-	Programs that crash with DSI or ISI error, are unlikely to work, but plase check
-	snoopy log, and make sure programs / demos / games are correctly installed.
+	Programs that crash with DSI or ISI error, are unlikely to work, but plase
+	check snoopy log, and make sure programs / demos / games are correctly installed.
 	some programs has poor sanity checks when opening libraries.
 
 	Please install this libs from os4depot.net
