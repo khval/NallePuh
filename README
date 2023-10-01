@@ -48,7 +48,14 @@ Not tested please report back. (2023)
 	SoundProbe
 		(locks up when I press play. this might need CIAA/B Timers)
 
-Changes in Sep. 2023
+Changes in 1 October 2023 Version 1.2
+
+	* Added Joy 1 and 2 fire button 1 and 2 support
+	* Fixed install script
+	* Fixed make_lha script
+	* Updated docs and readme
+
+Changes in 28 September 2023 Version 1.1
 
 	* Added CIAA / Timer A
 	* Added CIAA / Timer B
