@@ -19,24 +19,22 @@ What works with NallePuh on AmigaOS4.1
 	Myst playable demo (CGX)
 	Symphonie Pro player (Some sound quality issues, 15bit playback not supported.)
 	Symphonie Pro Editor (Works partally can be unstable, some sound issues.)
-	Deluxe Music 2.0 (it does mess around in Custom, but not CIAA/CIAB, its slow is this normal?)
 
 	if you find anything working, please report, 
 	lets make this list longer.
 
-What does not work as of Nov. 2022
+List of tested - unsupported is here:
 
-	(there is native version of Digibooster for AmigaOS4.1, so no need)
-	Octamed Soundstudio 1.03c does not work, need CIAA/B timers. (use Matrix insted.)
-	THX Sound System 2.3d, crashes badly, no idea why.
-	Delitracker 2.32 and Eagle Player do not work, freeze the system.
-	SoundProbe (locks up when I press play. this might need CIAA/B Timers, please retest)
-	SoundFX (loads 14%, and crashes with DSI error)
+	https://github.com/khval/NallePuh/edit/main/not-working.md
+
+	If you find more thats not working, please report, 
+	it saves people from wasting time on things that’s not working.
 	
-Not tested please report back. (2022)
+Not tested please report back. (2023)
 
 	Music-X
 	Musicline Editor 1.5
+	SoundProbe (locks up when I press play. this might need CIAA/B Timers, please retest)
 
 Changes in Sep. 2023
 
