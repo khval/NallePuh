@@ -1,3 +1,5 @@
+List of unsupported games and programs, just because they are in this list does not mean you can’t use these programs, it just means you need to use EUAE instead.
+
 ## Games
 
     SpaceQuest 1 – Not working, refuse to start (too old)
@@ -24,10 +26,23 @@
 
     303TrackerV0.12 - Black Screen.
 
+    AHX - DSI error crashes.
+
     Beatblox - Black Screen
 
-    OctamedPLayer - DSI error crashes.
+	Delitracker 2.32 - do not work, freeze the system.
+ 
+    Deluxe Music 2.0 - unstable, crashes in audio.device with DSI error
 
+    Eagle Player - do not work, freeze the system.
+    
     FutureComposer - DSI error crashes.
 
-    AHX - DSI error crashes.
+    OctamedPLayer - DSI error crashes.
+    
+    THX Sound System 2.3d, crashes badly, no idea why.
+
+    SoundFX (loads 14%, and crashes with DSI error)
+
+    Octamed Soundstudio 1.03c does not work, (interrupt routine is not working)  (use Matrix insted.)
+        (Needs investigation, can be working in the future.)
