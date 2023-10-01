@@ -23,7 +23,7 @@ Terminology for newbies
      
 	Black Screen - Uses copper to setup screen, can't be displayed in RTG modes.
 
-		Probably won’t be fixed unless some adds RTG support.
+		Probably won’t be fixed unless someone adds RTG support.
  
 ## Games
 
