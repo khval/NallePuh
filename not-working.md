@@ -22,7 +22,7 @@ T-zerO-Demo - black screen.
 
 Beatblox - Black Screen
 
-OctaamedPLayer - DSI error crashes.
+OctamedPLayer - DSI error crashes.
 
 FutureComposer - DSI error crashes.
 
