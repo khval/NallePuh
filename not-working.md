@@ -10,14 +10,20 @@ Terminology for newbies
 	  	* Assuming this are load that’s not (data files, fonts, libraries)
 	 	* Accessing part of OS that’s not allowed.
 
+		(If possible repport problem to game or tool developer, if they are around.)
+
 	ISI - Instruction interrrupt
 
 		Most commone couses.
  
- 		* Missing JMP tables or trying to access code, is not there.
+ 		* Missing JMP tables or trying to access code, that is not there.
    		* Broken function pointers.
+
+     		(If possible repport problem to game or tool developer, if they are around.)
      
 	Black Screen - Uses copper to setup screen, can't be displayed in RTG modes.
+
+		Probably won’t be fixed unless some adds RTG support.
  
 ## Games
 
