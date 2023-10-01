@@ -45,8 +45,6 @@
   )
 )
 
-(set PCopyLib     "Copying the NallePuh")
-
 ;********* FILES ******************************************
 
 (set LibName1	 "libblitter.library")
@@ -110,7 +108,7 @@
         (askdir
           (prompt PNallePuhDestDir)
           (help   HNallePuhDestDir)
-          (default NallePuhDestDir)
+          (default @default-dest)
         )
       )
     )
@@ -132,44 +130,43 @@
   )
 )
 
+(set PCopyCat     "Copying the Libraries")
+
 ;------ Copy all files ------------------------------------
 (if (IN InstOpts 0)             ; Libraries
   (
-
     (copylib
-      (prompt  PCopyLib1)
+      (prompt  PCopyCat)
       (help    @copylib-help)
       (confirm)
       (source  "libs/libblitter.library")
       (dest    LibDestDir)
-      (newname LibName1)
     )
 
     (copylib
-      (prompt  PCopyLib2)
+      (prompt  PCopyCat)
       (help    @copylib-help)
       (confirm)
       (source  "libs/ciaa.resource")
       (dest    LibDestDir)
-      (newname LibName1)
     )
 
     (copylib
-      (prompt  PCopyLib3)
+      (prompt  PCopyCat)
       (help    @copylib-help)
       (confirm)
       (source  "libs/ciab.resource")
       (dest    LibDestDir)
-      (newname LibName1)
     )
-
   )
 )
+
+(set PCopyCat     "Copying the NallePuh")
 
 (if (IN InstOpts 1)             ; NallePuh
   (
     (copyfiles
-      (prompt PCopyNallePuh)
+      (prompt PCopyCat)
       (help   HCopyNallePuh)
       (confirm)
       (source FNallePuh)
@@ -182,13 +179,13 @@
 
 (set PCopyCat     "Copying the catalogs")
 
-(if (IN InstOpts 3)             ; Catalogs
+(if (IN InstOpts 2)             ; Catalogs
   (
     (copyfiles
       (prompt PCopyCat)
       (help   @copyfiles-help)
       (confirm)
-      (source FCat)
+      (source "locale")
       (dest   CatDestDir)
       (all)
       (infos)
