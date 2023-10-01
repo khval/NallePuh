@@ -11,6 +11,12 @@ About AmigaOS4.1 version
 	 of the OS4.1 internal emulation of the custom chips where removed. 
 	This left NallePuh in a horrible state.
 
+Please repport bugs and problems here:
+
+	https://github.com/khval/NallePuh/issues
+
+	Please do not report bugs in forums and comment sections.
+
 What works with NallePuh on AmigaOS4.1
 
 	HippoPlayer.
