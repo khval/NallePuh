@@ -5,10 +5,18 @@ Terminology for newbies
 	DSI - Data storage Interrupt (software bugs)
 
 		Most commone couses.
-
-		* Reads outside of allocated memory
-	  	* Assuming this are load that’s not (data files, fonts, libraries)
+  
+		* Failed to allocate memory
+  			(make sure to have chip ram, see SetPatch docs.)
+     
+	  	* Assuming items are load that’s not (data files, fonts, libraries)
+    			(Check Snoopy logs)
+       
+       		* Reads outside of allocated memory
+	 		(Try press ignore DSI, and cross your fingers.)
+    
 	 	* Accessing part of OS that’s not allowed.
+   			(Sorry nothing can be done, use EUAE)
 
 		(If possible repport problem to game or tool developer, if they are around.)
 
@@ -17,13 +25,21 @@ Terminology for newbies
 		Most commone couses.
  
  		* Missing JMP tables or trying to access code, that is not there.
-   		* Broken function pointers.
+   
+   		* Broken function pointers, not set or overwritten with bad value.
 
      		(If possible repport problem to game or tool developer, if they are around.)
      
-	Black Screen - Uses copper to setup screen, can't be displayed in RTG modes.
+	Black or gray Screen
 
-		Probably won’t be fixed unless someone adds RTG support.
+		Most commone couses.
+
+		* Uses copper to setup screen, can't be displayed in RTG modes.
+  
+  		* Stuck in forbid state, program is not able to get out of busy loop.
+    			(Nalle Puh, needs multitasking)
+
+		Probably won’t be fixed unless someone has the source code.
  
 ## Games
 
