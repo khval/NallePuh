@@ -45,26 +45,31 @@ Terminology for newbies
 
 The games that are tested are HD installable games, and workbench games.
 
-    SpaceQuest 1 – Not working, refuse to start (too old)
+	BloodNet AGA - crashes after a window is displayed. 
+		they have some kind antipiracy code in there, that might cause problems.
+		code is encrypted.
 
-    SpaceQuest 4 – Not working, refuse to start (too old)
+	Breathless - Game refuse to start, don't know why.
+		(I believe the source code was released if someone feels the urge to fix it)
 
-    SimCity 2000 – it does start it has sound, make sure to read install script,
-	or install under EUAE first, problems no font and game crashes.
+	Deluxe Galaga AGA – shows trainer, it asks for mouse press.
+		Mouse press is working from Nalle Puh 1.2, games continue and does something… 
+		(not really working)
+    
+	SpaceQuest 1 – Not working, refuse to start (too old)
 
-    Deluxe Galaga AGA – shows trainer, it asks for mouse press.
-    Mouse press is working from Nalle Puh 1.2, games continue and does something… 
-    (not really working)
+	SpaceQuest 4 – Not working, refuse to start (too old)
 
-    Simon the Scorcerer - starts DSI error, and ends up at a back screen.
+	SimCity 2000 – it does start it has sound, make sure to read install script,
+		or install under EUAE first, problems: no font and game crashes.
 
-    The Shadow of time - starts and ends up on a black screen.
+	Simon the Scorcerer - starts DSI error, and ends up at a back screen.
 
-    BloodNet AGA - crashes after a window is displayed. 
-    they have some kind antipiracy code in there, that might cause problems.
-    code is encrypted.
+	The Shadow of time - starts and ends up on a black screen.
 
-    T-zerO-Demo - black screen.
+	The Settlers - Intro crashes, and the games crashes, 
+
+	T-zerO-Demo - black screen.
 
 ## Music players
 
