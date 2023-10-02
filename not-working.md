@@ -10,7 +10,7 @@ Terminology for newbies
   			(make sure to have chip ram, see SetPatch docs.)
      
 	  	* Assuming items are load that’s not (data files, fonts, libraries)
-    			(Check Snoopy logs)
+			(Check Snoopy logs)
        
        		* Reads outside of allocated memory
 	 		(Try press ignore DSI, and cross your fingers.)
