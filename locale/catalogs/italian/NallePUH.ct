@@ -1,4 +1,4 @@
-## version $VER: NallePUH.catalog 0.5 (17.11.2022)
+## version $VER: NallePUH.catalog 1.2 (30.09.2023)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Translated by Samir Hawamdeh (http://www.betatesting.it/backforthefuture)
@@ -10,6 +10,14 @@
 ; Italian translation of NallePUH
 ;
 ; Traduzione italiana di NallePUH
+;
+win_title
+NallePUH
+; Nalle Puh
+;
+win_about_title
+Informazioni su NallePUH
+; About Nalle Puh
 ;
 GAD_ACTIVATE
 _Attiva
@@ -44,7 +52,7 @@ _Informazioni
 ; A_bout
 ;
 PAGES_CHIP_ID
-Patatine fritte
+Chip
 ; Chips
 ;
 LIST_Chips_Paula
@@ -59,6 +67,22 @@ LIST_Frequency
 Frequenza
 ; Frequency
 ;
+GAD_JOY1_BUTTON1
+Pulsante 1
+; Button1
+;
+GAD_JOY1_BUTTON2
+Pulsante 2
+; Button2
+;
+GAD_JOY2_BUTTON1
+Pulsante 1
+; Button1
+;
+GAD_JOY2_BUTTON2
+Pulsante 2
+; Button2
+;
 str_copyright_by
 (c) 2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>
@@ -72,20 +96,12 @@ Aggiornato per AmigaOS 4.1 FE da Kjetil Hvalstrand (2022)
 ; Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)
 ;
 str_ciaa_ciab
-CIAA/CIAB supporto aggiunto
-; str_ciaa_ciab
+Aggiunto supporto CIAA/CIAB (2023)
+; CIAA/CIAB support added (2023)
 ;
 str_contributers
 Contributi a cura di Damien Stewart e Samir Hawamdeh
 ; Contributers: Damien Stewart, Samir Hawamdeh
-;
-win_title
-Winnie the Pooh
-; Nalle Puh
-;
-win_about_title
-Informazioni su NallePUH
-; About Nalle Puh
 ;
 req_ok
 _Ok
@@ -93,4 +109,4 @@ _Ok
 ;
 ID_END
 ;
-;
+; ;
