@@ -49,7 +49,8 @@ The games that are tested are HD installable games, and workbench games.
 
     SpaceQuest 4 – Not working, refuse to start (too old)
 
-    SimCity 2000 – Tested refuse to start.
+    SimCity 2000 – it does start it has sound, make sure to read install script,
+	or install under EUAE first, problems no font and game crashes.
 
     Deluxe Galaga AGA – shows trainer, it asks for mouse press.
     Mouse press is working from Nalle Puh 1.2, games continue and does something… 
