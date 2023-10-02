@@ -7,15 +7,15 @@ Terminology for newbies
 		Most commone couses.
   
 		* Failed to allocate memory
-  			(make sure to have chip ram, see SetPatch docs.)
+			(make sure to have chip ram, see SetPatch docs.)
      
-	  	* Assuming items are load that’s not (data files, fonts, libraries)
+		* Assuming items are load that’s not (data files, fonts, libraries)
 			(Check Snoopy logs)
        
-       		* Reads outside of allocated memory
-	 		(Try press ignore DSI, and cross your fingers.)
+		* Reads outside of allocated memory
+			(Try press ignore DSI, and cross your fingers.)
     
-	 	* Accessing part of OS that’s not allowed.
+		* Accessing part of OS that’s not allowed.
    			(Sorry nothing can be done, use EUAE)
 
 		(If possible repport problem to game or tool developer, if they are around.)
