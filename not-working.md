@@ -10,6 +10,9 @@ Terminology for newbies
 			AmigaOS3.1 will try open screens without modeid into hires mode.
 			AmigaOS4.1 will try open screens without modeid into true color mode.
    			as result AmigaOS4.1 crashes, many old programs do not set mode id.
+			download NewMode from Aminet, 
+   			(AmigaOS 4.1 Screens prefs can only promote screens that has
+      			successfully been opened once. So you can't use it!)
 
 		* Failed to allocate memory
 			(make sure to have chip ram, see SetPatch docs.)
