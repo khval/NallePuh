@@ -5,7 +5,12 @@ Terminology for newbies
 	DSI - Data storage Interrupt (software bugs)
 
 		Most commone couses.
-  
+
+		* NewMode is not running!!
+			AmigaOS3.1 will try open screens without modeid into hires mode.
+			AmigaOS4.1 will try open screens without modeid into true color mode.
+   			as result AmigaOS4.1 crashes, many old programs do not set mode id.
+
 		* Failed to allocate memory
 			(make sure to have chip ram, see SetPatch docs.)
      
