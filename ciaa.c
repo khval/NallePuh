@@ -71,7 +71,7 @@ static bool cia_get_usec( int *out_usec )
 			timersub(&cia_te,&cia_te_start,&cia_te_diff);
 			cia_te_start = cia_te;
 
-			usec = (cia_te_diff.tv_sec * 1000) + cia_te_diff.tv_usec ;
+			usec = (cia_te_diff.tv_sec * 1000000) + cia_te_diff.tv_usec ;
 			*out_usec = usec > 0 ? usec : 1;		// only posetive values, no overflow values allowed.
 		}
 
