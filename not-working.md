@@ -60,9 +60,10 @@ The games that are tested are HD installable games, and workbench games.
 	Breathless - Game refuse to start, don't know why.
 		(I believe the source code was released if someone feels the urge to fix it)
 
-	Deluxe Galaga AGA – shows trainer, it asks for mouse press.
-		Mouse press is working from Nalle Puh 1.2, games continue and does something… 
-		(not really working)
+	Deluxe Galaga AGA – shows trainer, it asks for fire button on joystick to be pressed.
+		if press joystick with Nalle Puh 1.2, games continue and does something… 
+		you can't see anything on the screen, but after while there is some sound,
+		then it crashes. (so not really working)
     
 	SpaceQuest 1 – Not working, refuse to start (too old)
 
