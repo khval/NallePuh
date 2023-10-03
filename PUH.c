@@ -72,7 +72,11 @@ extern struct ciabIFace *Iciab;
 extern struct chip chip_ciaa ;
 extern struct chip chip_ciab ;
 
-ULONG potgor;
+ULONG potgor =			// pull up on bit 14,12,10, 8
+		1L<<14 |
+		1L << 12 |
+		1L <<10 |
+		1L << 8 ;
 
 /******************************************************************************
 ** The chip registers we trigger on *******************************************
@@ -704,8 +708,7 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 		{
 			case 0x00BFE001:	
 
-				DebugPrintF("**** WHAT: %08x, REG: %04x ****\n", SEG, (ULONG) pFaultAddress & 0xFFE );
-
+//				DebugPrintF("**** WHAT: %08x, REG: %04x ****\n", SEG, (ULONG) pFaultAddress & 0xFFE );
 				HIT_Flags |= HIT_CIAA;
 				return CIAA(pContext, pSysBase, pd);
 				break;

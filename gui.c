@@ -634,30 +634,34 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 	 IO_BUTTONS_DOWN(input_flags & RL_GADGETMASK);
 }
 
+#define ACTIVE_HI_SET(REG,BIT) REG  |= BIT
+#define ACTIVE_HI_CLEAR(REG,BIT) REG &= ~BIT 
+#define ACTIVE_LOW_SET(REG,BIT) REG &= ~BIT
+#define ACTIVE_LOW_CLEAR(REG,BIT) REG |= BIT 
+
 void IO_BUTTONS_DOWN(ULONG ID)
 {
 	switch( ID )
 	{
 		case GAD_JOY1_BUTTON1:
 			gettimeofday(&button_press_time[0], NULL); 
-			ciaa_pra |= PA6; 
-
+			ACTIVE_LOW_SET(ciaa_pra,PA6); 
 			break;
 
 		case GAD_JOY1_BUTTON2:
 			gettimeofday(&button_press_time[1], NULL); 
-			potgor |= B10; 
+			ACTIVE_LOW_SET(potgor,B10); 
 
 			break;
 
 		case GAD_JOY2_BUTTON1:
 			gettimeofday(&button_press_time[2], NULL); 
-			ciaa_pra |= PA7; 
+			ACTIVE_LOW_SET(ciaa_pra,PA7); 
 			break;
 
 		case GAD_JOY2_BUTTON2:
 			gettimeofday(&button_press_time[3], NULL); 
-			potgor |= B14; 
+			ACTIVE_LOW_SET(potgor,B14); 
 			break;
 	}
 }
@@ -677,29 +681,33 @@ bool is_button_time( struct timeval *current_time, int n, int min_usec )
 
 void IO_BUTTONS_UP()
 {
+	// swap bits thats have pull up!.
+	ULONG inv_potgor = potgor ^ 0x5500;
+	ULONG inv_ciaa_pra = potgor ^ 0xC0;
+
 	int timeout = 500000;
 
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL); 
 
-	if ( (ciaa_pra & PA6) && (is_button_time( &current_time, 0, timeout )) )
+	if ( (inv_ciaa_pra & PA6) && (is_button_time( &current_time, 0, timeout )) )
 	{
-		ciaa_pra &= ~PA6; 
+		ACTIVE_LOW_CLEAR(ciaa_pra,PA6);
 	}
 
-	if ( (potgor & B10 ) && is_button_time( &current_time, 1, timeout) )
+	if ( (inv_potgor & B10 ) && is_button_time( &current_time, 1, timeout) )
 	{
-		potgor &= ~B10; 
+		ACTIVE_LOW_CLEAR(potgor,B10);
 	}
 
-	if ( (ciaa_pra & PA7) && is_button_time( &current_time, 2, timeout) )
+	if ( (inv_ciaa_pra & PA7) && is_button_time( &current_time, 2, timeout) )
 	{
-		ciaa_pra &= ~PA7; 
+		ACTIVE_LOW_CLEAR(ciaa_pra,PA7); 
 	}
 
-	if ( (potgor & B14) && is_button_time( &current_time, 3, timeout) )
+	if ( (inv_potgor & B14) && is_button_time( &current_time, 3, timeout) )
 	{
-		potgor &= ~B14;
+		ACTIVE_LOW_CLEAR(potgor,B14);
 	}
 }
 

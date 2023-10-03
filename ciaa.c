@@ -55,7 +55,7 @@ struct timeval cia_te_start ;
 extern struct Process *MainTask;
 extern uint32 SchedulerState;
 
-ULONG ciaa_pra = 0;
+ULONG ciaa_pra = 0xC0;	// bit 7,6 has pull up's
 
 static bool cia_get_usec( int *out_usec )
 {
@@ -148,7 +148,7 @@ static UWORD CIAARead( UWORD reg, BOOL *handled, struct PUHData *pd, struct Exec
 {
 	UWORD	result;
 
-	DebugPrintF("CIAA REG: %08lx\n", reg);
+//	DebugPrintF("CIAA REG: %08lx\n", reg);
 
 	switch( reg )
 	{
@@ -230,10 +230,8 @@ static UWORD CIAARead( UWORD reg, BOOL *handled, struct PUHData *pd, struct Exec
 
 static void CIAAWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase )
 {
-//	UWORD* address = (UWORD*) ( (ULONG) pd->m_CustomDirect + reg );
 
-
-	DebugPrintF("Set REG: %03x value: %02x\n", reg, value);
+//	DebugPrintF("Set REG: %03x value: %02x\n", reg, value);
 
 	switch( reg )
 	{
