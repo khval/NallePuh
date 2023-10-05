@@ -50,9 +50,17 @@ Not tested please report back. (2023)
 	SoundProbe
 		(locks up when I press play. this might need CIAA/B Timers)
 
+Changes in X October 2023 Version 1.X
+
+	* Interrupt should point to $DFF000 not CIAA/CIAB on A0
+		https://wiki.amigaos.net/wiki/Exec_Interrupts
+		(INT4 and INT6)
+
 Changes in 3 October 2023 Version 1.3
 
 	* Fire buttons should be active low
+	* Joystick/mouse has wrong names.
+	(Sorry broke ciaa.resource, use old one form 1.2)
 
 Changes in 1 October 2023 Version 1.2
 
