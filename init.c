@@ -209,8 +209,8 @@ BOOL OpenLibs( void )
 	ciaa_signal = AllocSignal(-1);
 	ciab_signal = AllocSignal(-1);
 
-	init_chip( &chip_ciaa, ciaa_signal );
-	init_chip( &chip_ciab, ciab_signal );
+	init_chip( &chip_ciaa, ciaa_signal, 2 );
+	init_chip( &chip_ciab, ciab_signal, 6 );
 
 	open_timer();
 

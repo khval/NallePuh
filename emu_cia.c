@@ -78,7 +78,7 @@ static void init_chip_timer( struct cia_timer *timer )
 	timer -> ticks_latch = 0;
 }
 
-void init_chip( struct chip *chip, ULONG sig )
+void init_chip( struct chip *chip, ULONG sig, ULONG irq )
 {
 	int n;
 	init_chip_timer( &chip  -> a );
@@ -93,6 +93,7 @@ void init_chip( struct chip *chip, ULONG sig )
 	chip -> signal = 1L << sig ;
 	chip -> icr = 0;
 	chip -> icr_handle = 0;
+	chip -> irq = irq;
 }
 
 #define RUNMODE 3
