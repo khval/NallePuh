@@ -706,6 +706,16 @@ ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysB
 
 		switch (SEG)
 		{
+/*
+			case 0x00000000:
+				if (((ULONG) pFaultAddress >= 0x64) && ((ULONG) pFaultAddress <= 0x7C))
+				{
+					int INT = ((ULONG) pFaultAddress - 0x64) >> 2;
+					DebugPrintF("NallePuh warn: SET or GET interrupt: %d\n", INT);
+					// 4,6,8,9,10 or 11 should be of interest.
+				}
+				break;
+*/
 			case 0x00BFE001:	
 
 //				DebugPrintF("**** WHAT: %08x, REG: %04x ****\n", SEG, (ULONG) pFaultAddress & 0xFFE );
