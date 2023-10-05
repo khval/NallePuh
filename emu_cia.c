@@ -174,22 +174,29 @@ void do_cia_timer_b(struct chip *chip)
 	timer -> ticks = tmp;
 }
 
-void call_int( ULONG addr, int mask, struct Interrupt *is )
+void call_int( int mask, struct Interrupt *is )
 {
 	if ( is == NULL ) return;							// NO INTERRUPT !!!..
 	if ( is->is_Code == NULL ) return;					// has no code;
 
 //	printf("*** Calling interrupt %s at %08x\n", is -> is_Node.ln_Name ? is -> is_Node.ln_Name : "NoName" , is->is_Code );
 
-	ULONG result = EmulateTags( is->is_Code,
+	if (IsNative(is->is_Code))
+	{
+		Cause( is );
+	}
+	else
+	{
+		ULONG result = EmulateTags( is->is_Code,
 			ET_SaveParamRegs, TRUE,
 			ET_SuperState,	TRUE,
-			ET_RegisterA0, 0x00BFE001,
+			ET_RegisterA0, 0x00DFF000,
 			ET_RegisterD1, mask,
 			ET_RegisterA1, is->is_Data,
 			ET_RegisterA5, is->is_Code,
 			ET_RegisterA6, SysBase,
 			TAG_DONE );
+	}
 }
 
 void event_cia( ULONG mask)
@@ -213,7 +220,7 @@ void event_cia( ULONG mask)
 				{
 					if ( (1<<b) & chip_ciaa.icr_handle )
 					{
-						call_int( 0x00BFE001, chip_ciaa.icr_handle, chip_ciaa.interrupts[b] );
+						call_int( chip_ciaa.icr_handle, chip_ciaa.interrupts[b] );
 					}
 				}
 				chip_ciaa.icr_handle = 0;
@@ -230,7 +237,7 @@ void event_cia( ULONG mask)
 				{
 					if ( (1<<b) & chip_ciab.icr_handle )
 					{
-						call_int( 0x00BFD000, chip_ciab.icr_handle, chip_ciab.interrupts[b] );
+						call_int( chip_ciab.icr_handle, chip_ciab.interrupts[b] );
 					}
 				}
 				chip_ciab.icr_handle = 0;
