@@ -50,6 +50,10 @@ Not tested please report back. (2023)
 	SoundProbe
 		(locks up when I press play. this might need CIAA/B Timers)
 
+Changes in 3 October 2023 Version 1.3
+
+	* Fire buttons should be active low
+
 Changes in 1 October 2023 Version 1.2
 
 	* Added Joy 1 and 2 fire button 1 and 2 support
