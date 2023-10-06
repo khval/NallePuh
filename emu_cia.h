@@ -21,7 +21,7 @@ struct chip
 	ULONG interrupt_mask;
 	struct Interrupt *interrupts[2];
 	ULONG signal;
-	int icr_handle;			// do not clear on read, clear on interupt.
+	char icr_handle[16];			// do not clear on read, clear on interupt.
 	ULONG irq;
 };
 

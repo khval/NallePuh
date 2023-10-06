@@ -80,7 +80,7 @@ static void init_chip_timer( struct cia_timer *timer )
 
 void init_chip( struct chip *chip, ULONG sig, ULONG irq )
 {
-	int n;
+	unsigned int n;
 	init_chip_timer( &chip  -> a );
 	init_chip_timer( &chip  -> b );
 	chip -> interrupt_mask = 0;
@@ -92,7 +92,8 @@ void init_chip( struct chip *chip, ULONG sig, ULONG irq )
 
 	chip -> signal = 1L << sig ;
 	chip -> icr = 0;
-	chip -> icr_handle = 0;
+
+	for (n = 0; n<sizeof(chip -> icr_handle);n++) chip -> icr_handle[n] = 0;
 	chip -> irq = irq;
 }
 
@@ -141,7 +142,7 @@ void do_cia_timer_a(struct chip *chip )
 				break;
 		}
 
-		chip -> icr_handle |= chip -> icr;
+		chip -> icr_handle[chip -> icr] = 1;
 		Signal(MainTask, chip -> signal );
 	}
 
@@ -168,12 +169,14 @@ void do_cia_timer_b(struct chip *chip)
 			tmp = timer -> ticks_latch + (tmp % timer -> ticks_latch);		// this is the same as (tmp = max - overflow)
 		}
 		chip -> icr |= (1<<overflow_bit_b);
-		chip -> icr_handle |= chip -> icr;
+		chip -> icr_handle[(1<<overflow_bit_b)] = 1;
 		Signal(MainTask, chip -> signal );
 	}
 
 	timer -> ticks = tmp;
 }
+
+extern ULONG CallInt(UWORD irq, UWORD mask, struct ExceptionContext *pContext, struct ExecBase *SysBase);
 
 void call_int( int mask, struct Interrupt *is )
 {
@@ -200,48 +203,37 @@ void call_int( int mask, struct Interrupt *is )
 	}
 }
 
-void event_cia( ULONG mask)
+void event_chip( struct chip *chip )
 {
 	int b;
+	CallInt(chip -> irq, 0, NULL, SysBase);
 
-		if (mask & (chip_ciaa.signal | chip_ciab.signal))
+	for (b=0;b<3;b++)
+	{
+		if ( chip_ciaa.icr_handle[b] )
 		{
-			GetSystemInfo(SchedulerState_tags);
+			call_int( chip_ciaa.icr, chip_ciaa.interrupts[b] );
+			chip -> icr_handle[b] = 0;
 		}
+	}
+}
 
-		// recover from forbid state.. do timeing here.
+void event_cia( ULONG mask)
+{
+	if (mask & (chip_ciaa.signal | chip_ciab.signal))
+	{
+		GetSystemInfo(SchedulerState_tags);
+	}
 
-		if ( mask & chip_ciaa.signal )
-		{
-			if (chip_ciaa.icr_handle)
-			{
-//				printf("chip: ciaa icr %02x\n",chip_ciaa.icr_handle);
+	// recover from forbid state.. do timeing here.
 
-				for (b=0;b<3;b++)
-				{
-					if ( (1<<b) & chip_ciaa.icr_handle )
-					{
-						call_int( chip_ciaa.icr_handle, chip_ciaa.interrupts[b] );
-					}
-				}
-				chip_ciaa.icr_handle = 0;
-			}
-		}
+	if ( mask & chip_ciaa.signal )
+	{
+		event_chip( &chip_ciaa );
+	}
 
-		if ( mask & chip_ciab.signal )
-		{
-			if (chip_ciab.icr_handle)
-			{
-//				printf("chip: ciaa icr %02x\n",chip_ciab.icr_handle);
-
-				for (b=0;b<3;b++)
-				{
-					if ( (1<<b) & chip_ciab.icr_handle )
-					{
-						call_int( chip_ciab.icr_handle, chip_ciab.interrupts[b] );
-					}
-				}
-				chip_ciab.icr_handle = 0;
-			}
-		}
+	if ( mask & chip_ciab.signal )
+	{
+		event_chip( &chip_ciab );
+	}
 }
