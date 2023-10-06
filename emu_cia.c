@@ -1,6 +1,6 @@
 
 /*
-	Copyright (C) 2023: Kjetil Hvalstrand
+	This file is Copyright (C) 2023: Kjetil Hvalstrand
 	MIT License.
 */
 
@@ -127,8 +127,6 @@ void do_cia_timer_a(struct chip *chip )
 			tmp = timer -> ticks_latch + (tmp % timer -> ticks_latch);		// this is the same as (tmp = max - overflow)
 		}
 
-		chip -> icr |= (1<<overflow_bit_a);
-
 		switch (INMODE_B(chip -> a.cr))
 		{
 			case 2: //  Timer B counts Timer A underflow pulses
@@ -142,7 +140,8 @@ void do_cia_timer_a(struct chip *chip )
 				break;
 		}
 
-		chip -> icr_handle[chip -> icr] = 1;
+		chip -> icr |= (1<<overflow_bit_a);
+		chip -> icr_handle[overflow_bit_a] = 1;
 		Signal(MainTask, chip -> signal );
 	}
 
@@ -168,8 +167,9 @@ void do_cia_timer_b(struct chip *chip)
 		{
 			tmp = timer -> ticks_latch + (tmp % timer -> ticks_latch);		// this is the same as (tmp = max - overflow)
 		}
+
 		chip -> icr |= (1<<overflow_bit_b);
-		chip -> icr_handle[(1<<overflow_bit_b)] = 1;
+		chip -> icr_handle[overflow_bit_b] = 1;
 		Signal(MainTask, chip -> signal );
 	}
 
@@ -237,3 +237,4 @@ void event_cia( ULONG mask)
 		event_chip( &chip_ciab );
 	}
 }
+

@@ -1,6 +1,6 @@
 
 /*
-	Copyright (C) 2023: Kjetil Hvalstrand
+	This file is Copyright (C) 2023: Kjetil Hvalstrand
 	MIT License.
 */
 
@@ -15,13 +15,34 @@ struct cia_timer
 
 struct chip
 {
+		// chip registers.
+
 	int icr ;
+
+		// timers.
+
 	struct cia_timer a;
 	struct cia_timer b;
+
+		// not sure help!!!!
+
 	ULONG interrupt_mask;
+
+		// over flow exception set by cia*.resource
+
 	struct Interrupt *interrupts[2];
+
+		// chip needs to wake up, and handle expcetions.
+
 	ULONG signal;
-	char icr_handle[16];			// do not clear on read, clear on interupt.
+
+		// do not clear on read, clear on interrupt, so interrupt is garanied.
+		// does not require read operation to set sate, so should be atomic.
+
+	char icr_handle[16];	
+
+		// Exec pseudo-priority irq, not hw irq.
+
 	ULONG irq;
 };
 
