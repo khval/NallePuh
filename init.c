@@ -114,8 +114,9 @@ int ciab_signal = -1;
 	#define DROPIFACE(x)	if (I ## x) { DropInterface((struct Interface *) I ## x); I ## x = NULL; }
 
 	#define CloseLib( name ) \
-		if (  name ## Base) CloseLibrary( name ## Base);  name ## Base = 0; \
-		if (I ## name) DropInterface((struct Interface*) I ## name ); I ## name = 0;
+		if (I ## name) DropInterface((struct Interface*) I ## name ); I ## name = 0; \
+		if (  name ## Base) CloseLibrary( name ## Base);  name ## Base = 0;
+
 
 #else
 
