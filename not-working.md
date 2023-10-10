@@ -80,27 +80,29 @@ The games that are tested are HD installable games, and workbench games.
 
 	T-zerO-Demo - black screen.
 
-## Music players
+## Music players and editors
 
-    303TrackerV0.12 - Black Screen.
+	303TrackerV0.12 - Black Screen.
 
-    AHX - DSI error crashes.
+	AHX - DSI error crashes.
 
-    Beatblox - Black Screen
+	Beatblox - Black Screen
 
 	Delitracker 2.32 - do not work, freeze the system.
  
-    Deluxe Music 2.0 - unstable, crashes in audio.device with DSI error
+	Deluxe Music 2.0 - unstable, crashes in audio.device with DSI error
 
-    Eagle Player - do not work, freeze the system.
+	Eagle Player - do not work, freeze the system.
     
-    FutureComposer - DSI error crashes.
+	FutureComposer - DSI error crashes.
 
-    OctamedPLayer - DSI error crashes.
+	Music-X - System freeze.
+
+	OctamedPLayer - DSI error crashes.
     
-    THX Sound System 2.3d, crashes badly, no idea why.
+	THX Sound System 2.3d, crashes badly, no idea why.
 
-    SoundFX (loads 14%, and crashes with DSI error)
+	SoundFX (loads 14%, and crashes with DSI error)
 
-    Octamed Soundstudio 1.03c does not work, (interrupt routine is not working)  (use Matrix insted.)
-        (Needs investigation, can be working in the future.)
+	Octamed Soundstudio 1.03c does not work, (interrupt routine is not working)  (use Matrix insted.)
+	(Needs investigation, can be working in the future.)
