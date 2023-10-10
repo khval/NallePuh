@@ -58,6 +58,8 @@
 #include "nallepuh_rev.h"
 #include "emu_cia.h"
 
+extern int req(const char *title,const  char *body,const char *buttons, ULONG image);
+
 STATIC CONST UBYTE USED verstag[] = VERSTAG;
 
 extern struct Custom CustomData;
@@ -262,11 +264,9 @@ void init_STRPTR_list( ULONG *local_array, CONST_STRPTR *str_array )
 
 void init_prefs(int win_nr)
 {
-
 	sprintf(window_title_name,"%s (V%d,%d)",_L(win_title),VERSION,REVISION);
 
 	init_STRPTR_list( local_Chips, Chips );
-
 
 	layout[win_nr] = (Object*) WindowObject,
 			WA_Title,       window_title_name,
@@ -593,7 +593,7 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 			{
 				if ( ! InstallPUH( 0, rc -> audio_mode, rc -> frequency ) )
 				{
-					DebugPrintF( "Can't open AHI & set exception" );		// maybe use a requestor!!!
+					req("Sorry!","Can't open AHI & set exception","OK", 3);
 				}
 				else
 				{
