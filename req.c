@@ -1,4 +1,9 @@
 
+/*
+	Copyright (C) 2023: Kjetil Hvalstrand
+	MIT License.
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -8,22 +13,14 @@
 
 #include <proto/exec.h>
 #include <proto/dos.h>
-#include <proto/Amigainput.h>
-#include <proto/timer.h>
 #include <proto/intuition.h>
 #include <proto/icon.h>
 #include <proto/graphics.h>
 #include <proto/gadtools.h>
 #include <proto/asl.h>
 #include <proto/requester.h>
-#include <proto/commodities.h>
 
 #include <exec/types.h>
-#include <exec/ports.h>
-#include <exec/interfaces.h>
-#include <exec/libraries.h>
-#include <exec/devices.h>
-#include <devices/input.h>
 
 #define ALL_REACTION_CLASSES
 #include <reaction/reaction.h>
@@ -56,3 +53,4 @@ int req(const char *title,const  char *body,const char *buttons, ULONG image)
 
 	return( reply ); // give the button number back to the caller
 }
+
