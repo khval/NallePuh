@@ -294,7 +294,7 @@ void init_STRPTR_list( ULONG *local_array, CONST_STRPTR *str_array )
 
 void init_prefs(int win_nr)
 {
-	sprintf(window_title_name,"%s (V%d,%d)",_L(win_title),VERSION,REVISION);
+	sprintf(window_title_name,"%s (V%d.%d)",_L(win_title),VERSION,REVISION);
 
 	init_STRPTR_list( local_Chips, Chips );
 
