@@ -26,6 +26,7 @@ copy package ram:NallePuh all
 copy readme ram:NallePuh/readme.txt
 copy COPYING ram:NallePuh/LICENCE.txt
 copy nallepuh ram:NallePuh
+copy nallepuh.debug ram:NallePuh
 copy nallepuh.info ram:nallepuh
 
 copy libs:ciaa.resource ram:NallePuh/libs
