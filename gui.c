@@ -83,6 +83,13 @@ enum
 	win_end
 };
 
+#if GUI_DEBUG
+#undef GUI_DEBUG
+#define GUI_DEBUG(a,b) printf("%s:%d\n",a,b);
+#else
+#define GUI_DEBUG(a,b)
+#endif
+
 struct Window *	win[win_end];
 Object *			layout[win_end];
 Object *			obj[ID_END];
@@ -204,45 +211,68 @@ void handel_iconify()
 
 void update_gui( int win_nr, struct rc *rc )
 {
+	GUI_DEBUG(__FUNCTION__,__LINE__);
 
 	switch (win_nr)
 	{
 		case win_prefs:
 			{
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 				if (rc)
 				{
 					char tmp[100];
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
 
 					sprintf(tmp,"%08lx", rc -> audio_mode );
 					RefreshSetGadgetAttrs( obj[ GAD_MODE_ID ], win[ win_nr ], NULL,
 						STRINGA_TextVal, (ULONG) tmp, 
 						TAG_DONE );
 
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 					RefreshSetGadgetAttrs( obj[ GAD_MODE_INFO ], win[ win_nr ], NULL,
 						STRINGA_TextVal, (ULONG) rc -> AHI_name, 
 						TAG_DONE );
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 				}
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
 
 				RefreshSetGadgetAttrs( obj[ GAD_SELECT_MODE ], win[ win_nr ], NULL,
 					GA_Disabled,  options.activated ? TRUE : FALSE, 
 					TAG_DONE );
 	
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win[ win_nr ], NULL,
 					GA_Disabled, options.activated ? TRUE : FALSE, 
 					TAG_DONE );
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 
 				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win[ win_nr ], NULL,
 					GA_Disabled, options.activated ? FALSE : TRUE, 
 					TAG_DONE );
 
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 				RefreshSetGadgetAttrs( obj[ GAD_TEST ], win[ win_nr ], NULL,
 					GA_Disabled, options.activated ? FALSE : TRUE, 
 					TAG_DONE );
 
+	GUI_DEBUG(__FUNCTION__,__LINE__);
 
 				RefreshSetGadgetAttrs( obj[ LIST_Frequency ], win[ win_nr ], NULL,
 					CHOOSER_Selected , cia_frequency_select,
 					TAG_DONE);
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
 
 			}
 			break;
@@ -591,6 +621,9 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 		case GAD_ACTIVATE:
 
 			{
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 				if ( ! InstallPUH( 0, rc -> audio_mode, rc -> frequency ) )
 				{
 					req("Sorry!","Can't open AHI & set exception","OK", 3);
@@ -599,23 +632,41 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 				{
 					options.installed = TRUE;
 
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 					if (  ActivatePUH( rc -> pd ) )
 					{
 						options.activated = TRUE;
-						update_gui( win_prefs, NULL );
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 					}
 
 					update_gui( win_prefs, NULL );
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 				}
 			}
 			break;
 
 		case GAD_DEACTIVATE:
 			{
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 				UninstallPUH( rc -> pd );
 
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 				options.activated = FALSE;
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 				update_gui( win_prefs, NULL );
+
+	GUI_DEBUG(__FUNCTION__,__LINE__);
+
 			}
 			break;
 				

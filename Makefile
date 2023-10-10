@@ -1,60 +1,27 @@
 
-CC			= ppc-amigaos-gcc
-LD			= ppc-amigaos-ld
-STRIP		= ppc-amigaos-strip
-CATCOMP		= catcomp
+OPT=USE_DEBUG=0
+OPT+=GUI_DEBUG=0
 
-USE_DEBUG=0
-
-CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
-			-Wno-cast-function-type \
-			-Wno-incompatible-pointer-types \
-			-Wno-missing-braces \
-			-Wno-unused-parameter \
-			-gstabs \
-			-D__USE_INLINE__ -D__USE_BASETYPE__ -g -D__amigaos4__ \
-			-DUSE_DEBUG=$(USE_DEBUG)
+OPT_DEBUG=USE_DEBUG=0
+OPT_DEBUG+=GUI_DEBUG=1
 
 
-LDFLAGS	= 
+quick:
+		make -f Makefile.NallePuh all $(OPT) TARGET=NallePuh
+		strip -R .comment NallePuh
 
-VERSION = 1
+all: normal debug
 
-TARGET	= NallePUH
-OBJECTS	= Nalle.o PUH.o debug.o iconify.o gui.o req.o file.o ciaa.o ciab.o emu_cia.o warn.o init.o timer.o
+normal:
+		make -f Makefile.NallePuh clean 
+		make -f Makefile.NallePuh all $(OPT) TARGET=NallePuh
+		strip -R .comment NallePuh
 
-all:	make_locale $(TARGET) 
-
-
-gui.o:	gui.c    gui_cia.c   gui_paula.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
-
-%.o:	%.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
-
-make_locale: locale/NallePUH.c locale/NallePUH.h
-
-locale/NallePUH.ct: locale/NallePUH.cd
-	@$(CATCOMP) locale/NallePUH.cd CTFILE locale/NallePUH.ct
-
-locale/NallePUH.h: locale/NallePUH.cd locale/NallePUH.ct
-	@$(CATCOMP) locale/NallePUH.cd CFILE locale/NallePUH.h NOSTRINGS NOARRAY NOBLOCK NOCODE
-
-locale/NallePUH.c: locale/NallePUH.cd locale/NallePUH.ct
-	@$(CATCOMP) locale/NallePUH.cd CFILE locale/NallePUH.c NOBLOCK NOCODE
+debug:	
+		make -f Makefile.NallePuh clean 
+		make -f Makefile.NallePuh all $(OPT_DEBUG) TARGET=NallePuh.debug
 
 clean:
-	$(RM) $(TARGET) $(OBJECTS)
-
-$(TARGET): 	$(OBJECTS)
-	$(CC) $(LDFLAGS) -o $@.debug $^
-	$(STRIP) -R .comment $@.debug -o $@
-
-.PHONY: revision
-revision:
-	bumprev $(VERSION) $(TARGET)
-
-Nalle.o:	Nalle.c PUH.h locale/NallePUH.h
-
-PUH.o:		PUH.c PUH.h
+		make -f Makefile.NallePuh clean
+		rm NallePuh NallePuh.debug
 
