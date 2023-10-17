@@ -15,6 +15,9 @@
 #include <exec/resident.h>
 #include <exec/emulation.h>
 
+#include <hardware/custom.h>
+#include <hardware/intbits.h>
+
 #include "emu_cia.h"
 
 extern struct Process *MainTask;
@@ -38,6 +41,7 @@ extern struct chip chip_ciab ;
 
 extern struct TagItem SchedulerState_tags[];
 
+extern struct Custom CustomData;
 
 void update_hz()
 {
@@ -206,13 +210,20 @@ void call_int( int mask, struct Interrupt *is )
 void event_chip( struct chip *chip )
 {
 	int b;
-	CallInt(chip -> irq, 0, NULL, SysBase);
+
+	// ports , External INT6
+	// bit is (IRQ-1)
+
+	if ( CustomData.intenar & (1L<<(chip -> irq-1)) ) 	// if bit is enabled !!!
+	{
+		CallInt(chip -> irq, 0, NULL, SysBase);
+	}
 
 	for (b=0;b<3;b++)
 	{
-		if ( chip_ciaa.icr_handle[b] )
+		if ( chip -> icr_handle[b] )
 		{
-			call_int( chip_ciaa.icr, chip_ciaa.interrupts[b] );
+			call_int( chip -> icr, chip -> interrupts[b] );
 			chip -> icr_handle[b] = 0;
 		}
 	}
