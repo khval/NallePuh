@@ -53,6 +53,7 @@ Changes in X October 2023 Version 1.X
 	* Interrupt should point to $DFF000 not CIAA/CIAB on A0
 		https://wiki.amigaos.net/wiki/Exec_Interrupts
 		(INT4 and INT6)
+	* Fixed bug, called wrong interrupt for ciab
 
 Changes in 3 October 2023 Version 1.3
 
