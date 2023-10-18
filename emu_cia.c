@@ -216,7 +216,8 @@ void event_chip( struct chip *chip )
 
 	if ( CustomData.intenar & (1L<<(chip -> irq-1)) ) 	// if bit is enabled !!!
 	{
-		CallInt(chip -> irq, 0, NULL, SysBase);
+		// interrupt bit (not irq number)
+		CallInt(chip -> irq - 1, 0, NULL, SysBase);
 	}
 
 	for (b=0;b<3;b++)
