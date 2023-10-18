@@ -101,6 +101,9 @@ struct Process *MainTask = NULL;
 extern void open_timer( void );
 extern void close_timer( void );
 
+extern void open_refresh_timer( void );
+extern void close_refresh_timer( void );
+
 extern uint32 appID;
 extern struct chip chip_ciaa ;
 extern struct chip chip_ciab ;
@@ -214,6 +217,7 @@ BOOL OpenLibs( void )
 	init_chip( &chip_ciab, ciab_signal, 14 );	// hw irq 6, sw irq 14
 
 	open_timer();
+	open_refresh_timer();
 
 	warn();
 
@@ -246,6 +250,7 @@ static void CloseClasses( void )
 void CloseLibs( void )
 {
 	close_timer();
+	close_refresh_timer();
 
 	if (ciaa_signal > -1) FreeSignal(ciaa_signal);
 	if (ciab_signal > -1) FreeSignal(ciab_signal);

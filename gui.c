@@ -72,6 +72,8 @@ extern void update_timer_ciab();
 extern struct chip chip_ciaa ;
 extern struct chip chip_ciab ;
 
+extern void reactivate_refresh_timer();
+
 extern struct TagItem SchedulerState_tags[];
 
 // workaround for reaction sucks!!
@@ -149,7 +151,9 @@ extern struct MsgPort *iconifyPort ;
 extern void enable_Iconify();
 extern void disable_Iconify();
 
-extern ULONG  timer_mask;
+extern ULONG timer_mask;
+extern ULONG refresh_signal;
+
 extern void handel_timer( void ); 
 
 extern void event_cia( ULONG mask );
@@ -783,7 +787,7 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 
 	while( ! rc.quit )
 	{
-		mask = Wait( window_signals | SIGBREAKF_CTRL_C | chip_ciaa.signal | chip_ciab.signal | timer_mask );
+		mask = Wait( window_signals | SIGBREAKF_CTRL_C | chip_ciaa.signal | chip_ciab.signal | timer_mask | refresh_signal );
 		
 		if (mask & timer_mask) handel_timer();
 
@@ -796,6 +800,24 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 			break;
 		}
 
+		if ( mask & refresh_signal )
+		{
+			if (HIT_Last_Flags != HIT_Flags)
+			{
+				char buffer[1000];
+				snprintf(buffer,sizeof(buffer),"%s",window_title_name);
+				if (HIT_Flags & HIT_CUSTOM) 	snprintf(buffer,sizeof(buffer),"%s %s", buffer, " [CUSTOM]");
+				if (HIT_Flags & HIT_CIAA) 	snprintf(buffer,sizeof(buffer),"%s %s", buffer, " [CIA A]");
+				if (HIT_Flags & HIT_CIAB) 	snprintf(buffer,sizeof(buffer),"%s %s", buffer, " [CIA B]");
+				SetWindowTitles(window, buffer, buffer);
+			}
+			HIT_Last_Flags = HIT_Flags;
+			HIT_Flags = 0;
+
+			reactivate_refresh_timer();
+		}
+
+
 		if ( mask & window_signals )
 		{
 			ULONG input_flags = 0;
@@ -807,21 +829,6 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 					case WMHI_CLOSEWINDOW:
 						rc.quit = TRUE;
 						rc.rc	= TRUE;
-						break;
-
-					case WMHI_INTUITICK:
-
-						if (HIT_Last_Flags != HIT_Flags)
-						{
-							char buffer[1000];
-							snprintf(buffer,sizeof(buffer),"%s",window_title_name);
-							if (HIT_Flags & HIT_CUSTOM) 	snprintf(buffer,sizeof(buffer),"%s %s", buffer, " [CUSTOM]");
-							if (HIT_Flags & HIT_CIAA) 	snprintf(buffer,sizeof(buffer),"%s %s", buffer, " [CIA A]");
-							if (HIT_Flags & HIT_CIAB) 	snprintf(buffer,sizeof(buffer),"%s %s", buffer, " [CIA B]");
-							SetWindowTitles(window, buffer, buffer);
-						}
-						HIT_Last_Flags = HIT_Flags;
-						HIT_Flags = 0;
 						break;
 
 					case WMHI_ICONIFY:

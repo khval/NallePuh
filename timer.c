@@ -10,9 +10,16 @@
 #include "PUH.h"
 #include "emu_cia.h"
 
+extern struct TagItem SchedulerState_tags[];
+
 struct MsgPort *timer_port = NULL;
 struct TimeRequest *timer_io = NULL;
-ULONG  timer_mask = 0;
+
+struct MsgPort *refresh_timer_port = NULL;
+struct TimeRequest *refresh_timer_io = NULL;
+
+ULONG timer_mask = 0;
+ULONG refresh_signal = 0;
 
 extern struct options options;
 
@@ -22,51 +29,85 @@ extern struct chip chip_ciab ;
 extern void update_timer_ciaa();
 extern void update_timer_ciab();
 
-extern struct TagItem SchedulerState_tags[];
+ULONG  _open_timer( struct MsgPort **timer_port, struct TimeRequest **timer_io, ULONG Seconds, ULONG Microseconds );
+void _close_timer( struct MsgPort **timer_port, struct TimeRequest **timer_io );
 
 void open_timer( void )
 {
-	timer_port = (struct MsgPort*) AllocSysObjectTags(ASOT_PORT, TAG_DONE);
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+	timer_mask = _open_timer(  &timer_port, &timer_io, 0 , 16667 );
 
-	if (timer_port)
+	printf("timer_mask: %08x\n",timer_mask);
+}
+
+void close_timer( void )
+{
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+	_close_timer( &timer_port, &timer_io );
+}
+
+void open_refresh_timer( void )
+{
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+	refresh_signal = _open_timer(  &refresh_timer_port, &refresh_timer_io, 2 , 0 );
+
+	printf("refresh_signal_mask: %08x\n",refresh_signal);
+}
+
+void close_refresh_timer( void )
+{
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+	_close_timer( &refresh_timer_port, &refresh_timer_io );
+}
+
+ULONG  _open_timer( struct MsgPort **timer_port, struct TimeRequest **timer_io, ULONG Seconds, ULONG Microseconds )
+{
+	ULONG signal_mask = 0;	
+
+	*timer_port = (struct MsgPort*) AllocSysObjectTags(ASOT_PORT, TAG_DONE);
+
+	if (*timer_port)
 	{
-		timer_io = (struct TimeRequest *) AllocSysObjectTags(ASOT_IOREQUEST, 
-						ASOIOR_ReplyPort , timer_port, 
+		*timer_io = (struct TimeRequest *) AllocSysObjectTags(ASOT_IOREQUEST, 
+						ASOIOR_ReplyPort , *timer_port, 
 						ASOIOR_Size, sizeof(struct TimeRequest), 
 						TAG_END);
 
-		if (timer_io)
+		if (*timer_io)
 		{
-			if (!OpenDevice( (char *) TIMERNAME, UNIT_MICROHZ, (struct IORequest *)timer_io, 0))
+			if (!OpenDevice( (char *) TIMERNAME, UNIT_MICROHZ, (struct IORequest *) *timer_io, 0))
 			{
-				timer_mask = 1 << timer_port->mp_SigBit;
-				timer_io->Request.io_Command = TR_ADDREQUEST;
-				timer_io->Time.Seconds = 0;
-				timer_io->Time.Microseconds = 16667 ;
-				SendIO((struct IORequest *)timer_io);
+				signal_mask = 1L << (*timer_port)->mp_SigBit;
+				(*timer_io)->Request.io_Command = TR_ADDREQUEST;
+				(*timer_io)->Time.Seconds = 0;
+				(*timer_io)->Time.Microseconds = 16667 ;
+				SendIO((struct IORequest *) *timer_io);
 			}
 		}
 	}
+
+	return signal_mask;
 }
 
-void close_timer()
+void _close_timer( struct MsgPort **timer_port, struct TimeRequest **timer_io)
 {
 
 	// Stop timer
-	if (timer_io)
+	if (*timer_io)
 	{
 
-		if (!CheckIO((struct IORequest *)timer_io)) AbortIO((struct IORequest *)timer_io);
-		WaitIO((struct IORequest *)timer_io);
-		CloseDevice((struct IORequest *)timer_io);
+		if (!CheckIO((struct IORequest *)*timer_io)) AbortIO((struct IORequest *)*timer_io);
+		WaitIO((struct IORequest *)*timer_io);
+		CloseDevice((struct IORequest *)*timer_io);
 
 
-		FreeSysObject(ASOT_IOREQUEST,timer_io);
-		timer_io = NULL;
+		FreeSysObject(ASOT_IOREQUEST,*timer_io);
+		*timer_io = NULL;
 	}
 
-	if (timer_port)	FreeSysObject(ASOT_PORT,timer_port);
-	timer_port = NULL;
+	if (*timer_port)	FreeSysObject(ASOT_PORT,*timer_port);
+	*timer_port = NULL;
 
 }
 
@@ -91,5 +132,14 @@ void handel_timer( void )
 	}
 
 	IO_BUTTONS_UP( );
+}
+
+void reactivate_refresh_timer()
+{
+	// Restart timer
+	refresh_timer_io->Request.io_Command = TR_ADDREQUEST;
+	refresh_timer_io->Time.Seconds = 2;
+	refresh_timer_io->Time.Microseconds = 0;
+	SendIO((struct IORequest *)refresh_timer_io);
 }
 
