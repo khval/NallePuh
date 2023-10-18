@@ -156,6 +156,8 @@ extern void warn();
 
 BOOL OpenLibs( void )
 {
+	IDebug = (struct DebugIFace *) GetInterface((struct Library *) SysBase, "debug", 1L, NULL);
+
 	// optonal
 
 	LibBlitterBase = (struct Library *) OpenLibrary( "libblitter.library", 1 );
@@ -278,9 +280,10 @@ void CloseLibs( void )
 
 	CloseClasses();
 
+	DROPIFACE(Debug); 
+
 	CloseLib(ciaa);
 	CloseLib(ciab);
-
 	CloseLib(Application);
 	CloseLib(Intuition);
 	CloseLib(Utility);

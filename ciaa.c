@@ -467,6 +467,15 @@ ULONG CIAA(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct 
 						CIAAWrite((eff_addr & 0xFFE)+2,value&0xffff,&bHandled2,pd,SysBase);
 					break;
 
+					case 215: /* stbx */
+						eff_addr = (a_reg==0?0:pContext->gpr[a_reg]) + pContext->gpr[b_reg];
+						value = pContext->gpr[d_reg] & 0xff;
+
+						DEBUG( "stbx r%ld, r%ld, r%ld (ea: %lx	data: %lx)\n", d_reg, a_reg, b_reg, eff_addr, value );
+
+						CIAAWrite((eff_addr & 0xFFF),value,&bHandled1,pd,SysBase);
+						break;
+
 					case 343: /* lhax */
 						eff_addr = (a_reg==0?pContext->gpr[a_reg]:0) + pContext->gpr[b_reg];
 
@@ -479,7 +488,13 @@ ULONG CIAA(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct 
 					break;
 
 					default:
-						DEBUG("*** Unhandled op_code 31 (subcode %d)\n", sub_code);
+						{
+							char opcodeName[LEN_DISASSEMBLE_OPCODE_STRING];
+							char operands[LEN_DISASSEMBLE_OPERANDS_STRING];
+							DisassembleNative(pContext->ip, opcodeName, operands);
+							DebugPrintF("*** Unhandled op_code 31 (subcode %d) :::: %s %s \n", sub_code,opcodeName,operands);
+						}
+						break;
 				}
 			break;
 
