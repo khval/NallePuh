@@ -66,9 +66,6 @@ extern struct Custom CustomData;
 extern int ciaa_signal;
 extern int ciab_signal;
 
-extern void update_timer_ciaa();
-extern void update_timer_ciab();
-
 extern struct chip chip_ciaa ;
 extern struct chip chip_ciab ;
 

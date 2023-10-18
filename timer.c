@@ -36,23 +36,18 @@ void open_timer( void )
 {
 	printf("%s:%d\n",__FUNCTION__,__LINE__);
 	timer_mask = _open_timer(  &timer_port, &timer_io, 0 , 16667 );
-
-	printf("timer_mask: %08x\n",timer_mask);
 }
 
 void close_timer( void )
 {
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
+//	printf("%s:%d\n",__FUNCTION__,__LINE__);
 	_close_timer( &timer_port, &timer_io );
 }
 
 void open_refresh_timer( void )
 {
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
+//	printf("%s:%d\n",__FUNCTION__,__LINE__);
 	refresh_signal = _open_timer(  &refresh_timer_port, &refresh_timer_io, 2 , 0 );
-
-	printf("refresh_signal_mask: %08x\n",refresh_signal);
 }
 
 void close_refresh_timer( void )
@@ -123,7 +118,7 @@ void handel_timer( void )
 
 	if (options.activated)
 	{
-//		printf("%02x, %02x, %02x, %02x\n", chip_ciaa.a.cr, chip_ciaa.b.cr, chip_ciab.a.cr,  chip_ciab.b.cr);
+		printf("%02x, %02x, %02x, %02x\n", chip_ciaa.a.cr, chip_ciaa.b.cr, chip_ciab.a.cr,  chip_ciab.b.cr);
 
 		GetSystemInfo(SchedulerState_tags);
 
