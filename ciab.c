@@ -115,20 +115,6 @@ void update_timer_ciab()
 		state_update = true;
 	}
 
-#if USE_DEBUG==1
-
-	if (state_update)
-	{
-		DebugPrintF("CIAB -- chip_ciab.icr: %02x chip_ciab.a.cr %02x chip_ciab.b.cr %02x TIMER_A: %d / %d, TIMER_B: %d / %d, HORIZONTAL_SYNC_COUNTER: %d\n", chip_ciab.icr,  chip_ciab.a.cr, chip_ciab.b.cr,
-			TIMER_A,
-			TIMER_A_LATCH,
-			TIMER_B,
-			TIMER_B_LATCH, 
-			HORIZONTAL_SYNC_COUNTER );
-	}
-
-#endif
-
 }
 
 static UWORD CIABRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase )
