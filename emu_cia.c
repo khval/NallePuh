@@ -10,6 +10,7 @@
 #include <time.h>
 
 #include <proto/exec.h>
+#include <proto/dos.h>
 #include <exec/execbase.h>
 #include <exec/memory.h>
 #include <exec/resident.h>
@@ -217,6 +218,8 @@ void event_chip( struct chip *chip )
 
 	if ( CustomData.intenar & (1L<<(chip -> irq-1)) ) 	// if bit is enabled !!!
 	{
+		Printf("%s:%ld - IRQ: %ld\n",__FUNCTION__,__LINE__, chip -> irq);
+
 		// interrupt bit (not irq number)
 		CallInt(chip -> irq - 1, 0, NULL, SysBase);
 	}
@@ -225,8 +228,14 @@ void event_chip( struct chip *chip )
 	{
 		if ( chip -> icr_handle[b] )
 		{
-			call_int( chip -> icr, chip -> interrupts[b] );
 			chip -> icr_handle[b] = 0;
+
+			if (chip -> interrupts[b])
+				Printf("%s:%ld - %s cause interrupts %ld\n", __FUNCTION__,__LINE__,chip->name,b);
+			else
+				Printf("%s:%ld - %s interrupts %d is NULL\n", __FUNCTION__,__LINE__,chip->name,b);
+
+			call_int( chip -> icr, chip -> interrupts[b] );
 		}
 	}
 }
@@ -242,11 +251,13 @@ void event_cia( ULONG mask)
 
 	if ( mask & chip_ciaa.signal )
 	{
+		printf("overflow CIAA\n");
 		event_chip( &chip_ciaa );
 	}
 
 	if ( mask & chip_ciab.signal )
 	{
+		printf("overflow CIAB\n");
 		event_chip( &chip_ciab );
 	}
 }
