@@ -118,8 +118,6 @@ void handel_timer( void )
 
 	if (options.activated)
 	{
-		printf("%02x, %02x, %02x, %02x\n", chip_ciaa.a.cr, chip_ciaa.b.cr, chip_ciab.a.cr,  chip_ciab.b.cr);
-
 		GetSystemInfo(SchedulerState_tags);
 
 		if ( (chip_ciaa.a.cr  |  chip_ciaa.b.cr)  & 1)  update_timer_ciaa();
