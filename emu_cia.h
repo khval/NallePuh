@@ -44,9 +44,11 @@ struct chip
 		// Exec pseudo-priority irq, not hw irq.
 
 	ULONG irq;
+
+	const char *name;
 };
 
-extern void init_chip( struct chip *chip, ULONG sig, ULONG irq );
+extern void init_chip( const char *name, struct chip *chip, ULONG sig, ULONG irq );
 extern bool us2ticks( double unit, uint32 *us, uint32 *ticks );
 extern void do_cia_timer_a(struct chip *chip);
 extern void do_cia_timer_b(struct chip *chip);

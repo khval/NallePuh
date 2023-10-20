@@ -38,6 +38,8 @@
 #include "locale/NallePUH.h"
 #include "gui.h"
 
+#include "emu_cia.h"
+
 struct Library * AHIBase = NULL;
 struct IntuitionBase* IntuitionBase = NULL;
 struct Library *LocaleBase = NULL;
@@ -215,8 +217,8 @@ BOOL OpenLibs( void )
 	ciaa_signal = AllocSignal(-1);
 	ciab_signal = AllocSignal(-1);
 
-	init_chip( &chip_ciaa, ciaa_signal, 4 ); 	// hw irq 2, sw irq 4 
-	init_chip( &chip_ciab, ciab_signal, 14 );	// hw irq 6, sw irq 14
+	init_chip( "CIAA", &chip_ciaa, ciaa_signal, 4 ); 	// hw irq 2, sw irq 4 
+	init_chip( "CIAB", &chip_ciab, ciab_signal, 14 );	// hw irq 6, sw irq 14
 
 	open_timer();
 	open_refresh_timer();
