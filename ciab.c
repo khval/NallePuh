@@ -407,7 +407,7 @@ ULONG CIAB(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct 
 				eff_addr = (a_reg==0?0:pContext->gpr[a_reg]) + offset;
 				value = pContext->gpr[d_reg] & 0xFF;
 
-				DebugPrintF( "stb r%ld,%ld(r%ld) (ea: %lx	data: %lx)\n", d_reg, offset, a_reg, eff_addr, value );
+				DEBUG( "stb r%ld,%ld(r%ld) (ea: %lx	data: %lx)\n", d_reg, offset, a_reg, eff_addr, value );
 
 				CIABWrite((eff_addr & 0xFFF),value,&bHandled1,pd,SysBase);
 			break;
