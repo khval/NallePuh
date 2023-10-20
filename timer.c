@@ -129,6 +129,30 @@ void handel_timer( void )
 	IO_BUTTONS_UP( );
 }
 
+#define TIMER_A chip -> a.ticks
+#define TIMER_A_LATCH chip -> a.ticks_latch
+#define TIMER_A_ticks chip -> a.new_ticks
+
+#define TIMER_B chip -> b.ticks
+#define TIMER_B_LATCH chip -> b.ticks_latch
+#define TIMER_B_ticks chip -> b.new_ticks
+
+
+void cia_status( const char *name, struct chip *chip)
+{
+		Printf("%s -- chip_ciab.icr: %02lx chip_ciab.a.cr %02lx chip_ciab.b.cr %02lx TIMER_A: %ld / %ld, TIMER_B: %ld / %ld\n", 
+
+				name,
+
+				chip_ciab.icr, chip_ciab.a.cr, chip_ciab.b.cr,
+
+				TIMER_A,
+				TIMER_A_LATCH,
+
+				TIMER_B,
+				TIMER_B_LATCH);
+}
+
 void reactivate_refresh_timer()
 {
 	// Restart timer
@@ -136,5 +160,14 @@ void reactivate_refresh_timer()
 	refresh_timer_io->Time.Seconds = 2;
 	refresh_timer_io->Time.Microseconds = 0;
 	SendIO((struct IORequest *)refresh_timer_io);
+
+
+	if (options.activated)
+	{
+		printf("%02x, %02x, %02x, %02x\n", chip_ciaa.a.cr, chip_ciaa.b.cr, chip_ciab.a.cr,  chip_ciab.b.cr);
+		if ( (chip_ciaa.a.cr  |  chip_ciaa.b.cr)  & 1) cia_status( "CIAA", &chip_ciaa );
+		if ( (chip_ciab.a.cr  |  chip_ciab.b.cr)  & 1) cia_status( "CIAB", &chip_ciab );
+
+	}
 }
 
