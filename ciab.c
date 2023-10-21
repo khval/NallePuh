@@ -55,6 +55,9 @@ struct timeval cia_te_start ;
 extern struct Process *MainTask;
 extern uint32 SchedulerState;
 
+extern UWORD cd_ReadWord( void* address );
+extern void cd_WriteWord( void* address, UWORD value );
+
 static void cia_get_usec( int *out_usec )
 {
 	struct timeval cia_te ;
@@ -78,7 +81,6 @@ static void cia_get_usec( int *out_usec )
 void update_timer_ciab()
 {
 	int us = 0;
-	bool state_update = false;
 
 	// calulate delta time... from last read..
 
@@ -94,7 +96,6 @@ void update_timer_ciab()
 		if ( (TIMER_A) && us2ticks( CIA_TIMER_UNIT, &TIMER_A_us , &TIMER_A_ticks ) )  	// count down mode, single shot... :-P
 		{
 			do_cia_timer_a( &chip_ciab);
-			state_update = true;
 		}
 	}
 
@@ -104,7 +105,6 @@ void update_timer_ciab()
 		if ( (TIMER_B) && us2ticks( CIA_TIMER_UNIT, &TIMER_B_us, &TIMER_B_ticks ) )	        // count down mode, single shot... :-P
 		{
 			do_cia_timer_b( &chip_ciab);
-			state_update = true;
 		}
 	}
 
@@ -112,9 +112,7 @@ void update_timer_ciab()
 	if ( us2ticks( HORIZONTAL_SYNC_HZ, &TIMER_H_us, &TIMER_H_ticks ) )	        // count down mode, single shot... :-P
 	{
 		HORIZONTAL_SYNC_COUNTER = (HORIZONTAL_SYNC_COUNTER + TIMER_H_ticks) & 0xFFFFFF;
-		state_update = true;
 	}
-
 }
 
 static UWORD CIABRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase )
@@ -188,7 +186,7 @@ static UWORD CIABRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct Exec
 		default:
 			// Just carry out the intercepted read operation
 
-			result = cd_ReadWord( 0x00BFD000 | reg );
+			result = cd_ReadWord( (void *) (0x00BFD000 | reg) );
 			break;
 	}
 
@@ -390,7 +388,7 @@ ULONG CIAB(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct 
 
 				pContext->gpr[d_reg] = value;
 
-				DebugPrintF( "lbz r%ld,%ld(r%ld) (ea: %lx	data: %lx)\n", d_reg, offset, a_reg, eff_addr, value );
+				DEBUG( "lbz r%ld,%ld(r%ld) (ea: %lx	data: %lx)\n", d_reg, offset, a_reg, eff_addr, value );
 				break;
 
 			case 36: /* stw */
@@ -445,7 +443,7 @@ ULONG CIAB(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct 
 						CIABWrite((eff_addr & 0xFFF)+2,value&0xffff,&bHandled2,pd,SysBase);
 					break;
 
-					case 215: /* stbx */
+					case 215: // stbx //
 						eff_addr = (a_reg==0?0:pContext->gpr[a_reg]) + pContext->gpr[b_reg];
 						value = pContext->gpr[d_reg] & 0xff;
 
@@ -469,7 +467,7 @@ ULONG CIAB(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct 
 						{
 							char opcodeName[LEN_DISASSEMBLE_OPCODE_STRING];
 							char operands[LEN_DISASSEMBLE_OPERANDS_STRING];
-							DisassembleNative(pContext->ip, opcodeName, operands);
+							DisassembleNative( (char *) pContext->ip, opcodeName, operands);
 							DebugPrintF("*** Unhandled op_code 31 (subcode %d) :::: %s %s \n", sub_code,opcodeName,operands);
 						}
 						break;
