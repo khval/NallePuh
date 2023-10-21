@@ -240,6 +240,18 @@ void event_chip( struct chip *chip )
 	}
 }
 
+void dump_chip_interrupts( struct chip *chip )
+{
+	int b;
+	const char *timers[]={"A","B"};
+
+	for (b=0;b<2;b++)
+	{
+		Printf("%s: Timer %s, %08lx\n", chip->name,timers[b], chip -> interrupts[b]);
+	}	
+}
+
+
 void event_cia( ULONG mask)
 {
 	if (mask & (chip_ciaa.signal | chip_ciab.signal))
