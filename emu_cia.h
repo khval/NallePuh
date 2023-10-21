@@ -39,7 +39,7 @@ struct chip
 		// do not clear on read, clear on interrupt, so interrupt is garanied.
 		// does not require read operation to set sate, so should be atomic.
 
-	char icr_handle[16];	
+	char icr_handle[8];	
 
 		// Exec pseudo-priority irq, not hw irq.
 
