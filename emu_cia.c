@@ -27,7 +27,7 @@ int cia_frequency_select = 0;
 int HORIZONTAL_SYNC_HZ = 0;
 int VSYNC_HZ = 0;
 
-#define scale_factor 100.0f
+#define scale_factor 1.0f
 
 double CIA_TIMER_UNIT = scale_factor;
 

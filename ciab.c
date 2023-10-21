@@ -24,6 +24,9 @@
 #include "PUH.h"
 #include "emu_cia.h"
 
+
+//#define DEBUG DebugPrintF
+
 extern struct TagItem SchedulerState_tags[];
 extern void debug_info( struct ExceptionContext *pContext, struct ExecBase *pSysBase, APTR pFaultAddress );
 
@@ -211,7 +214,7 @@ static void CIABWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd
 
 		case TAHI:
 			TIMER_A_LATCH = (TIMER_A_LATCH & 0x00FF) | (value & 0xFF) << 8;
-			TIMER_A = TIMER_A_LATCH;		// load latch value..
+//			TIMER_A = TIMER_A_LATCH;		// load latch value..
 			SET_CRA(START,SET);
 			*handled = TRUE;
 			break;
@@ -225,7 +228,7 @@ static void CIABWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd
 
 		case TBHI:
 			TIMER_B_LATCH = (TIMER_B_LATCH & 0x00FF) | (value & 0xFF) << 8;
-			TIMER_B = TIMER_B_LATCH;		// load latch value..
+//			TIMER_B = TIMER_B_LATCH;		// load latch value..
 			SET_CRB(START,SET);
 			*handled = TRUE;
 			break;
