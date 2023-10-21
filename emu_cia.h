@@ -52,6 +52,7 @@ extern void init_chip( const char *name, struct chip *chip, ULONG sig, ULONG irq
 extern bool us2ticks( double unit, uint32 *us, uint32 *ticks );
 extern void do_cia_timer_a(struct chip *chip);
 extern void do_cia_timer_b(struct chip *chip);
+extern void dump_chip_interrupts( struct chip *chip );
 
 ULONG CIAA(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd);
 ULONG CIAB(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd);
