@@ -47,8 +47,28 @@ void close_timer( void )
 void open_refresh_timer( void )
 {
 //	printf("%s:%d\n",__FUNCTION__,__LINE__);
-	refresh_signal = _open_timer(  &refresh_timer_port, &refresh_timer_io, 2 , 0 );
+	refresh_signal = _open_timer(  &refresh_timer_port, &refresh_timer_io, 1 , 0 );
 }
+
+void reactivate_refresh_timer()
+{
+	// Restart timer
+	refresh_timer_io->Request.io_Command = TR_ADDREQUEST;
+	refresh_timer_io->Time.Seconds = 1;
+	refresh_timer_io->Time.Microseconds = 0;
+	SendIO((struct IORequest *)refresh_timer_io);
+
+	if (options.activated)
+	{
+		printf("%02x, %02x, %02x, %02x\n", chip_ciaa.a.cr, chip_ciaa.b.cr, chip_ciab.a.cr,  chip_ciab.b.cr);
+		if ( (chip_ciaa.a.cr  |  chip_ciaa.b.cr)  & 1) cia_status( "CIAA", &chip_ciaa );
+		if ( (chip_ciab.a.cr  |  chip_ciab.b.cr)  & 1) cia_status( "CIAB", &chip_ciab );
+
+		dump_chip_interrupts( &chip_ciaa );
+		dump_chip_interrupts( &chip_ciab );
+	}
+}
+
 
 void close_refresh_timer( void )
 {
@@ -136,9 +156,10 @@ void handel_timer( void )
 #define TIMER_B_ticks chip -> b.new_ticks
 
 
+
 void cia_status( const char *name, struct chip *chip)
 {
-		Printf("%s -- chip_ciab.icr: %02lx chip_ciab.a.cr %02lx chip_ciab.b.cr %02lx TIMER_A: %ld / %ld, TIMER_B: %ld / %ld\n", 
+	Printf("%s -- chip_ciab.icr: %02lx chip_ciab.a.cr %02lx chip_ciab.b.cr %02lx TIMER_A: %ld / %ld, TIMER_B: %ld / %ld\n", 
 
 				name,
 
@@ -149,23 +170,8 @@ void cia_status( const char *name, struct chip *chip)
 
 				TIMER_B,
 				TIMER_B_LATCH);
+
+	
 }
 
-void reactivate_refresh_timer()
-{
-	// Restart timer
-	refresh_timer_io->Request.io_Command = TR_ADDREQUEST;
-	refresh_timer_io->Time.Seconds = 2;
-	refresh_timer_io->Time.Microseconds = 0;
-	SendIO((struct IORequest *)refresh_timer_io);
-
-
-	if (options.activated)
-	{
-		printf("%02x, %02x, %02x, %02x\n", chip_ciaa.a.cr, chip_ciaa.b.cr, chip_ciab.a.cr,  chip_ciab.b.cr);
-		if ( (chip_ciaa.a.cr  |  chip_ciaa.b.cr)  & 1) cia_status( "CIAA", &chip_ciaa );
-		if ( (chip_ciab.a.cr  |  chip_ciab.b.cr)  & 1) cia_status( "CIAB", &chip_ciab );
-
-	}
-}
 
