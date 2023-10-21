@@ -119,6 +119,8 @@ void __chkabort( void )
 //extern struct chip chip_ciab ;
 
 
+extern int req(const char *title,const  char *body,const char *buttons, ULONG image);
+
 int main( int argc,char* argv[] )
 {
 	int	rc = 0;
@@ -133,6 +135,11 @@ int main( int argc,char* argv[] )
 	{
 		CloseLibs();
 		return 20;
+	}
+
+	if (AvailMem(MEMF_TOTAL|MEMF_CHIP) == 0)
+	{
+		req("No chipram","you should change setpatch command in startup sequene to:\n\nSetPatch QUIET WAITFORVALIDATE ADDCHIPRAM=2\n","OK", 0);
 	}
 
 	if ( argc == 0)
