@@ -224,7 +224,14 @@ void event_chip( struct chip *chip )
 		CallInt(chip -> irq - 1, 0, NULL, SysBase);
 	}
 
-	for (b=0;b<3;b++)
+	// ICR register of the CHIP. (we only care about about bit 0 and 1)
+
+	// bit 0 -- Timer A overflow
+	// bit 1 -- Timer B overflow
+	// bit 2 -- TOD Alarm
+	// bit 3 -- Serial port full / empty
+
+	for (b=0;b<2;b++)
 	{
 		if ( chip -> icr_handle[b] )
 		{
