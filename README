@@ -48,7 +48,7 @@ Not tested please report back. (2023)
 	SoundProbe
 		(locks up when I press play. this might need CIAA/B Timers)
 
-Changes in X October 2023 Version 1.X
+Changes in 22 October 2023 Version 1.4
 
 	* Window title status now updated, while window is inactive.
 	* CIAA/CIAB Status page added to GUI.
