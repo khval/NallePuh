@@ -104,5 +104,7 @@ The games that are tested are HD installable games, and workbench games.
 
 	SoundFX (loads 14%, and crashes with DSI error)
 
+ 	SuperJam (plays notes, but crashes badly)
+
 	Octamed Soundstudio 1.03c does not work, (interrupt routine is not working)  (use Matrix insted.)
 	(Needs investigation, can be working in the future.)
