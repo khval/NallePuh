@@ -55,6 +55,9 @@ struct timeval cia_te_start ;
 extern struct Process *MainTask;
 extern uint32 SchedulerState;
 
+extern UWORD cd_ReadWord( void* address );
+extern void cd_WriteWord( void* address, UWORD value );
+
 ULONG ciaa_pra = 0xC0;	// bit 7,6 has pull up's
 
 static bool cia_get_usec( int *out_usec )
@@ -91,7 +94,6 @@ static bool cia_get_usec( int *out_usec )
 void update_timer_ciaa()
 {
 	int us = 0;
-	bool state_update = false;
 
 	// calulate delta time... from last read..
 
@@ -112,13 +114,11 @@ void update_timer_ciaa()
 	if ( (TIMER_A) && us2ticks( CIA_TIMER_UNIT, &TIMER_A_us , &TIMER_A_ticks ) )  	// count down mode, single shot... :-P
 	{
 		do_cia_timer_a( &chip_ciaa);
-		state_update = true;
 	}
 
 	if ( (TIMER_B) && us2ticks( CIA_TIMER_UNIT, &TIMER_B_us, &TIMER_B_ticks ) )	        // count down mode, single shot... :-P
 	{
 		do_cia_timer_b( &chip_ciaa);
-		state_update = true;
 	}
 
 	// PAL mode 50HZ 
@@ -126,19 +126,7 @@ void update_timer_ciaa()
 	if ( us2ticks( VSYNC_HZ, &TIMER_V_us, &TIMER_V_ticks ) )	        // count down mode, single shot... :-P
 	{
 		VSYNC_COUNTER = (VSYNC_COUNTER + TIMER_V_ticks) & 0xFFFFFF;
-		state_update = true;
 	}
-/*
-	if (state_update)
-	{
-		DebugPritnF("CIAA -- ICR: %02x CRA %02x CRB %02x TIMER_A: %d / %d, TIMER_B: %d / %d, VSYNC_COUNTER: %d\n", chip_ciaa.icr,  chip_ciaa.a.cr, chip_ciaa.b.cr,
-			TIMER_A,
-			TIMER_A_LATCH,
-			TIMER_B,
-			TIMER_B_LATCH, 
-			VSYNC_COUNTER );
-	}
-*/
 }
 
 extern int ciaa_signal;
@@ -221,7 +209,7 @@ static UWORD CIAARead( UWORD reg, BOOL *handled, struct PUHData *pd, struct Exec
 		default:
 			// Just carry out the intercepted read operation
 
-			result = cd_ReadWord( 0x00BFD001 | reg );
+			result = cd_ReadWord( (void *) (0x00BFD001 | reg) );
 			break;
 	}
 
@@ -315,7 +303,7 @@ static void CIAAWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd
 
 		default:
 
-			cd_WriteWord( 0xBFE001 | reg , value );
+			cd_WriteWord( (void *) (0xBFE001 | reg) , value );
 			*handled = TRUE;
 			break;
 	}
@@ -491,7 +479,7 @@ ULONG CIAA(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct 
 						{
 							char opcodeName[LEN_DISASSEMBLE_OPCODE_STRING];
 							char operands[LEN_DISASSEMBLE_OPERANDS_STRING];
-							DisassembleNative(pContext->ip, opcodeName, operands);
+							DisassembleNative( (void *) pContext->ip, opcodeName, operands);
 							DebugPrintF("*** Unhandled op_code 31 (subcode %d) :::: %s %s \n", sub_code,opcodeName,operands);
 						}
 						break;

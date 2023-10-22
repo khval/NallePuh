@@ -52,6 +52,9 @@ extern void update_timer_ciab();
 ULONG  _open_timer( struct MsgPort **timer_port, struct TimeRequest **timer_io, ULONG Seconds, ULONG Microseconds );
 void _close_timer( struct MsgPort **timer_port, struct TimeRequest **timer_io );
 
+void set_info_cr(ULONG gad, ULONG icr,ULONG acr,ULONG bcr );
+void set_info_timer(ULONG gad, ULONG value, ULONG latch );
+
 void open_timer( void )
 {
 	timer_mask = _open_timer(  &timer_port, &timer_io, 0 , 16667 );
@@ -77,16 +80,23 @@ void reactivate_refresh_timer()
 
 	if (options.activated)
 	{
-		set_info_cr( GAD_CIAA_CR, chip_ciab.icr, chip_ciab.a.cr, chip_ciab.b.cr );
+		set_info_cr( GAD_CIAA_CR, chip_ciaa.icr, chip_ciaa.a.cr, chip_ciaa.b.cr );
 		set_info_cr( GAD_CIAB_CR, chip_ciab.icr, chip_ciab.a.cr, chip_ciab.b.cr );
+
+		set_info_timer( GAD_CIAA_TA, chip_ciaa.a.ticks, chip_ciaa.a.ticks_latch);
+		set_info_timer( GAD_CIAA_TB, chip_ciaa.b.ticks, chip_ciaa.b.ticks_latch );
+
+		set_info_timer( GAD_CIAB_TA, chip_ciab.a.ticks, chip_ciab.a.ticks_latch );
+		set_info_timer( GAD_CIAB_TB, chip_ciab.b.ticks, chip_ciab.b.ticks_latch );
+
 
 //		printf("%02x, %02x, %02x, %02x\n", chip_ciaa.a.cr, chip_ciaa.b.cr, chip_ciab.a.cr,  chip_ciab.b.cr);
 
-		if ( (chip_ciaa.a.cr  |  chip_ciaa.b.cr)  & 1) cia_status( "CIAA", &chip_ciaa );
-		if ( (chip_ciab.a.cr  |  chip_ciab.b.cr)  & 1) cia_status( "CIAB", &chip_ciab );
+//		if ( (chip_ciaa.a.cr  |  chip_ciaa.b.cr)  & 1) cia_status( "CIAA", &chip_ciaa );
+//		if ( (chip_ciab.a.cr  |  chip_ciab.b.cr)  & 1) cia_status( "CIAB", &chip_ciab );
 
-		dump_chip_interrupts( &chip_ciaa );
-		dump_chip_interrupts( &chip_ciab );
+//		dump_chip_interrupts( &chip_ciaa );
+//		dump_chip_interrupts( &chip_ciab );
 	}
 }
 
@@ -193,16 +203,17 @@ void set_info_cr(ULONG gad, ULONG icr,ULONG acr,ULONG bcr )
 	TAG_DONE );
 }
 
-void set_info_value(ULONG gad, ULONG value)
+void set_info_timer(ULONG gad, ULONG value, ULONG latch )
 {
 	char tmp[100];
 
-	sprintf(tmp,"%ld", value );
+	sprintf(tmp,"%ld / %ld", value, latch );
 	RefreshSetGadgetAttrs( obj[ gad ], win[ win_prefs ], NULL,
 	STRINGA_TextVal, (ULONG) tmp, 
 	TAG_DONE );
 }
 
+/*
 void cia_status( const char *name, struct chip *chip)
 {
 
@@ -215,5 +226,5 @@ void cia_status( const char *name, struct chip *chip)
 			TIMER_B_LATCH);
 
 }
-
+*/
 

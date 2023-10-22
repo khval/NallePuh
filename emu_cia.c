@@ -20,6 +20,7 @@
 #include <hardware/intbits.h>
 
 #include "emu_cia.h"
+#include "PUH.h"
 
 extern struct Process *MainTask;
 
@@ -69,8 +70,6 @@ bool us2ticks( double unit, uint32 *us, uint32 *ticks )
 		int newTicks = *us / unit;
 		*us -= (int)  ( (double) newTicks  * unit);
 
-//		DebugPrintF("new ticks: %d\n", newTicks);
-
 		*ticks += newTicks;
 		return true;
 	}
@@ -85,6 +84,8 @@ static void init_chip_timer( struct cia_timer *timer )
 
 void init_chip( const char *name, struct chip *chip, ULONG sig, ULONG irq )
 {
+	DEBUG("%s:%ld\n",__FUNCTION__,__LINE__);
+
 	unsigned int n;
 	init_chip_timer( &chip  -> a );
 	init_chip_timer( &chip  -> b );
@@ -115,6 +116,8 @@ void init_chip( const char *name, struct chip *chip, ULONG sig, ULONG irq )
 
 void do_cia_timer_a(struct chip *chip )
 {
+	DEBUG("%s:%ld\n",__FUNCTION__,__LINE__);
+
 	int tmp;
 	struct cia_timer *timer = &chip -> a;
 
@@ -156,6 +159,8 @@ void do_cia_timer_a(struct chip *chip )
 
 void do_cia_timer_b(struct chip *chip)
 {
+//	Printf("%s:%ld\n",__FUNCTION__,__LINE__);
+
 	int tmp;
 	struct cia_timer *timer = &chip -> b;
 
@@ -197,7 +202,7 @@ void call_int( int mask, struct Interrupt *is )
 	}
 	else
 	{
-		ULONG result = EmulateTags( is->is_Code,
+		EmulateTags( is->is_Code,
 			ET_SaveParamRegs, TRUE,
 			ET_SuperState,	TRUE,
 			ET_RegisterA0, 0x00DFF000,
@@ -218,7 +223,7 @@ void event_chip( struct chip *chip )
 
 	if ( CustomData.intenar & (1L<<(chip -> irq-1)) ) 	// if bit is enabled !!!
 	{
-		Printf("%s:%ld - IRQ: %ld\n",__FUNCTION__,__LINE__, chip -> irq);
+		DEBUG("%s:%ld - IRQ: %ld\n",__FUNCTION__,__LINE__, chip -> irq);
 
 		// interrupt bit (not irq number)
 		CallInt(chip -> irq - 1, 0, NULL, SysBase);
@@ -237,10 +242,12 @@ void event_chip( struct chip *chip )
 		{
 			chip -> icr_handle[b] = 0;
 
+#if USE_DEBUG == 1
 			if (chip -> interrupts[b])
 				Printf("%s:%ld - %s cause interrupts %ld\n", __FUNCTION__,__LINE__,chip->name,b);
 			else
 				Printf("%s:%ld - %s interrupts %d is NULL\n", __FUNCTION__,__LINE__,chip->name,b);
+#endif
 
 			call_int( chip -> icr, chip -> interrupts[b] );
 		}
@@ -270,13 +277,13 @@ void event_cia( ULONG mask)
 
 	if ( mask & chip_ciaa.signal )
 	{
-		printf("overflow CIAA\n");
+		DEBUG("overflow CIAA\n");
 		event_chip( &chip_ciaa );
 	}
 
 	if ( mask & chip_ciab.signal )
 	{
-		printf("overflow CIAB\n");
+		DEBUG("overflow CIAB\n");
 		event_chip( &chip_ciab );
 	}
 }
