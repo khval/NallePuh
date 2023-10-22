@@ -15,8 +15,6 @@ CFLAGS	= -fomit-frame-pointer -O2 -W -Wall \
 
 LDFLAGS	= 
 
-VERSION = 1
-
 OBJECTS	= \
 	$(obj_dir)/Nalle.o \
 	$(obj_dir)/PUH.o \
@@ -34,7 +32,7 @@ OBJECTS	= \
 
 all:	make_locale $(TARGET) 
 
-gui.o:	gui.c    gui_cia.c   gui_paula.c
+gui.o:	gui.c    gui_cia.c   gui_paula.c  gui_status.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
 
 $(obj_dir)/%.o:	%.c
@@ -56,10 +54,6 @@ clean:
 
 $(TARGET): 	$(OBJECTS)
 	gcc $(OBJECTS) -o $(TARGET)
-
-.PHONY: revision
-revision:
-	bumprev $(VERSION) $(TARGET)
 
 Nalle.o:	Nalle.c PUH.h locale/NallePUH.h
 

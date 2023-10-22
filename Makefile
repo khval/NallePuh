@@ -5,6 +5,8 @@ OPT+=GUI_DEBUG=0
 OPT_DEBUG=USE_DEBUG=0
 OPT_DEBUG+=GUI_DEBUG=1
 
+VERSION = 1
+
 all: dirs normal debug
 
 normal:
@@ -29,3 +31,7 @@ objs/debug:
 
 objs/normal:
 		makedir objs/normal
+
+.PHONY: revision
+revision:
+	bumprev $(VERSION) NallePuh
