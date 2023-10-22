@@ -96,6 +96,8 @@ The games that are tested are HD installable games, and workbench games.
     
 	FutureComposer - DSI error crashes.
 
+	MusicBugs - System freeze (cooper screen i think.)
+
 	Music-X - System freeze.
 
 	OctamedPLayer - DSI error crashes.
