@@ -54,18 +54,25 @@
 #define PAGES_CHIP_ID 208
 #define LIST_Chips_Paula 209
 #define LIST_Chips_CIA 210
-#define LIST_Frequency 211
-#define GAD_JOY1_BUTTON1 212
-#define GAD_JOY1_BUTTON2 213
-#define GAD_JOY2_BUTTON1 214
-#define GAD_JOY2_BUTTON2 215
-#define str_copyright_by 300
-#define str_ported_by 301
-#define str_updated_by 302
-#define str_ciaa_ciab 303
-#define str_contributers 304
-#define req_ok 400
-#define ID_END 401
+#define LIST_Chips_Status 211
+#define LIST_Frequency 212
+#define GAD_JOY1_BUTTON1 213
+#define GAD_JOY1_BUTTON2 214
+#define GAD_JOY2_BUTTON1 215
+#define GAD_JOY2_BUTTON2 216
+#define GAD_CIAA_CR 217
+#define GAD_CIAA_TA 218
+#define GAD_CIAA_TB 219
+#define GAD_CIAB_CR 220
+#define GAD_CIAB_TA 221
+#define GAD_CIAB_TB 222
+#define str_copyright_by 500
+#define str_ported_by 501
+#define str_updated_by 502
+#define str_ciaa_ciab 503
+#define str_contributers 504
+#define req_ok 600
+#define ID_END 601
 
 #endif /* CATCOMP_NUMBERS */
 

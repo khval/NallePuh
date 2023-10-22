@@ -54,18 +54,25 @@
 #define PAGES_CHIP_ID 208
 #define LIST_Chips_Paula 209
 #define LIST_Chips_CIA 210
-#define LIST_Frequency 211
-#define GAD_JOY1_BUTTON1 212
-#define GAD_JOY1_BUTTON2 213
-#define GAD_JOY2_BUTTON1 214
-#define GAD_JOY2_BUTTON2 215
-#define str_copyright_by 300
-#define str_ported_by 301
-#define str_updated_by 302
-#define str_ciaa_ciab 303
-#define str_contributers 304
-#define req_ok 400
-#define ID_END 401
+#define LIST_Chips_Status 211
+#define LIST_Frequency 212
+#define GAD_JOY1_BUTTON1 213
+#define GAD_JOY1_BUTTON2 214
+#define GAD_JOY2_BUTTON1 215
+#define GAD_JOY2_BUTTON2 216
+#define GAD_CIAA_CR 217
+#define GAD_CIAA_TA 218
+#define GAD_CIAA_TB 219
+#define GAD_CIAB_CR 220
+#define GAD_CIAB_TA 221
+#define GAD_CIAB_TB 222
+#define str_copyright_by 500
+#define str_ported_by 501
+#define str_updated_by 502
+#define str_ciaa_ciab 503
+#define str_contributers 504
+#define req_ok 600
+#define ID_END 601
 
 #endif /* CATCOMP_NUMBERS */
 
@@ -88,11 +95,18 @@
 #define PAGES_CHIP_ID_STR "Chips"
 #define LIST_Chips_Paula_STR "Paula"
 #define LIST_Chips_CIA_STR "CIA"
+#define LIST_Chips_Status_STR "Status"
 #define LIST_Frequency_STR "Frequency"
 #define GAD_JOY1_BUTTON1_STR "Button1"
 #define GAD_JOY1_BUTTON2_STR "Button2"
 #define GAD_JOY2_BUTTON1_STR "Button1"
 #define GAD_JOY2_BUTTON2_STR "Button2"
+#define GAD_CIAA_CR_STR "Controll Register"
+#define GAD_CIAA_TA_STR "Timer A"
+#define GAD_CIAA_TB_STR "Timer B"
+#define GAD_CIAB_CR_STR "Controll Register"
+#define GAD_CIAB_TA_STR "Timer A"
+#define GAD_CIAB_TB_STR "Timer B"
 #define str_copyright_by_STR "(c)2001 Martin Blom <martin@blom.org>"
 #define str_ported_by_STR "Ported to AmigaOS4.0 by: Stephan Rupprecht (2004)"
 #define str_updated_by_STR "Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)"
@@ -130,11 +144,18 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {PAGES_CHIP_ID,(CONST_STRPTR)PAGES_CHIP_ID_STR},
     {LIST_Chips_Paula,(CONST_STRPTR)LIST_Chips_Paula_STR},
     {LIST_Chips_CIA,(CONST_STRPTR)LIST_Chips_CIA_STR},
+    {LIST_Chips_Status,(CONST_STRPTR)LIST_Chips_Status_STR},
     {LIST_Frequency,(CONST_STRPTR)LIST_Frequency_STR},
     {GAD_JOY1_BUTTON1,(CONST_STRPTR)GAD_JOY1_BUTTON1_STR},
     {GAD_JOY1_BUTTON2,(CONST_STRPTR)GAD_JOY1_BUTTON2_STR},
     {GAD_JOY2_BUTTON1,(CONST_STRPTR)GAD_JOY2_BUTTON1_STR},
     {GAD_JOY2_BUTTON2,(CONST_STRPTR)GAD_JOY2_BUTTON2_STR},
+    {GAD_CIAA_CR,(CONST_STRPTR)GAD_CIAA_CR_STR},
+    {GAD_CIAA_TA,(CONST_STRPTR)GAD_CIAA_TA_STR},
+    {GAD_CIAA_TB,(CONST_STRPTR)GAD_CIAA_TB_STR},
+    {GAD_CIAB_CR,(CONST_STRPTR)GAD_CIAB_CR_STR},
+    {GAD_CIAB_TA,(CONST_STRPTR)GAD_CIAB_TA_STR},
+    {GAD_CIAB_TB,(CONST_STRPTR)GAD_CIAB_TB_STR},
     {str_copyright_by,(CONST_STRPTR)str_copyright_by_STR},
     {str_ported_by,(CONST_STRPTR)str_ported_by_STR},
     {str_updated_by,(CONST_STRPTR)str_updated_by_STR},

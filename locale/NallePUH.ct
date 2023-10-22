@@ -54,6 +54,10 @@ LIST_Chips_CIA
 
 ; CIA
 ;
+LIST_Chips_Status
+
+; Status
+;
 LIST_Frequency
 
 ; Frequency
@@ -73,6 +77,30 @@ GAD_JOY2_BUTTON1
 GAD_JOY2_BUTTON2
 
 ; Button2
+;
+GAD_CIAA_CR
+
+; Controll Register
+;
+GAD_CIAA_TA
+
+; Timer A
+;
+GAD_CIAA_TB
+
+; Timer B
+;
+GAD_CIAB_CR
+
+; Controll Register
+;
+GAD_CIAB_TA
+
+; Timer A
+;
+GAD_CIAB_TB
+
+; Timer B
 ;
 str_copyright_by
 

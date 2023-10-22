@@ -159,6 +159,7 @@ ULONG local_Chips[]=
 {
 	LIST_Chips_Paula,
 	LIST_Chips_CIA,
+	LIST_Chips_Status,
 	0
 };
 
@@ -218,6 +219,19 @@ void update_gui( int win_nr, struct rc *rc )
 	{
 		case win_prefs:
 			{
+				ULONG *i;
+				ULONG disable_gadgets[]=
+					{
+						GAD_CIAA_CR,
+						GAD_CIAA_TA,
+						GAD_CIAA_TB,
+						GAD_CIAB_CR,
+						GAD_CIAB_TA,
+						GAD_CIAB_TB,
+						~0
+					};
+
+
 
 	GUI_DEBUG(__FUNCTION__,__LINE__);
 
@@ -232,8 +246,6 @@ void update_gui( int win_nr, struct rc *rc )
 						STRINGA_TextVal, (ULONG) tmp, 
 						TAG_DONE );
 
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 					RefreshSetGadgetAttrs( obj[ GAD_MODE_INFO ], win[ win_nr ], NULL,
 						STRINGA_TextVal, (ULONG) rc -> AHI_name, 
 						TAG_DONE );
@@ -242,36 +254,34 @@ void update_gui( int win_nr, struct rc *rc )
 
 				}
 
-	GUI_DEBUG(__FUNCTION__,__LINE__);
 
 				RefreshSetGadgetAttrs( obj[ GAD_SELECT_MODE ], win[ win_nr ], NULL,
 					GA_Disabled,  options.activated ? TRUE : FALSE, 
 					TAG_DONE );
 	
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win[ win_nr ], NULL,
 					GA_Disabled, options.activated ? TRUE : FALSE, 
 					TAG_DONE );
-
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 
 				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win[ win_nr ], NULL,
 					GA_Disabled, options.activated ? FALSE : TRUE, 
 					TAG_DONE );
 
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 				RefreshSetGadgetAttrs( obj[ GAD_TEST ], win[ win_nr ], NULL,
 					GA_Disabled, options.activated ? FALSE : TRUE, 
 					TAG_DONE );
 
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 				RefreshSetGadgetAttrs( obj[ LIST_Frequency ], win[ win_nr ], NULL,
 					CHOOSER_Selected , cia_frequency_select,
 					TAG_DONE);
+
+
+				for (i = disable_gadgets; *i != (ULONG) (~0); i++)
+				{
+					RefreshSetGadgetAttrs( obj[ *i ], win[ win_nr ], NULL,
+						GA_Disabled, TRUE, 
+						TAG_DONE );
+				}
 
 	GUI_DEBUG(__FUNCTION__,__LINE__);
 
@@ -330,6 +340,8 @@ void init_prefs(int win_nr)
 
 #include "gui_paula.c"
 #include "gui_cia.c"
+#include "gui_status.c"
+
 					PageEnd,
 
 				ClickTabEnd,

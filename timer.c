@@ -5,10 +5,30 @@
 
 #include <proto/exec.h>
 #include <proto/dos.h>
+#include <proto/intuition.h>
 #include <devices/timer.h>
 
 #include "PUH.h"
 #include "emu_cia.h"
+
+#define ALL_REACTION_CLASSES
+#include <reaction/reaction.h>
+#include <reaction/reaction_macros.h>
+
+#define CATCOMP_NUMBERS
+#define CATCOMP_STRINGS
+#define CATCOMP_ARRAY
+
+#include "locale/NallePUH.h"
+
+enum
+{
+	win_prefs,
+	win_end
+};
+
+extern struct Window	*win[win_end];
+extern Object			 *obj[ID_END];
 
 extern struct TagItem SchedulerState_tags[];
 
@@ -34,19 +54,16 @@ void _close_timer( struct MsgPort **timer_port, struct TimeRequest **timer_io );
 
 void open_timer( void )
 {
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
 	timer_mask = _open_timer(  &timer_port, &timer_io, 0 , 16667 );
 }
 
 void close_timer( void )
 {
-//	printf("%s:%d\n",__FUNCTION__,__LINE__);
 	_close_timer( &timer_port, &timer_io );
 }
 
 void open_refresh_timer( void )
 {
-//	printf("%s:%d\n",__FUNCTION__,__LINE__);
 	refresh_signal = _open_timer(  &refresh_timer_port, &refresh_timer_io, 1 , 0 );
 }
 
@@ -60,7 +77,11 @@ void reactivate_refresh_timer()
 
 	if (options.activated)
 	{
-		printf("%02x, %02x, %02x, %02x\n", chip_ciaa.a.cr, chip_ciaa.b.cr, chip_ciab.a.cr,  chip_ciab.b.cr);
+		set_info_cr( GAD_CIAA_CR, chip_ciab.icr, chip_ciab.a.cr, chip_ciab.b.cr );
+		set_info_cr( GAD_CIAB_CR, chip_ciab.icr, chip_ciab.a.cr, chip_ciab.b.cr );
+
+//		printf("%02x, %02x, %02x, %02x\n", chip_ciaa.a.cr, chip_ciaa.b.cr, chip_ciab.a.cr,  chip_ciab.b.cr);
+
 		if ( (chip_ciaa.a.cr  |  chip_ciaa.b.cr)  & 1) cia_status( "CIAA", &chip_ciaa );
 		if ( (chip_ciab.a.cr  |  chip_ciab.b.cr)  & 1) cia_status( "CIAB", &chip_ciab );
 
@@ -69,10 +90,8 @@ void reactivate_refresh_timer()
 	}
 }
 
-
 void close_refresh_timer( void )
 {
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
 	_close_timer( &refresh_timer_port, &refresh_timer_io );
 }
 
@@ -107,15 +126,12 @@ ULONG  _open_timer( struct MsgPort **timer_port, struct TimeRequest **timer_io, 
 
 void _close_timer( struct MsgPort **timer_port, struct TimeRequest **timer_io)
 {
-
 	// Stop timer
 	if (*timer_io)
 	{
-
 		if (!CheckIO((struct IORequest *)*timer_io)) AbortIO((struct IORequest *)*timer_io);
 		WaitIO((struct IORequest *)*timer_io);
 		CloseDevice((struct IORequest *)*timer_io);
-
 
 		FreeSysObject(ASOT_IOREQUEST,*timer_io);
 		*timer_io = NULL;
@@ -123,7 +139,6 @@ void _close_timer( struct MsgPort **timer_port, struct TimeRequest **timer_io)
 
 	if (*timer_port)	FreeSysObject(ASOT_PORT,*timer_port);
 	*timer_port = NULL;
-
 }
 
 extern void IO_BUTTONS_UP( void );
@@ -155,23 +170,50 @@ void handel_timer( void )
 #define TIMER_B_LATCH chip -> b.ticks_latch
 #define TIMER_B_ticks chip -> b.new_ticks
 
+void set_info_cr(ULONG gad, ULONG icr,ULONG acr,ULONG bcr )
+{
+	int c;
+	int b;
+	char tmp[100];
 
+	c = 0;
+	for (b=7; b>-1;b--) tmp[c++] = (icr & (1L << b)) ? '1' : '0';
+	tmp[c++]=' '; 
+
+	for (b=7; b>-1;b--) tmp[c++] = (acr & (1L << b)) ? '1' : '0';
+	tmp[c++]=' '; 
+
+	for (b=7; b>-1;b--) tmp[c++] = (bcr & (1L << b)) ? '1' : '0';
+	tmp[c++]=0; 
+
+//	printf("%s\n",tmp);
+
+	RefreshSetGadgetAttrs( obj[ gad ], win[ win_prefs ], NULL,
+	STRINGA_TextVal, (ULONG) tmp, 
+	TAG_DONE );
+}
+
+void set_info_value(ULONG gad, ULONG value)
+{
+	char tmp[100];
+
+	sprintf(tmp,"%ld", value );
+	RefreshSetGadgetAttrs( obj[ gad ], win[ win_prefs ], NULL,
+	STRINGA_TextVal, (ULONG) tmp, 
+	TAG_DONE );
+}
 
 void cia_status( const char *name, struct chip *chip)
 {
+
 	Printf("%s -- chip_ciab.icr: %02lx chip_ciab.a.cr %02lx chip_ciab.b.cr %02lx TIMER_A: %ld / %ld, TIMER_B: %ld / %ld\n", 
+			name,
+			chip_ciab.icr, chip_ciab.a.cr, chip_ciab.b.cr,
+			TIMER_A,
+			TIMER_A_LATCH,
+			TIMER_B,
+			TIMER_B_LATCH);
 
-				name,
-
-				chip_ciab.icr, chip_ciab.a.cr, chip_ciab.b.cr,
-
-				TIMER_A,
-				TIMER_A_LATCH,
-
-				TIMER_B,
-				TIMER_B_LATCH);
-
-	
 }
 
 

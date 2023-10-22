@@ -33,13 +33,16 @@ A_bout
 PAGES_CHIP_ID (//)
 Chips
 ;
-LIST_Chips_Paula (//)
+LIST_Chips_Paula (//300)
 Paula
 ;
 LIST_Chips_CIA (//)
 CIA
 ;
-LIST_Frequency (//)
+LIST_Chips_Status (//)
+Status
+;
+LIST_Frequency (//400)
 Frequency
 ;
 GAD_JOY1_BUTTON1 (//)
@@ -54,7 +57,25 @@ Button1
 GAD_JOY2_BUTTON2 (//)
 Button2
 ;
-str_copyright_by (300//)
+GAD_CIAA_CR (//)
+Controll Register
+;
+GAD_CIAA_TA (//)
+Timer A
+;
+GAD_CIAA_TB (//)
+Timer B
+;
+GAD_CIAB_CR (//)
+Controll Register
+;
+GAD_CIAB_TA (//)
+Timer A
+;
+GAD_CIAB_TB (//)
+Timer B
+;
+str_copyright_by (500//)
 (c)2001 Martin Blom <martin@blom.org>
 ;
 str_ported_by (//)
@@ -69,7 +90,7 @@ CIAA/CIAB support added (2023)
 str_contributers (//)
 Contributers: Damien Stewart, Samir Hawamdeh
 ;
-req_ok (400//)
+req_ok (600//)
 _Ok
 ;
 ID_END (//)

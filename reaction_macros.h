@@ -26,6 +26,13 @@
 	GA_RelVerify, TRUE,		\
 	ButtonEnd
 
+#define MakeButtonImmediate(n)  obj[n] = (Object*) ButtonObject, \
+	GA_ID, n,				\
+	GA_Text, _L(n),		\
+	GA_RelVerify, TRUE,		\
+	GA_Immediate, TRUE,	\
+	ButtonEnd
+
 #define MakeImageButton(n,nn)  obj[n] = (Object*) ButtonObject, \
 	GA_ID, n,				\
 	BUTTON_AutoButton, nn , \
