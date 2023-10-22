@@ -245,7 +245,7 @@ static void CIAAWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd
 
 		case TAHI:
 			TIMER_A_LATCH = (TIMER_A_LATCH & 0x00FF) | (value & 0xFF) << 8;
-			TIMER_A = TIMER_A_LATCH;		// load latch value..
+			// TIMER_A is loaded at overflow.
 			SET_CRA(START,SET);
 			*handled = TRUE;
 			break;
@@ -259,7 +259,7 @@ static void CIAAWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd
 
 		case TBHI:
 			TIMER_B_LATCH = (TIMER_B_LATCH & 0x00FF) | (value & 0xFF) << 8;
-			TIMER_B = TIMER_B_LATCH;		// load latch value..
+			// TIMER_B is loaded at overflow
 			SET_CRB(START,SET);
 			*handled = TRUE;
 			break;
