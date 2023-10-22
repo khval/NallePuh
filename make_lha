@@ -23,8 +23,8 @@ makedir ram:NallePuh/locale
 makedir ram:NallePuh/locale/catalogs
 
 copy package ram:NallePuh all
-copy readme ram:NallePuh/readme.txt
-copy COPYING ram:NallePuh/LICENCE.txt
+tools/utf8-to-ascii readme > ram:NallePuh/readme.txt
+tools/utf8-to-ascii COPYING > ram:NallePuh/LICENCE.txt
 copy nallepuh ram:NallePuh
 copy nallepuh.debug ram:NallePuh
 copy nallepuh.info ram:nallepuh

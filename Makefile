@@ -7,7 +7,7 @@ OPT_DEBUG+=GUI_DEBUG=1
 
 VERSION = 1
 
-all: dirs normal debug
+all: dirs normal debug tools/utf8-to-ascii
 
 normal:
 		make -f Makefile.NallePuh all $(OPT) TARGET=NallePuh obj_dir=objs/normal
@@ -31,6 +31,9 @@ objs/debug:
 
 objs/normal:
 		makedir objs/normal
+
+tools/utf8-to-ascii: tools/utf8-to-ascii.c
+		gcc tools/utf8-to-ascii.c -o tools/utf8-to-ascii
 
 .PHONY: revision
 revision:
