@@ -126,3 +126,6 @@ The games that are tested are HD installable games, and workbench games.
    		Intuition is probably locked up / maybe a cooper screen.
 		(multitasking is working, you can get into shell over AUX:)
   
+	RNO - Experiment2007 - locksup at "Titanics-Cruncher decrunches while loading..." message.
+
+ 
