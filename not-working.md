@@ -116,4 +116,13 @@ The games that are tested are HD installable games, and workbench games.
 	Boogietown - locksup at "Titanics-Cruncher decrunches while loading..." message.
  		(not possible to get into shell using AUX:)
 
- 	RNO - Fourskin - locksup quicky.
+ 	RNO - Fourskin - locksup quicky. (NOT TESTED WITH NEWMODE)
+
+	RNO - 4tft - locksup qucikly, even when using newmode.
+
+ 	RNO - Boozembly08 - locksup at "Titanics-Cruncher decrunches while loading..." message.
+
+  	DW-RPH-KVG-RNO - loads, but get stuck on gray screen, no music.
+   		Intuition is probably locked up / maybe a cooper screen.
+		(multitasking is working, you can get into shell over AUX:)
+  
