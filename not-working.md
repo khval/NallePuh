@@ -116,4 +116,4 @@ The games that are tested are HD installable games, and workbench games.
 	Boogietown - locksup at "Titanics-Cruncher decrunches while loading..." message.
  		(not possible to get into shell using AUX:)
 
- 
+ 	RNO - Fourskin - locksup quicky.
