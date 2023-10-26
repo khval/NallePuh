@@ -1,0 +1,134 @@
+## version $VER: nallepuh.catalog 1.1 (24.10.2024)
+## codeset 4
+## language spanish
+;
+win_title
+Nalle Puh
+; Nalle Puh
+;
+win_about_title
+Acerca de Nalle Puh
+; About Nalle Puh
+;
+GAD_ACTIVATE
+_Activar
+; _Activate
+;
+GAD_DEACTIVATE
+_Desactivar
+; _Deactivate
+;
+GAD_MESSAGES
+Mensajes
+; Messages
+;
+GAD_MODE_ID
+AudioID:
+; Mode Id
+;
+GAD_MODE_INFO
+Modo:
+; Mode info
+;
+GAD_SELECT_MODE
+_Seleccionar modo AHI
+; _Select audio mode
+;
+GAD_TEST
+_Probar
+; _Test
+;
+GAD_ABOUT
+Ac_erca de...
+; A_bout
+;
+PAGES_CHIP_ID
+Chips
+; Chips
+;
+LIST_Chips_Paula
+Paula
+; Paula
+;
+LIST_Chips_CIA
+CIAs
+; CIA
+;
+LIST_Chips_Status
+Estado
+; Status
+;
+LIST_Frequency
+Frecuencia
+; Frequency
+;
+GAD_JOY1_BUTTON1
+Botón 1
+; Button1
+;
+GAD_JOY1_BUTTON2
+Botón 2
+; Button2
+;
+GAD_JOY2_BUTTON1
+Botón 1
+; Button1
+;
+GAD_JOY2_BUTTON2
+Botón 2
+; Button2
+;
+GAD_CIAA_CR
+Reg. control (CR):
+; Controll Register
+;
+GAD_CIAA_TA
+Timer A:
+; Timer A
+;
+GAD_CIAA_TB
+Timer B:
+; Timer B
+;
+GAD_CIAB_CR
+Reg. control (CR):
+; Controll Register
+;
+GAD_CIAB_TA
+Timer A:
+; Timer A
+;
+GAD_CIAB_TB
+Timer B:
+; Timer B
+;
+str_copyright_by
+(c)2001 Martin Blom <martin@blom.org>\n
+; (c)2001 Martin Blom <martin@blom.org>
+;
+str_ported_by
+\033bStephan Rupprecht\033n:\n\
+ Versión AmigaOS4.0 (2004)
+;\033bVersión AmigaOS4.0\033n\n Stephan Rupprecht (2004)
+; Ported to AmigaOS4.0 by: Stephan Rupprecht (2004)
+;
+str_updated_by
+\033bKjetil Hvalstrand\033n:\n\
+ Actualización AOS4.1FE (2022)
+;\033bActualización AOS4.1FE\033n\n Kjetil Hvalstrand (2022)
+; Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)
+;
+str_ciaa_ciab
+ Añadido soporte CIAA/CIAB (2023)
+; CIAA/CIAB support added (2023)
+;
+str_contributers
+\n\033bContribuyen\033n\n Damien Stewart, Samir Hawamdeh
+; Contributers: Damien Stewart, Samir Hawamdeh
+;
+req_ok
+_Aceptar
+; _Ok
+;
+ID_END
+;
