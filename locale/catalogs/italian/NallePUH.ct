@@ -1,4 +1,4 @@
-## version $VER: NallePUH.catalog 1.2 (30.09.2023)
+## version $VER: NallePUH.catalog 1.4 (23.10.2023)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Translated by Samir Hawamdeh (http://www.betatesting.it/backforthefuture)
@@ -63,6 +63,10 @@ LIST_Chips_CIA
 CIA
 ; CIA
 ;
+LIST_Chips_Status
+Stato
+; Status
+;
 LIST_Frequency
 Frequenza
 ; Frequency
@@ -83,8 +87,32 @@ GAD_JOY2_BUTTON2
 Pulsante 2
 ; Button2
 ;
+GAD_CIAA_CR
+Registro Controllo
+; Controll Register
+;
+GAD_CIAA_TA
+Timer A
+; Timer A
+;
+GAD_CIAA_TB
+Timer B
+; Timer B
+;
+GAD_CIAB_CR
+Registro Controllo
+; Controll Register
+;
+GAD_CIAB_TA
+Timer A
+; Timer A
+;
+GAD_CIAB_TB
+Timer B
+; Timer B
+;
 str_copyright_by
-(c) 2001 Martin Blom <martin@blom.org>
+NallePUH (c) 2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>
 ;
 str_ported_by
@@ -96,7 +124,7 @@ Aggiornato per AmigaOS 4.1 FE da Kjetil Hvalstrand (2022)
 ; Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)
 ;
 str_ciaa_ciab
-Aggiunto supporto CIAA/CIAB (2023)
+Aggiunto supporto per CIAA/CIAB (2023)
 ; CIAA/CIAB support added (2023)
 ;
 str_contributers
@@ -110,3 +138,4 @@ _Ok
 ID_END
 ;
 ; ;
+;
