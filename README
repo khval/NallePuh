@@ -48,6 +48,13 @@ Not tested please report back. (2023)
 	SoundProbe
 		(locks up when I press play. this might need CIAA/B Timers)
 
+Changes in xx October 2023 Version 1.x
+
+	* GUI now uses "Read Only" instead of disabled.
+	* TEST button is now disabled until, NallePuh is activated.
+	* Translation from Samir Hawamdeh
+	* Translation from Javier de las Rivas
+
 Changes in 22 October 2023 Version 1.4
 
 	* Window title status now updated, while window is inactive.
