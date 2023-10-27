@@ -8,3 +8,5 @@ NallePUH
 *.catalog
 
 *.cfg
+
+tools/utf8-to-ascii
