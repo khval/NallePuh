@@ -220,7 +220,7 @@ void update_gui( int win_nr, struct rc *rc )
 		case win_prefs:
 			{
 				ULONG *i;
-				ULONG disable_gadgets[]=
+				ULONG read_only_gadgets[]=
 					{
 						GAD_CIAA_CR,
 						GAD_CIAA_TA,
@@ -231,60 +231,55 @@ void update_gui( int win_nr, struct rc *rc )
 						~0
 					};
 
+				ULONG disabled_while_active_gadgets[]=
+					{
+						GAD_SELECT_MODE,
+						GAD_ACTIVATE,
+						LIST_Frequency,
+						~0
+					};
 
+				ULONG activate_while_active_gadgets[]=
+					{
+						GAD_TEST,
+						GAD_DEACTIVATE,
+						~0
+					};
 
-	GUI_DEBUG(__FUNCTION__,__LINE__);
 
 				if (rc)
 				{
 					char tmp[100];
 
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 					sprintf(tmp,"%08lx", rc -> audio_mode );
 					RefreshSetGadgetAttrs( obj[ GAD_MODE_ID ], win[ win_nr ], NULL,
-						STRINGA_TextVal, (ULONG) tmp, 
-						TAG_DONE );
+						STRINGA_TextVal, (ULONG) tmp, TAG_DONE );
 
 					RefreshSetGadgetAttrs( obj[ GAD_MODE_INFO ], win[ win_nr ], NULL,
-						STRINGA_TextVal, (ULONG) rc -> AHI_name, 
-						TAG_DONE );
-
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
+						STRINGA_TextVal, (ULONG) rc -> AHI_name, TAG_DONE );
 				}
-
-
-				RefreshSetGadgetAttrs( obj[ GAD_SELECT_MODE ], win[ win_nr ], NULL,
-					GA_Disabled,  options.activated ? TRUE : FALSE, 
-					TAG_DONE );
-	
-				RefreshSetGadgetAttrs( obj[ GAD_ACTIVATE ], win[ win_nr ], NULL,
-					GA_Disabled, options.activated ? TRUE : FALSE, 
-					TAG_DONE );
-
-				RefreshSetGadgetAttrs( obj[ GAD_DEACTIVATE ], win[ win_nr ], NULL,
-					GA_Disabled, options.activated ? FALSE : TRUE, 
-					TAG_DONE );
-
-				RefreshSetGadgetAttrs( obj[ GAD_TEST ], win[ win_nr ], NULL,
-					GA_Disabled, options.activated ? FALSE : TRUE, 
-					TAG_DONE );
 
 				RefreshSetGadgetAttrs( obj[ LIST_Frequency ], win[ win_nr ], NULL,
 					CHOOSER_Selected , cia_frequency_select,
 					TAG_DONE);
 
-
-				for (i = disable_gadgets; *i != (ULONG) (~0); i++)
+				for (i = disabled_while_active_gadgets; *i != (ULONG) (~0); i++)
 				{
 					RefreshSetGadgetAttrs( obj[ *i ], win[ win_nr ], NULL,
-						GA_Disabled, TRUE, 
-						TAG_DONE );
+						GA_Disabled,  options.activated ? TRUE : FALSE, TAG_DONE );
 				}
 
-	GUI_DEBUG(__FUNCTION__,__LINE__);
+				for (i = activate_while_active_gadgets; *i != (ULONG) (~0); i++)
+				{
+					RefreshSetGadgetAttrs( obj[ *i ], win[ win_nr ], NULL,
+						GA_Disabled,  options.activated ? FALSE : TRUE, TAG_DONE );
+				}
 
+				for (i = read_only_gadgets; *i != (ULONG) (~0); i++)
+				{
+					RefreshSetGadgetAttrs( obj[ *i ], win[ win_nr ], NULL,
+						GA_ReadOnly, TRUE, TAG_DONE );
+				}
 			}
 			break;
 	}
@@ -634,9 +629,6 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 		case GAD_ACTIVATE:
 
 			{
-
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 				if ( ! InstallPUH( 0, rc -> audio_mode, rc -> frequency ) )
 				{
 					req("Sorry!","Can't open AHI & set exception","OK", 3);
@@ -645,20 +637,12 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 				{
 					options.installed = TRUE;
 
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 					if (  ActivatePUH( rc -> pd ) )
 					{
 						options.activated = TRUE;
-
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 					}
 
 					update_gui( win_prefs, NULL );
-
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 				}
 			}
 			break;
@@ -666,26 +650,19 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 		case GAD_DEACTIVATE:
 			{
 
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 				UninstallPUH( rc -> pd );
-
-	GUI_DEBUG(__FUNCTION__,__LINE__);
 
 				options.activated = FALSE;
 
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 				update_gui( win_prefs, NULL );
-
-	GUI_DEBUG(__FUNCTION__,__LINE__);
-
 			}
 			break;
 				
 		case GAD_TEST:
 			{
-				rc -> messed_with_registers = TRUE;
+				// this buttons should only enabled, when NallePuh is active.
+
+				rc -> messed_with_registers = TRUE;			
 				nallepuh_test();
 			}
 			break;
