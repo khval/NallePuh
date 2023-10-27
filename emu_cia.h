@@ -53,6 +53,7 @@ extern bool us2ticks( double unit, uint32 *us, uint32 *ticks );
 extern void do_cia_timer_a(struct chip *chip);
 extern void do_cia_timer_b(struct chip *chip);
 extern void dump_chip_interrupts( struct chip *chip );
+extern int allocated_timers( struct chip *chip );
 
 ULONG CIAA(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd);
 ULONG CIAB(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd);

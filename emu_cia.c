@@ -76,8 +76,9 @@ bool us2ticks( double unit, uint32 *us, uint32 *ticks )
 	return false;
 }
 
-static void init_chip_timer( struct cia_timer *timer )
+void init_chip_timer( struct cia_timer *timer )
 {
+	timer -> cr = 0;
 	timer -> ticks = 0;
 	timer -> ticks_latch = 0;
 }
@@ -286,5 +287,10 @@ void event_cia( ULONG mask)
 		DEBUG("overflow CIAB\n");
 		event_chip( &chip_ciab );
 	}
+}
+
+int allocated_timers( struct chip *chip )
+{
+	return (chip -> interrupts[0] ? 1: 0) + (chip -> interrupts[1] ? 1: 0);
 }
 

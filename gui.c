@@ -631,7 +631,7 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 			{
 				if ( ! InstallPUH( 0, rc -> audio_mode, rc -> frequency ) )
 				{
-					req("Sorry!","Can't open AHI & set exception","OK", 3);
+					req(_L(win_sorry_title),_L(str_cant_open_ahi),_L(req_ok), 3);
 				}
 				else
 				{
@@ -649,14 +649,55 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 
 		case GAD_DEACTIVATE:
 			{
+				bool deactivate = false;
 
-				UninstallPUH( rc -> pd );
+				if (
+					(allocated_timers( &chip_ciaa ) +
+					allocated_timers( &chip_ciab )) > 0
+				)
+				{
+					ULONG ret;
+					char *buttons = (char *) alloca( strlen(_L(req_ok)) + strlen(_L(req_ignore)) + 2 );
+					sprintf(buttons,"%s|%s",_L(req_ok),_L(req_ignore));
+					ret = req(_L(win_warning_title),"bla bla bla",buttons, 3);
+					printf("ret: %ld\n",ret);
 
-				options.activated = FALSE;
+					if (ret == 0) // ignore
+					{
+						int n;
 
-				update_gui( win_prefs, NULL );
+						// stop timers!!
+
+						init_chip_timer( &chip_ciaa.a );
+						init_chip_timer( &chip_ciaa.b );
+						chip_ciaa.icr = 0;
+
+						init_chip_timer( &chip_ciab.a );
+						init_chip_timer( &chip_ciab.b );
+						chip_ciab.icr = 0;
+
+						Delay(10);	// now its maybe its safe to remove IRQ's, and die!!!
+
+						for (n=0;n<2;n++)
+						{
+							chip_ciaa.interrupts[n] = NULL;
+							chip_ciab.interrupts[n] = NULL;
+						}
+
+						deactivate = true;
+					}
+				}
+				else deactivate = true;
+				
+
+				if (deactivate)
+				{
+					UninstallPUH( rc -> pd );
+					options.activated = FALSE;
+					update_gui( win_prefs, NULL );
+				}
+				break;
 			}
-			break;
 				
 		case GAD_TEST:
 			{
