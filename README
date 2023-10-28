@@ -46,6 +46,8 @@ Changes in xx October 2023 Version 1.x
 	* GUI now uses "Read Only" instead of disabled.
 	* TEST button is now disabled until, NallePuh is activated.
 	* Deactivate button, now checks if it’s safe, and asks.
+	* Close Window, will check if safe to do so.
+	* GUI frames can now be translated. (on request)
 	* Translation from Samir Hawamdeh
 	* Translation from Javier de las Rivas
 
