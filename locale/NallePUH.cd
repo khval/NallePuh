@@ -1,12 +1,18 @@
 ; *** catalog description file of "NallePUH.res"
 ;
-win_title (100//)
+win_title (50//)
 Nalle Puh
 ;
 win_about_title (//)
 About Nalle Puh
 ;
-GAD_ACTIVATE  (200//)
+win_sorry_title (//)
+Sorry!!
+;
+win_warning_title (//)
+Warning!!
+;
+GAD_ACTIVATE  (150//)
 _Activate
 ;
 GAD_DEACTIVATE  (//)
@@ -33,7 +39,7 @@ A_bout
 PAGES_CHIP_ID (//)
 Chips
 ;
-LIST_Chips_Paula (//300)
+LIST_Chips_Paula (//200)
 Paula
 ;
 LIST_Chips_CIA (//)
@@ -42,7 +48,7 @@ CIA
 LIST_Chips_Status (//)
 Status
 ;
-LIST_Frequency (//400)
+LIST_Frequency (//250)
 Frequency
 ;
 GAD_JOY1_BUTTON1 (//)
@@ -75,7 +81,16 @@ Timer A
 GAD_CIAB_TB (//)
 Timer B
 ;
-str_copyright_by (500//)
+frame_audio (300//)
+Audio options
+;
+frame_port1 (//)
+Port1: Joystick 2 / Mouse
+;
+frame_port2 (//)
+Port2: Joystick 1
+;
+str_copyright_by (350//)
 (c)2001 Martin Blom <martin@blom.org>
 ;
 str_ported_by (//)
@@ -90,8 +105,21 @@ CIAA/CIAB support added (2023)
 str_contributers (//)
 Contributers: Damien Stewart, Samir Hawamdeh
 ;
-req_ok (600//)
+str_cant_open_ahi (//)
+Can't open AHI & set exception
+;
+str_warn_close (//)
+Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?
+;
+req_ok (400//)
 _Ok
 ;
-ID_END (//)
+req_ignore (//)
+_Ignore
+;
+req_cancel (//)
+Cancel
+;
+ID_END (500//)
+Size of locale
 ;

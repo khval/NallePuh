@@ -2,7 +2,7 @@
 PAGE_Add,  VGroupObject,
 
 	LAYOUT_AddChild, VGroupObject,
-		GFrame("Audio options"),
+		GFrame(_L(frame_audio)),
 
 		LAYOUT_AddChild, MakeString(GAD_MODE_ID),
 		CHILD_Label, MakeLabel(GAD_MODE_ID),
