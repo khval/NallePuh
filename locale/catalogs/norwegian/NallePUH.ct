@@ -2,6 +2,22 @@
 ## codeset 0
 ## language Norwegian
 ;
+win_title
+Ole Brumm
+; Nalle PUH
+;
+win_about_title
+Om Nalle Puh
+; About Nalle Puh
+;
+win_sorry_title
+Beklager
+; Sorry!!
+;
+win_warning_title
+Advarsel
+; Warning!!
+;
 GAD_ACTIVATE
 _Aktiver
 ; _Activate
@@ -66,6 +82,18 @@ GAD_JOY2_BUTTON2
 Knapp 2
 ; Button 2
 ;
+frame_audio
+Lyd oppsett
+; Audio options
+;
+frame_port1
+Port1: Spillekontroller 2 / Mouse
+; Port1: Joystick 2 / Mouse
+;
+frame_port2
+Port2: Spillekontroller 1
+; Port2: Joystick 1
+;
 str_copyright_by
 (c)2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>
@@ -83,22 +111,30 @@ CIAA/CIAB støtte lagt til (2023)
 ; CIAA/CIAB support added (2023)
 ;
 str_contributers
-Bidragsytere: Damien Stewart, Samir Hawamdeh
-; Contributers: Damien Stewart, Samir Hawamdeh
+Bidragsytere: Damien Stewart, Samir Hawamdeh, Javier de las Rivas
+; Contributers: Damien Stewart, Samir Hawamdeh, Javier de las Rivas
 ;
-win_title
-Ole Brumm
-; Nalle PUH
+str_warn_close
+Flere "timer interrupts" er reservert, vennligst sørg for at alle programmer er ordentlig lukket før du fortsetter, unnlatelse av å gjøre det, kan føre til hengende programmer, eller i verste fall krasjer, velger du å ignorere?
+; Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?
 ;
-win_about_title
-Om Nalle Puh
-; About Nalle Puh
+str_cant_open_ahi
+Kan ikke åpne ahi samt, sette minneunntaks håndterer
+; Can't open AHI & set exception handler
 ;
 req_ok
 _Ok
 ; _Ok
 ;
+req_ignore
+Ignorer
+; _Ignore
+;
+req_cancel
+Avbryt
+; Cancel
+;
 ID_END
 ID_END
-; ;
+; ID_END
 ;
