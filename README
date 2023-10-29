@@ -2,14 +2,20 @@
 
 About AmigaOS4.1 version
 
-	Originally created by Martin Blom
-	First ported by Stephan Rupprecht
-	Stephan Rupprecht has not been active since 2009 on OS4Depot.net.
-	it has gone 13 years without any updates, it's now time to dust it off, 
-	and get it working again. We (Damien Stewart and Kjetil Hvalstrand)
-	believe something changed in the Petunia JIT compiler, and possibly some
-	 of the OS4.1 internal emulation of the custom chips where removed. 
-	This left NallePuh in a horrible state.
+	This is a chip set emulation, project based on the 
+	Paula emulator by Martin Blom, it was ported to AmigaOS4.1 in 2009,
+	then it stopped working, and it was fixed up by Kjetil and Damian, 
+	in November 2022, after this we have been gradually adding support 
+	for blitter and the timer circuits CIAA / CIAB, the aim of the project
+	is to support system friendly software, that sometimes reserve hardware
+	using the API / resources that OS provides. It's not designed to handle
+	those programs that intent to take over the system, this application
+	requires multitasking to work. The project does not guarantee that any
+	software is bug free or will work perfectly, for the last few commits
+	has been to improve timing and and provide better warnings, 
+	user feedback has also been important as some people want to use 
+	this tool for debugging, This is why the program provides basic
+	monitoring features.
 
 Please repport bugs and problems here:
 
