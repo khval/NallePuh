@@ -1,4 +1,4 @@
-## version $VER: NallePUH.catalog 1.4 (23.10.2023)
+## version $VER: NallePUH.catalog 1.5 (29.10.2023)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Translated by Samir Hawamdeh (http://www.betatesting.it/backforthefuture)
@@ -19,6 +19,14 @@ win_about_title
 Informazioni su NallePUH
 ; About Nalle Puh
 ;
+win_sorry_title
+Spiacente
+; Sorry!!
+;
+win_warning_title
+Avviso
+; Warning!!
+;
 GAD_ACTIVATE
 _Attiva
 ; _Activate
@@ -36,7 +44,7 @@ Modalità ID
 ; Mode Id
 ;
 GAD_MODE_INFO
-Modalità info
+Modalità Info
 ; Mode info
 ;
 GAD_SELECT_MODE
@@ -111,6 +119,18 @@ GAD_CIAB_TB
 Timer B
 ; Timer B
 ;
+frame_audio
+Opzioni Audio
+; Audio options
+;
+frame_port1
+Porta 1: Joystick 2 / Mouse
+; Port1: Joystick 2 / Mouse
+;
+frame_port2
+Porta 2: Joystick 1
+; Port2: Joystick 1
+;
 str_copyright_by
 NallePUH (c) 2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>
@@ -131,11 +151,27 @@ str_contributers
 Contributi a cura di Damien Stewart e Samir Hawamdeh
 ; Contributers: Damien Stewart, Samir Hawamdeh
 ;
+str_cant_open_ahi
+Impossibile aprire AHI & impostare un Exception
+; Can't open AHI & set exception
+;
+str_warn_close
+Molti dei timer interrupts sono riservati, per favore assicurati che tutti i programmi siano chiusi in modo corretto prima di continuare, non farlo potrebbe portare a dei blocchi nei programmi o nel caso peggiore a dei crash, si desidera ignorarli?
+; Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?
+;
 req_ok
 _Ok
 ; _Ok
 ;
-ID_END
+req_ignore
+_Ignora
+; _Ignore
 ;
-; ;
+req_cancel
+_Annulla
+; Cancel
+;
+ID_END
+Dimensione locale
+; Size of locale
 ;
