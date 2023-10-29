@@ -1,6 +1,6 @@
 ## version $VER: XX.catalog XX.XX (XX.XX.20XX)
-## codeset 1
-## language 1
+## codeset X
+## language X
 ;
 win_title
 
@@ -140,11 +140,11 @@ str_ciaa_ciab
 ;
 str_contributers
 
-; Contributers: Damien Stewart, Samir Hawamdeh
+; Contributers: Damien Stewart, Samir Hawamdeh, Javier de las Rivas
 ;
 str_cant_open_ahi
 
-; Can't open AHI & set exception
+; Can't open AHI & set memory exception handler
 ;
 str_warn_close
 

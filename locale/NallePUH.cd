@@ -103,10 +103,10 @@ str_ciaa_ciab (//)
 CIAA/CIAB support added (2023)
 ;
 str_contributers (//)
-Contributers: Damien Stewart, Samir Hawamdeh
+Contributers: Damien Stewart, Samir Hawamdeh, Javier de las Rivas
 ;
 str_cant_open_ahi (//)
-Can't open AHI & set exception
+Can't open AHI & set memory exception handler
 ;
 str_warn_close (//)
 Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?

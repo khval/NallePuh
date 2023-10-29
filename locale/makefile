@@ -7,7 +7,7 @@ clean:
 NallePUH.ct: NallePUH.cd
 	CATCOMP NallePUH.cd CTFILE NallePUH.ct
 
-updated: NallePUH.ct
+updated: NallePUH.cd
 	protect update +s
 	update
 	date > updated

@@ -1,7 +1,4 @@
 
-echo "echo *"*E[1mread from *"NallePUH.ct*"*E[0m" > t:b2-flexcat
-echo "flexcat NallePUH.cd NallePUH.ct codeset=0 catalog=NallePUH.catalog" >> t:b2-flexcat
-
-list catalogs all lformat "echo *E[1mread from *"%p%n*"*E[0m*nflexcat NallePUH.cd *"%p%n*" catalog=%pNallePUH.catalog" | grep "NallePUH.ct" >> t:b2-flexcat
-protect t:b2-flexcat +s
-t:b2-flexcat 
+list catalogs all lformat "echo *E[1mread from *"%p%n*"*E[0m*nflexcat NallePUH.cd *"%p%n*" catalog=%pNallePUH.catalog" | grep "NallePUH.ct" > t:script-flexcat
+protect t:script-flexcat +s
+t:script-flexcat 
