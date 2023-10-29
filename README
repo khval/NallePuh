@@ -49,7 +49,7 @@ List of tested - unsupported is here:
 	If you find more thats not working, please report, 
 	it saves people from wasting time on things that’s not working.
 
-Changes in xx October 2023 Version 1.x
+Changes in 29 October 2023 Version 1.5
 
 	* GUI now uses "Read Only" instead of disabled.
 	* TEST button is now disabled until, NallePuh is activated.
