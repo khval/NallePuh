@@ -55,30 +55,40 @@ static uint32 TIMER_H_ticks = 0;
 static bool te_start_set = false;
 struct timeval cia_te_start ;
 
-extern struct Process *MainTask;
+extern struct Process *cia_process;
+
 extern uint32 SchedulerState;
 
 extern UWORD cd_ReadWord( void* address );
 extern void cd_WriteWord( void* address, UWORD value );
 
-static void cia_get_usec( int *out_usec )
+static bool cia_get_usec( int *out_usec )
 {
-	struct timeval cia_te ;
-	struct timeval cia_te_diff ;
-	int usec;
-
-	if (te_start_set)
+	if (! SchedulerState)		// not in forbid state
 	{
-		gettimeofday(&cia_te, NULL);
-		timersub(&cia_te,&cia_te_start,&cia_te_diff);
-		cia_te_start = cia_te;
+		struct timeval cia_te ;
+		struct timeval cia_te_diff ;
+		int usec;
 
-		usec = (cia_te_diff.tv_sec * 1000000) + cia_te_diff.tv_usec ;
-		*out_usec = usec > 0 ? usec : 1;		// only posetive values, no overflow values allowed.
+		if (te_start_set)
+		{
+			gettimeofday(&cia_te, NULL);
+			timersub(&cia_te,&cia_te_start,&cia_te_diff);
+			cia_te_start = cia_te;
+
+			usec = (cia_te_diff.tv_sec * 1000000) + cia_te_diff.tv_usec ;
+			*out_usec = usec > 0 ? usec : 1;		// only posetive values, no overflow values allowed.
+		}
+
+		gettimeofday(&cia_te_start, NULL);
+		te_start_set = true;
+
+		return true;
 	}
-
-	gettimeofday(&cia_te_start, NULL);
-	te_start_set = true;
+	else
+	{
+		return false;		
+	}
 }
 
 void update_timer_ciab()
@@ -201,9 +211,6 @@ static UWORD CIABRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct Exec
 
 static void CIABWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase )
 {
-	UWORD* address = (UWORD*) ( (ULONG) pd->m_CustomDirect + reg );
-
-
 	switch( reg )
 	{
 
@@ -284,7 +291,7 @@ static void CIABWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd
 
 		default:
 
-			cd_WriteWord( address, value );
+			cd_WriteWord( (void *) (0xBFD000 | reg) , value );
 			*handled = TRUE;
 			break;
 	}

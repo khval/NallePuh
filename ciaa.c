@@ -99,30 +99,33 @@ void update_timer_ciaa()
 
 	if ( cia_get_usec( &us ) == false )
 	{
-		Signal(MainTask, chip_ciaa.signal );
+		Signal(cia_process, chip_ciaa.signal );
 		return;
 	}
 
-	// time us accumulators, us is subtracted when number is dividable.
-
-	TIMER_A_us += us;
-	TIMER_B_us += us;
-	TIMER_V_us += us;
-
 	// convert delta time in us to ticks
 	
-	if ( (TIMER_A) && us2ticks( CIA_TIMER_UNIT, &TIMER_A_us , &TIMER_A_ticks ) )  	// count down mode, single shot... :-P
+	if (INMODE_A(chip_ciaa.icr) == 0)
 	{
-		do_cia_timer_a( &chip_ciaa);
+		TIMER_A_us += us;
+		if ( (TIMER_A) && us2ticks( CIA_TIMER_UNIT, &TIMER_A_us , &TIMER_A_ticks ) )  	// count down mode, single shot... :-P
+		{
+			do_cia_timer_a( &chip_ciaa);
+		}
 	}
 
-	if ( (TIMER_B) && us2ticks( CIA_TIMER_UNIT, &TIMER_B_us, &TIMER_B_ticks ) )	        // count down mode, single shot... :-P
+	if (INMODE_B(chip_ciaa.icr) == 1)
 	{
-		do_cia_timer_b( &chip_ciaa);
+		TIMER_B_us += us;
+		if ( (TIMER_B) && us2ticks( CIA_TIMER_UNIT, &TIMER_B_us, &TIMER_B_ticks ) )	        // count down mode, single shot... :-P
+		{
+			do_cia_timer_b( &chip_ciaa);
+		}
 	}
 
 	// PAL mode 50HZ 
 
+	TIMER_V_us += us;
 	if ( us2ticks( VSYNC_HZ, &TIMER_V_us, &TIMER_V_ticks ) )	        // count down mode, single shot... :-P
 	{
 		VSYNC_COUNTER = (VSYNC_COUNTER + TIMER_V_ticks) & 0xFFFFFF;
