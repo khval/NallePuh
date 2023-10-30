@@ -59,10 +59,16 @@
 #include <stdbool.h>
 #include <string.h>
 
+#define CATCOMP_NUMBERS
+#define CATCOMP_STRINGS
+#define CATCOMP_ARRAY
+
 #include "locale/NallePUH.h"
+
 #include "PUH.h"
 #include "debug.h"
 #include "emu_cia.h"
+#include "spawn.h"
 
 /* Version Tag */
 #include "nallepuh_rev.h"
@@ -139,7 +145,7 @@ int main( int argc,char* argv[] )
 
 	if (AvailMem(MEMF_TOTAL|MEMF_CHIP) == 0)
 	{
-		req("No chipram","you should change setpatch command in startup sequene to:\n\nSetPatch QUIET WAITFORVALIDATE ADDCHIPRAM=2\n","OK", 0);
+		req(_L(win_no_chip_ram),_L(str_no_chip_ram),_L(req_ok), 0);
 	}
 
 	if ( argc == 0)

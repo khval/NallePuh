@@ -18,6 +18,10 @@ win_warning_title
 
 ; Warning!!
 ;
+win_no_chip_ram
+
+; No chipram
+;
 GAD_ACTIVATE
 
 ; _Activate
@@ -149,6 +153,10 @@ str_cant_open_ahi
 str_warn_close
 
 ; Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?
+;
+str_no_chip_ram
+
+; you should change setpatch command in startup sequene to:\n\nSetPatch QUIET WAITFORVALIDATE ADDCHIPRAM=2\n
 ;
 req_ok
 

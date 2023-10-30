@@ -45,6 +45,7 @@
 #define win_about_title 51
 #define win_sorry_title 52
 #define win_warning_title 53
+#define win_no_chip_ram 54
 #define GAD_ACTIVATE 150
 #define GAD_DEACTIVATE 151
 #define GAD_MESSAGES 152
@@ -78,6 +79,7 @@
 #define str_contributers 354
 #define str_cant_open_ahi 355
 #define str_warn_close 356
+#define str_no_chip_ram 357
 #define req_ok 400
 #define req_ignore 401
 #define req_cancel 402

@@ -82,6 +82,30 @@ GAD_JOY2_BUTTON2
 Knapp 2
 ; Button 2
 ;
+GAD_CIAA_CR
+Kontroll Register
+; Controll Register
+;
+GAD_CIAA_TA
+Timer A
+; Timer A
+;
+GAD_CIAA_TB
+Timer B
+; Timer B
+;
+GAD_CIAB_CR
+Kontroll Register
+; Controll Register
+;
+GAD_CIAB_TA
+Timer A
+; Timer A
+;
+GAD_CIAB_TB
+Timer B
+; Timer B
+;
 frame_audio
 Lyd oppsett
 ; Audio options

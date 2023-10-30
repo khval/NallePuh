@@ -1,9 +1,11 @@
+#warning hello
+
 #ifndef NALLEPUH_H
 #define NALLEPUH_H
 
+#warning hello88
 
 /****************************************************************************/
-
 
 /* This file was created automatically by CatComp.
  * Do NOT edit by hand!
@@ -45,6 +47,7 @@
 #define win_about_title 51
 #define win_sorry_title 52
 #define win_warning_title 53
+#define win_no_chip_ram 54
 #define GAD_ACTIVATE 150
 #define GAD_DEACTIVATE 151
 #define GAD_MESSAGES 152
@@ -78,6 +81,7 @@
 #define str_contributers 354
 #define str_cant_open_ahi 355
 #define str_warn_close 356
+#define str_no_chip_ram 357
 #define req_ok 400
 #define req_ignore 401
 #define req_cancel 402
@@ -95,6 +99,7 @@
 #define win_about_title_STR "About Nalle Puh"
 #define win_sorry_title_STR "Sorry!!"
 #define win_warning_title_STR "Warning!!"
+#define win_no_chip_ram_STR "No chipram"
 #define GAD_ACTIVATE_STR "_Activate"
 #define GAD_DEACTIVATE_STR "_Deactivate"
 #define GAD_MESSAGES_STR "Messages"
@@ -128,6 +133,7 @@
 #define str_contributers_STR "Contributers: Damien Stewart, Samir Hawamdeh, Javier de las Rivas"
 #define str_cant_open_ahi_STR "Can't open AHI & set memory exception handler"
 #define str_warn_close_STR "Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?"
+#define str_no_chip_ram_STR "you should change setpatch command in startup sequene to:\n\nSetPatch QUIET WAITFORVALIDATE ADDCHIPRAM=2\n"
 #define req_ok_STR "_Ok"
 #define req_ignore_STR "_Ignore"
 #define req_cancel_STR "Cancel"
@@ -153,6 +159,7 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {win_about_title,(CONST_STRPTR)win_about_title_STR},
     {win_sorry_title,(CONST_STRPTR)win_sorry_title_STR},
     {win_warning_title,(CONST_STRPTR)win_warning_title_STR},
+    {win_no_chip_ram,(CONST_STRPTR)win_no_chip_ram_STR},
     {GAD_ACTIVATE,(CONST_STRPTR)GAD_ACTIVATE_STR},
     {GAD_DEACTIVATE,(CONST_STRPTR)GAD_DEACTIVATE_STR},
     {GAD_MESSAGES,(CONST_STRPTR)GAD_MESSAGES_STR},
@@ -186,6 +193,7 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {str_contributers,(CONST_STRPTR)str_contributers_STR},
     {str_cant_open_ahi,(CONST_STRPTR)str_cant_open_ahi_STR},
     {str_warn_close,(CONST_STRPTR)str_warn_close_STR},
+    {str_no_chip_ram,(CONST_STRPTR)str_no_chip_ram_STR},
     {req_ok,(CONST_STRPTR)req_ok_STR},
     {req_ignore,(CONST_STRPTR)req_ignore_STR},
     {req_cancel,(CONST_STRPTR)req_cancel_STR},
