@@ -28,7 +28,8 @@ OBJECTS	= \
 	$(obj_dir)/warn.o \
 	$(obj_dir)/init.o \
 	$(obj_dir)/timer.o \
-	$(obj_dir)/req.o
+	$(obj_dir)/req.o \
+	$(obj_dir)/spawn.o
 
 all:	make_locale $(TARGET) 
 
