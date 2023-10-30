@@ -101,7 +101,7 @@ static struct MsgPort *AHImp = NULL;
 static struct AHIRequest *AHIio = NULL;
 static BYTE AHIDevice = IOERR_OPENFAIL;
 
-
+struct Process *cia_process = NULL;
 
 BOOL cli_start = TRUE;
 BOOL gui_mode = FALSE;
@@ -124,11 +124,58 @@ void __chkabort( void )
 //extern struct chip chip_ciaa ;
 //extern struct chip chip_ciab ;
 
+bool nallepuh_quit = false;
 
 extern int req(const char *title,const  char *body,const char *buttons, ULONG image);
 
+extern struct chip chip_ciaa ;
+extern struct chip chip_ciab ;
+
+int ciaa_signal = -1;
+int ciab_signal = -1;
+
+extern ULONG timer_mask;
+extern void open_timer( void );
+extern void close_timer( void );
+extern void handel_timer( void );
+
+void cia_fn ()
+{
+	int id;
+	ULONG mask;
+
+	ciaa_signal = AllocSignal(-1);
+	ciab_signal = AllocSignal(-1);
+
+	init_chip( "CIAA", &chip_ciaa, ciaa_signal, 4 ); 	// hw irq 2, sw irq 4 
+	init_chip( "CIAB", &chip_ciab, ciab_signal, 14 );	// hw irq 6, sw irq 14
+
+	open_timer();
+
+	for(;;)
+	{
+		Printf("%d\n",id);
+		id = (id + 1) % 10;
+
+		mask = Wait(SIGBREAKF_CTRL_C | timer_mask | chip_ciaa.signal | chip_ciab.signal);
+
+		if (mask & timer_mask) handel_timer();
+
+		if (mask & SIGBREAKF_CTRL_C) break;
+
+		event_cia( mask );
+	}
+
+	close_timer();
+
+	if (ciaa_signal > -1) FreeSignal(ciaa_signal);
+	if (ciab_signal > -1) FreeSignal(ciab_signal);
+}
+
 int main( int argc,char* argv[] )
 {
+	BPTR cia_out ;
+
 	int	rc = 0;
 
 	ULONG mode_id	= 0;
@@ -198,6 +245,10 @@ int main( int argc,char* argv[] )
 		}
 	}
 	#endif
+
+	cia_out = Open("CON:Debug",MODE_NEWFILE);
+
+	cia_process = spawn( cia_fn, "NallePuh cia process", cia_out );
 
 	if ( ! gui_mode )
 	{
@@ -313,6 +364,7 @@ int main( int argc,char* argv[] )
 		}
 	}
 
+	if (cia_process) Signal(cia_process, SIGBREAKF_CTRL_C );
 
 	CloseAHI();
 	CloseLibs();

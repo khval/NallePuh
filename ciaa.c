@@ -52,7 +52,9 @@ static uint32 TIMER_V_ticks = 0;
 static bool te_start_set = false;
 struct timeval cia_te_start ;
 
-extern struct Process *MainTask;
+//extern struct Process *MainTask;
+extern struct Process *cia_process;
+
 extern uint32 SchedulerState;
 
 extern UWORD cd_ReadWord( void* address );
@@ -88,8 +90,6 @@ static bool cia_get_usec( int *out_usec )
 		return false;		
 	}
 }
-
-
 
 void update_timer_ciaa()
 {
@@ -130,7 +130,6 @@ void update_timer_ciaa()
 }
 
 extern int ciaa_signal;
-extern struct Process *MainTask;
 
 static UWORD CIAARead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase )
 {
@@ -296,7 +295,7 @@ static void CIAAWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd
 			{
 				int bits = value & 0x07E;
 				chip_ciaa.icr = value & 0x80 ? chip_ciaa.icr | bits : chip_ciaa.icr & ~bits;
-				if (chip_ciaa.icr & 3) Signal(MainTask, ciaa_signal );	// if interupts bits are set, signal main task.
+				if (chip_ciaa.icr & 3) Signal(cia_process, ciaa_signal );	// if interupts bits are set, signal cia process.
 				*handled = TRUE;
 			}
 			break;

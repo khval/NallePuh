@@ -87,9 +87,11 @@ void update_timer_ciab()
 
 	// calulate delta time... from last read..
 
-	cia_get_usec( &us );
-
-	// time us accumulators, us is subtracted when number is dividable.
+	if ( cia_get_usec( &us ) == false )
+	{
+		Signal(cia_process, chip_ciab.signal );
+		return;
+	}
 
 	// convert delta time in us to ticks
 	
@@ -275,7 +277,7 @@ static void CIABWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd
 			{
 				int bits = value & 0x07E;
 				chip_ciab.icr = value & 0x80 ? chip_ciab.icr | bits : chip_ciab.icr & ~bits;
-				if (chip_ciab.icr & 3) Signal(MainTask, chip_ciab.signal );	// if interupts bits are set, signal main task.
+				if (chip_ciab.icr & 3) Signal(cia_process, chip_ciab.signal );	// if interupts bits are set, signal cia process.
 				*handled = TRUE;
 			}
 			break;

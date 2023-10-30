@@ -45,6 +45,8 @@ extern struct TagItem SchedulerState_tags[];
 
 extern struct Custom CustomData;
 
+extern struct Process *cia_process;
+
 void update_hz()
 {
 	switch (cia_frequency_select)
@@ -152,7 +154,7 @@ void do_cia_timer_a(struct chip *chip )
 
 		chip -> icr |= (1<<overflow_bit_a);
 		chip -> icr_handle[overflow_bit_a] = 1;
-		Signal(MainTask, chip -> signal );
+		Signal(cia_process, chip -> signal );
 	}
 
 	timer -> ticks = tmp;
@@ -182,7 +184,7 @@ void do_cia_timer_b(struct chip *chip)
 
 		chip -> icr |= (1<<overflow_bit_b);
 		chip -> icr_handle[overflow_bit_b] = 1;
-		Signal(MainTask, chip -> signal );
+		Signal(cia_process, chip -> signal );
 	}
 
 	timer -> ticks = tmp;

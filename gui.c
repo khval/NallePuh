@@ -63,8 +63,6 @@ extern int req(const char *title,const  char *body,const char *buttons, ULONG im
 STATIC CONST UBYTE USED verstag[] = VERSTAG;
 
 extern struct Custom CustomData;
-extern int ciaa_signal;
-extern int ciab_signal;
 
 extern struct chip chip_ciaa ;
 extern struct chip chip_ciab ;
@@ -187,9 +185,7 @@ void handel_iconify()
 
 		do
 		{
-			mask =Wait( iconifyPort_signal | chip_ciaa.signal | chip_ciab.signal | timer_mask );
-
-			if (mask & timer_mask) handel_timer();
+			mask =Wait( iconifyPort_signal );
 
 			event_cia( mask);
 
@@ -817,12 +813,8 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 
 	while( ! rc.quit )
 	{
-		mask = Wait( window_signals | SIGBREAKF_CTRL_C | chip_ciaa.signal | chip_ciab.signal | timer_mask | refresh_signal );
+		mask = Wait( window_signals | SIGBREAKF_CTRL_C | timer_mask | refresh_signal );
 		
-		if (mask & timer_mask) handel_timer();
-
-		event_cia( mask);
-
 		if ( mask & SIGBREAKF_CTRL_C )
 		{
 			if (deactivate( &rc ))

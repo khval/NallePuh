@@ -39,6 +39,7 @@
 #include "gui.h"
 
 #include "emu_cia.h"
+#include "spawn.h"
 
 struct Library * AHIBase = NULL;
 struct IntuitionBase* IntuitionBase = NULL;
@@ -107,11 +108,6 @@ extern void open_refresh_timer( void );
 extern void close_refresh_timer( void );
 
 extern uint32 appID;
-extern struct chip chip_ciaa ;
-extern struct chip chip_ciab ;
-
-int ciaa_signal = -1;
-int ciab_signal = -1;
 
 #ifdef __amigaos4__
 
@@ -214,13 +210,7 @@ BOOL OpenLibs( void )
 	if ( !( appID = RegisterApplication("NallePuh",REGAPP_LoadPrefs, FALSE,TAG_DONE)) ) return FALSE;
 
 	MainTask = FindTask( NULL );
-	ciaa_signal = AllocSignal(-1);
-	ciab_signal = AllocSignal(-1);
 
-	init_chip( "CIAA", &chip_ciaa, ciaa_signal, 4 ); 	// hw irq 2, sw irq 4 
-	init_chip( "CIAB", &chip_ciab, ciab_signal, 14 );	// hw irq 6, sw irq 14
-
-	open_timer();
 	open_refresh_timer();
 
 	warn();
@@ -253,11 +243,10 @@ static void CloseClasses( void )
 
 void CloseLibs( void )
 {
-	close_timer();
-	close_refresh_timer();
+	// wait for all spwans to die!!!
+	wait_spawns();
 
-	if (ciaa_signal > -1) FreeSignal(ciaa_signal);
-	if (ciab_signal > -1) FreeSignal(ciab_signal);
+	close_refresh_timer();
 
 	if (appID)
 	{
