@@ -1,18 +1,18 @@
 VERSION		EQU	1
-REVISION	EQU	4
+REVISION	EQU	5
 
 DATE	MACRO
-		dc.b '22.10.2023'
+		dc.b '29.10.2023'
 		ENDM
 
 VERS	MACRO
-		dc.b 'NallePuh 1.4'
+		dc.b 'NallePuh 1.5'
 		ENDM
 
 VSTRING	MACRO
-		dc.b 'NallePuh 1.4 (22.10.2023)',13,10,0
+		dc.b 'NallePuh 1.5 (29.10.2023)',13,10,0
 		ENDM
 
 VERSTAG	MACRO
-		dc.b 0,'$VER: NallePuh 1.4 (22.10.2023)',0
+		dc.b 0,'$VER: NallePuh 1.5 (29.10.2023)',0
 		ENDM

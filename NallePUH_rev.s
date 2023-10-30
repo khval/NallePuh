@@ -1,21 +1,21 @@
 VERSION = 1
-REVISION = 4
+REVISION = 5
 
 .macro DATE
-.ascii "22.10.2023"
+.ascii "29.10.2023"
 .endm
 
 .macro VERS
-.ascii "NallePuh 1.4"
+.ascii "NallePuh 1.5"
 .endm
 
 .macro VSTRING
-.ascii "NallePuh 1.4 (22.10.2023)"
+.ascii "NallePuh 1.5 (29.10.2023)"
 .byte 13,10,0
 .endm
 
 .macro VERSTAG
 .byte 0
-.ascii "$VER: NallePuh 1.4 (22.10.2023)"
+.ascii "$VER: NallePuh 1.5 (29.10.2023)"
 .byte 0
 .endm
