@@ -72,6 +72,9 @@ void open_refresh_timer( void )
 
 void reactivate_refresh_timer()
 {
+	// Remove timer request
+	GetMsg(refresh_timer_port);	
+
 	// Restart timer
 	refresh_timer_io->Request.io_Command = TR_ADDREQUEST;
 	refresh_timer_io->Time.Seconds = 1;
@@ -155,6 +158,9 @@ extern void IO_BUTTONS_UP( void );
 
 void handel_timer( void )
 {
+	// Remove timer request
+	GetMsg(timer_port);	
+	
 	// Restart timer
 	timer_io->Request.io_Command = TR_ADDREQUEST;
 	timer_io->Time.Seconds = 0;
