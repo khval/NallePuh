@@ -141,7 +141,6 @@ extern void handel_timer( void );
 
 void cia_fn ()
 {
-	int id;
 	ULONG mask;
 
 	ciaa_signal = AllocSignal(-1);
@@ -154,13 +153,9 @@ void cia_fn ()
 
 	for(;;)
 	{
-		Printf("%d\n",id);
-		id = (id + 1) % 10;
-
 		mask = Wait(SIGBREAKF_CTRL_C | timer_mask | chip_ciaa.signal | chip_ciab.signal);
 
 		if (mask & timer_mask) handel_timer();
-
 		if (mask & SIGBREAKF_CTRL_C) break;
 
 		event_cia( mask );
