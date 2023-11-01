@@ -67,7 +67,7 @@ GAD_JOY2_BUTTON2 (//)
 Button2
 ;
 GAD_CIAA_CR (//)
-Controll Register
+Control Register
 ;
 GAD_CIAA_TA (//)
 Timer A
@@ -115,7 +115,7 @@ str_warn_close (//)
 Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?
 ;
 str_no_chip_ram (//)
-you should change setpatch command in startup sequene to:\n\nSetPatch QUIET WAITFORVALIDATE ADDCHIPRAM=2\n
+you should change setpatch command in startup sequence to:\n\nSetPatch QUIET WAITFORVALIDATE ADDCHIPRAM=2\n
 ;
 req_ok (400//)
 _Ok
