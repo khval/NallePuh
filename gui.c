@@ -363,7 +363,7 @@ void close_window(int layout_nr)
 	}
 }
 
-BOOL open_window(ULONG win_id )
+BOOL open_window(ULONG win_id, struct rc *rc )
 {
 	win[ win_id ] = RA_OpenWindow( layout[win_id] );
 	if ( ! win[ win_id ]) return FALSE;
@@ -381,14 +381,14 @@ BOOL open_window(ULONG win_id )
 	return TRUE;
 }
 
-struct rc ShowGUI( struct PUHData* pd )
+struct rc ShowGUI( struct PUHData* pd,	 struct rc *rc )
 {
-	struct rc rc;
+
 	struct Screen *screen;
 	struct MsgPort *idcmp_port;
 	struct MsgPort *app_port;
 	
-	rc.rc = FALSE;
+	rc -> rc = FALSE;
 	screen = LockPubScreen( NULL );
 	
 	if ( screen != NULL )
@@ -403,9 +403,9 @@ struct rc ShowGUI( struct PUHData* pd )
 			{
 				init_prefs(win_prefs);
 
-				if (open_window( win_prefs ))
+				if (open_window( win_prefs, rc ))
 				{
-					rc = HandleGUI( win[ win_prefs ], pd );
+					HandleGUI( win[ win_prefs ], pd, rc );
 					close_window(win_prefs);
 				}
 			
@@ -418,7 +418,7 @@ struct rc ShowGUI( struct PUHData* pd )
 		UnlockPubScreen( NULL, screen );
 	}
 	
-	return rc;
+	return *rc;
 }
 
 /******************************************************************************
@@ -508,16 +508,16 @@ void nallepuh_test()
 
 }
 
-void init_rc(struct rc *rc, struct Window * window, struct PUHData* pd)
+void init_rc(struct rc *rc, struct PUHData* pd)
 {
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
 	rc -> rc = FALSE;
 	rc -> quit = FALSE;
 	rc -> messed_with_registers = FALSE;
 	rc -> audio_mode = 0;
 	rc -> frequency = 0;
-	rc -> win_ptr = NULL;
 	rc -> code = 0;
-	rc -> win_ptr = window;
 	rc -> pd = pd;
 	rc -> AHI_name[0] = 0;
 }
@@ -557,6 +557,30 @@ ULONG getv( ULONG id, ULONG arg )
 
 void IO_BUTTONS_UP( void );
 void IO_BUTTONS_DOWN(ULONG ID);
+
+void activate( struct rc *rc )
+{
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+	if ( ! InstallPUH( 0, rc -> audio_mode, rc -> frequency ) )
+	{
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+		req(_L(win_sorry_title),_L(str_cant_open_ahi),_L(req_ok), 3);
+	}
+	else
+	{
+		options.installed = TRUE;
+
+	printf("%s:%d\n",__FUNCTION__,__LINE__);
+
+
+		if (  ActivatePUH( rc -> pd ) )
+		{
+			options.activated = TRUE;
+		}
+	}
+}
 
 bool deactivate( struct rc *rc )
 {
@@ -626,9 +650,9 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 								
 				struct TagItem	filter_tags[] =
 				{
-					{ AHIDB_Realtime, 	TRUE },
-					{ AHIDB_MaxChannels, 4		},
-					{ TAG_DONE, 				0		}
+					{ AHIDB_Realtime, TRUE },
+					{ AHIDB_MaxChannels, 4 },
+					{ TAG_DONE, 0 }
 				};
 
 				struct Hook filter_hook =
@@ -640,7 +664,7 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 				};
 
 				req = AHI_AllocAudioRequest(
-						AHIR_Window, 	(ULONG) rc -> win_ptr,
+						AHIR_Window, 	(ULONG) win[ win_prefs ],
 						AHIR_SleepWindow, TRUE,
 						AHIR_InitialAudioID, rc -> audio_mode,
 						AHIR_InitialMixFreq, rc -> frequency,
@@ -653,7 +677,7 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 				if ( req == NULL )
 				{
 					rc->quit = TRUE;
-					rc->rc	= FALSE;
+					rc->rc = FALSE;
 				}
 				else
 				{
@@ -662,7 +686,10 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 						rc -> audio_mode = req->ahiam_AudioID;
 						rc -> frequency = req->ahiam_MixFreq;
 										
-						if ( AHI_GetAudioAttrs( rc -> audio_mode, NULL, AHIDB_BufferLen, 255, AHIDB_Name, (ULONG) rc -> AHI_name, TAG_DONE ) )
+						if ( AHI_GetAudioAttrs( rc -> audio_mode, NULL, 
+								AHIDB_BufferLen, sizeof( rc -> AHI_name ), 
+								AHIDB_Name, (ULONG) rc -> AHI_name, 
+								TAG_DONE ) )
 						{
 							update_gui( win_prefs, rc );
 						}
@@ -674,24 +701,8 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 			}
 
 		case GAD_ACTIVATE:
-
-			{
-				if ( ! InstallPUH( 0, rc -> audio_mode, rc -> frequency ) )
-				{
-					req(_L(win_sorry_title),_L(str_cant_open_ahi),_L(req_ok), 3);
-				}
-				else
-				{
-					options.installed = TRUE;
-
-					if (  ActivatePUH( rc -> pd ) )
-					{
-						options.activated = TRUE;
-					}
-
-					update_gui( win_prefs, NULL );
-				}
-			}
+			activate( rc );
+			update_gui( win_prefs, NULL );
 			break;
 
 		case GAD_DEACTIVATE:
@@ -732,7 +743,6 @@ void IO_BUTTONS_DOWN(ULONG ID)
 		case GAD_JOY1_BUTTON2:
 			gettimeofday(&button_press_time[1], NULL); 
 			ACTIVE_LOW_SET(potgor,B10); 
-
 			break;
 
 		case GAD_JOY2_BUTTON1:
@@ -793,25 +803,16 @@ void IO_BUTTONS_UP()
 }
 
 
-struct rc HandleGUI( struct Window * window, struct PUHData* pd )
+void HandleGUI( struct Window * window, struct PUHData* pd, struct rc *rc )
 {
 	ULONG mask;
-	struct rc rc;
-	ULONG	window_signals = 0;
+	ULONG window_signals = 0;
 
-	init_rc( &rc, window, pd );
-	init_options( &options );
-
-	load("progdir:NallePuh.cfg",&rc);
-	update_gui( win_prefs, &rc );
+	update_gui( win_prefs, rc );
 
 	window_signals = 1L << window -> UserPort -> mp_SigBit;
 
-//	log_data.m_Gadget = obj[ GAD_MESSAGES ];
-//	log_data.m_Window = rc.win_ptr;
-//	SetPUHLogger( &log_hook, pd );
-
-	while( ! rc.quit )
+	while( ! rc -> quit )
 	{
 		mask = Wait( window_signals | SIGBREAKF_CTRL_C | timer_mask | refresh_signal );
 		
@@ -819,8 +820,8 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 		{
 			if (deactivate( &rc ))
 			{
-				rc.quit = TRUE;
-				rc.rc	= TRUE;
+				rc -> quit = TRUE;
+				rc -> rc	= TRUE;
 			}
 			break;
 		}
@@ -846,45 +847,39 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 		{
 			ULONG input_flags = 0;
 			
-			while( ( input_flags = RA_HandleInput( layout[ win_prefs ] ,&rc.code) ) != WMHI_LASTMSG )
+			while( ( input_flags = RA_HandleInput( layout[ win_prefs ] ,&(rc -> code)) ) != WMHI_LASTMSG )
 			{
 				switch( input_flags & WMHI_CLASSMASK)
 				{
 					case WMHI_CLOSEWINDOW:
 
-						if (deactivate( &rc ))
+						if (deactivate( rc ))
 						{
-							rc.quit = TRUE;
-							rc.rc	= TRUE;
+							rc -> quit = TRUE;
+							rc -> rc	= TRUE;
 						}
 						break;
 
 					case WMHI_ICONIFY:
 
 						// empty event queue
-						while( ( input_flags = RA_HandleInput( layout[ win_prefs ] ,&rc.code) ) != WMHI_LASTMSG );
+						while( ( input_flags = RA_HandleInput( layout[ win_prefs ] ,&(rc -> code) ) ) != WMHI_LASTMSG );
 
 						close_window( win_prefs );
 
 						handel_iconify();
 
 						init_prefs(win_prefs);			// we trashed objs with close_window :-)
-						if (open_window(win_prefs))
+						if (open_window(win_prefs, rc ))
 						{
 							window = win[ win_prefs ];
-							window = rc.win_ptr;
-							rc.log_data.m_Window = rc.win_ptr;
-							update_gui( win_prefs, &rc );
+							update_gui( win_prefs, rc );
 						}
-						else 
-						{
-							printf("failed !!\n");
-							return rc;
-						}
+						else return;
 						break;
 
 					case WMHI_GADGETUP:
-						HandleGadgetsUp(input_flags, &rc);
+						HandleGadgetsUp(input_flags, rc);
 						break;
 
 					default:
@@ -894,17 +889,7 @@ struct rc HandleGUI( struct Window * window, struct PUHData* pd )
 		}
 	}
 	
-	save("progdir:NallePuh.cfg",&rc);
+	save("progdir:NallePuh.cfg",rc);
 
-//	SetPUHLogger( NULL, pd );
-
-	if ( rc.messed_with_registers )
-	{
-		BOOL bHandled;
-		emu_WriteWord( &bHandled, &CustomData.dmacon, DMAF_AUD0 );
-		emu_WriteWord( &bHandled, &CustomData.aud[ 0 ].ac_vol, 0 );
-	}
-
-	return rc;
 }
 

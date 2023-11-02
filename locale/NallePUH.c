@@ -1,9 +1,6 @@
-#warning hello
 
 #ifndef NALLEPUH_H
 #define NALLEPUH_H
-
-#warning hello88
 
 /****************************************************************************/
 

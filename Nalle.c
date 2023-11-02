@@ -44,6 +44,7 @@
 #include <proto/wb.h>
 #include <proto/application.h>
 #include <diskfont/diskfonttag.h>
+#include <workbench/startup.h>
 
 #include <gadgets/integer.h>
 #include <gadgets/layout.h>
@@ -69,6 +70,9 @@
 #include "debug.h"
 #include "emu_cia.h"
 #include "spawn.h"
+
+extern bool arg_iconify;
+extern bool arg_activate;
 
 /* Version Tag */
 #include "nallepuh_rev.h"
@@ -139,6 +143,8 @@ extern void open_timer( void );
 extern void close_timer( void );
 extern void handel_timer( void );
 
+void activate( struct rc *rc );
+
 void cia_fn ()
 {
 	ULONG mask;
@@ -166,6 +172,11 @@ void cia_fn ()
 	if (ciaa_signal > -1) FreeSignal(ciaa_signal);
 	if (ciab_signal > -1) FreeSignal(ciab_signal);
 }
+
+extern struct options options;
+extern void init_options( struct options *o);
+
+bool wbStartup(struct WBStartup *wbmsg);
 
 int main( int argc,char* argv[] )
 {
@@ -195,6 +206,8 @@ int main( int argc,char* argv[] )
 		// wb startup
 		gui_mode = TRUE;
 		cli_start = FALSE;
+
+		wbStartup( (struct WBStartup *) argv );
 	}
 	else 	if ( argc == 1 )
 	{
@@ -292,7 +305,15 @@ int main( int argc,char* argv[] )
 			{
 				struct rc rcode;
 
-				rcode = ShowGUI( pd );
+				init_rc( &rcode, pd );
+				init_options( &options );
+
+				load("progdir:NallePuh.cfg",&rcode);
+
+				if (arg_activate) activate( &rcode );
+				if (arg_iconify)	handel_iconify();
+
+				ShowGUI( pd, &rcode );
 
 				if ( ! rcode.rc )
 				{

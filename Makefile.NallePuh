@@ -29,7 +29,8 @@ OBJECTS	= \
 	$(obj_dir)/init.o \
 	$(obj_dir)/timer.o \
 	$(obj_dir)/req.o \
-	$(obj_dir)/spawn.o
+	$(obj_dir)/spawn.o \
+	$(obj_dir)/wbstartup.o
 
 all:	make_locale $(TARGET) 
 
