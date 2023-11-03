@@ -32,7 +32,7 @@ OBJECTS	= \
 	$(obj_dir)/spawn.o \
 	$(obj_dir)/wbstartup.o
 
-all:	make_locale $(TARGET) 
+all:	$(TARGET) 
 
 gui.o:	gui.c    gui_cia.c   gui_paula.c  gui_status.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
@@ -40,16 +40,6 @@ gui.o:	gui.c    gui_cia.c   gui_paula.c  gui_status.c
 $(obj_dir)/%.o:	%.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
 
-make_locale: locale/NallePUH.c locale/NallePUH.h
-
-locale/NallePUH.ct: locale/NallePUH.cd
-	@$(CATCOMP) locale/NallePUH.cd CTFILE locale/NallePUH.ct
-
-locale/NallePUH.h: locale/NallePUH.cd locale/NallePUH.ct
-	@$(CATCOMP) locale/NallePUH.cd CFILE locale/NallePUH.h NOSTRINGS NOARRAY NOBLOCK NOCODE
-
-locale/NallePUH.c: locale/NallePUH.cd locale/NallePUH.ct
-	@$(CATCOMP) locale/NallePUH.cd CFILE locale/NallePUH.c NOBLOCK NOCODE
 
 clean:
 	$(RM) $(OBJECTS)
