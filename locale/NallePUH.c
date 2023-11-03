@@ -1,8 +1,9 @@
-
 #ifndef NALLEPUH_H
 #define NALLEPUH_H
 
+
 /****************************************************************************/
+
 
 /* This file was created automatically by CatComp.
  * Do NOT edit by hand!
@@ -79,6 +80,12 @@
 #define str_cant_open_ahi 355
 #define str_warn_close 356
 #define str_no_chip_ram 357
+#define str_warning 358
+#define str_not_installed 359
+#define str_if_its_not_installed 360
+#define str_following_porgrams_will_crash 361
+#define str_following_porgrams_uses_this_library 362
+#define str_download_from 363
 #define req_ok 400
 #define req_ignore 401
 #define req_cancel 402
@@ -131,6 +138,12 @@
 #define str_cant_open_ahi_STR "Can't open AHI & set memory exception handler"
 #define str_warn_close_STR "Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?"
 #define str_no_chip_ram_STR "you should change setpatch command in startup sequene to:\n\nSetPatch QUIET WAITFORVALIDATE ADDCHIPRAM=2\n"
+#define str_warning_STR "Warning"
+#define str_not_installed_STR "not installed"
+#define str_if_its_not_installed_STR "if its not installed"
+#define str_following_porgrams_will_crash_STR "following porgrams will crash"
+#define str_following_porgrams_uses_this_library_STR "following porgrams uses this library"
+#define str_download_from_STR "Download from"
 #define req_ok_STR "_Ok"
 #define req_ignore_STR "_Ignore"
 #define req_cancel_STR "Cancel"
@@ -191,6 +204,12 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {str_cant_open_ahi,(CONST_STRPTR)str_cant_open_ahi_STR},
     {str_warn_close,(CONST_STRPTR)str_warn_close_STR},
     {str_no_chip_ram,(CONST_STRPTR)str_no_chip_ram_STR},
+    {str_warning,(CONST_STRPTR)str_warning_STR},
+    {str_not_installed,(CONST_STRPTR)str_not_installed_STR},
+    {str_if_its_not_installed,(CONST_STRPTR)str_if_its_not_installed_STR},
+    {str_following_porgrams_will_crash,(CONST_STRPTR)str_following_porgrams_will_crash_STR},
+    {str_following_porgrams_uses_this_library,(CONST_STRPTR)str_following_porgrams_uses_this_library_STR},
+    {str_download_from,(CONST_STRPTR)str_download_from_STR},
     {req_ok,(CONST_STRPTR)req_ok_STR},
     {req_ignore,(CONST_STRPTR)req_ignore_STR},
     {req_cancel,(CONST_STRPTR)req_cancel_STR},

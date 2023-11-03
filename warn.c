@@ -5,6 +5,11 @@
 #include <proto/exec.h>
 #include <proto/dos.h>
 
+#define CATCOMP_NUMBERS
+
+#include "locale/NallePUH.h"
+#include "gui.h"
+
 struct file
 {
 	char *name;
@@ -21,15 +26,16 @@ const struct file files[]=
 		{"libs:libblitter.library","os4depot.net",NULL, "NallePuh" },
 		{"libs:ptplay.library","os4depot.net",NULL, "demos and players" },
 		{"libs:ptreplay.library","os4depot.net",NULL, "demos and players" },
+		{"libs:dogshit.library","os4depot.net",NULL, "demos and players" },
 		{NULL,NULL,NULL,NULL}
 	};
 
 void msg(const struct file *f)
 {
-	printf("\nWarning: %s, not installed\n", f-> name);
-	printf("  download from: %s\n", f -> from);
-	if (f -> blame) printf("  follwing porgrams will crash: %s, if its not installed\n", f -> blame);
-	if (f -> used) printf("  follwing porgrams uses this library: %s\n", f -> used);
+	printf("\n%s: %s, %s\n",_L(str_warning),f-> name,_L(str_not_installed));
+	printf("  %s: %s\n", _L(str_download_from), f -> from);
+	if (f -> blame) printf("  %s: %s, %s\n",_L(str_following_porgrams_will_crash),f -> blame,_L(str_if_its_not_installed));
+	if (f -> used) printf("  %s: %s\n",_L(str_following_porgrams_uses_this_library), f -> used);
 	printf("\n");
 }
 

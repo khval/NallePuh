@@ -80,6 +80,12 @@
 #define str_cant_open_ahi 355
 #define str_warn_close 356
 #define str_no_chip_ram 357
+#define str_warning 358
+#define str_not_installed 359
+#define str_if_its_not_installed 360
+#define str_following_porgrams_will_crash 361
+#define str_following_porgrams_uses_this_library 362
+#define str_download_from 363
 #define req_ok 400
 #define req_ignore 401
 #define req_cancel 402

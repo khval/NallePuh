@@ -158,6 +158,30 @@ str_no_chip_ram
 
 ; you should change setpatch command in startup sequene to:\n\nSetPatch QUIET WAITFORVALIDATE ADDCHIPRAM=2\n
 ;
+str_warning
+
+; Warning
+;
+str_not_installed
+
+; not installed
+;
+str_if_its_not_installed
+
+; if its not installed
+;
+str_following_porgrams_will_crash
+
+; following porgrams will crash
+;
+str_following_porgrams_uses_this_library
+
+; following porgrams uses this library
+;
+str_download_from
+
+; Download from
+;
 req_ok
 
 ; _Ok
