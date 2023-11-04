@@ -1,4 +1,4 @@
-## version $VER: nallepuh.catalog 1.1 (24.10.2024)
+## version $VER: nallepuh.catalog 1.2 (29.10.2024)
 ## codeset 4
 ## language spanish
 ;
@@ -9,6 +9,14 @@ Nalle Puh
 win_about_title
 Acerca de Nalle Puh
 ; About Nalle Puh
+;
+win_sorry_title
+Problema
+; Sorry!!
+;
+win_warning_title
+¡Aviso!
+; Warning!!
 ;
 GAD_ACTIVATE
 _Activar
@@ -102,6 +110,18 @@ GAD_CIAB_TB
 Timer B:
 ; Timer B
 ;
+frame_audio
+Opciones De Audio
+; Audio options
+;
+frame_port1
+Puerto 1 (Joystick 2 / Ratón)
+; Port1: Joystick 2 / Mouse
+;
+frame_port2
+Puerto 2 (Joystick 1)
+; Port2: Joystick 1
+;
 str_copyright_by
 (c)2001 Martin Blom <martin@blom.org>\n
 ; (c)2001 Martin Blom <martin@blom.org>
@@ -109,13 +129,11 @@ str_copyright_by
 str_ported_by
 \033bStephan Rupprecht\033n:\n\
  Versión AmigaOS4.0 (2004)
-;\033bVersión AmigaOS4.0\033n\n Stephan Rupprecht (2004)
 ; Ported to AmigaOS4.0 by: Stephan Rupprecht (2004)
 ;
 str_updated_by
 \033bKjetil Hvalstrand\033n:\n\
  Actualización AOS4.1FE (2022)
-;\033bActualización AOS4.1FE\033n\n Kjetil Hvalstrand (2022)
 ; Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)
 ;
 str_ciaa_ciab
@@ -126,9 +144,28 @@ str_contributers
 \n\033bContribuyen\033n\n Damien Stewart, Samir Hawamdeh
 ; Contributers: Damien Stewart, Samir Hawamdeh
 ;
+str_cant_open_ahi
+No se puede abrir AHI y establecer excepción
+; Can't open AHI & set exception
+;
+str_warn_close
+\033cInterrupciones (de timer) reservadas, asegúrate\n\
+de que todos los programas están corréctamente\n\
+cerrados antes de continuar o pueden bloquearse\n\
+o \"colgarse"\. ¿Deseas ignorarlo y continuar?
+; Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?
+;
 req_ok
 _Aceptar
 ; _Ok
+req_ignore
+_Ignorar
+; _Ignore
+;
+req_cancel
+Cancelar
+; Cancel
 ;
 ID_END
+Size of locale
 ;
