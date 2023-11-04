@@ -76,7 +76,7 @@ GAD_CIAA_TB (//)
 Timer B
 ;
 GAD_CIAB_CR (//)
-Controll Register
+Control Register
 ;
 GAD_CIAB_TA (//)
 Timer A
@@ -126,11 +126,11 @@ not installed
 str_if_its_not_installed (//)
 if its not installed
 ;
-str_following_porgrams_will_crash (//)
-following porgrams will crash
+str_following_programs_will_crash (//)
+following programs will crash
 ;
-str_following_porgrams_uses_this_library (//)
-following porgrams uses this library
+str_following_programs_uses_this_library (//)
+following programs uses this library
 ;
 str_download_from (//)
 Download from
