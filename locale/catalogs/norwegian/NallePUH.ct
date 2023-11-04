@@ -146,6 +146,38 @@ str_cant_open_ahi
 Kan ikke åpne ahi samt, sette minneunntaks håndterer
 ; Can't open AHI & set exception handler
 ;
+str_warn_close
+Flere timer interrupt er reservert, vennligst sørg for at alle programmer er ordentlig lukket før du fortsetter, unnlatelse av å gjøre det, kan føre til hengende programmer, eller i verste fall krasjer, velger du å ignorere?
+;Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?
+;
+str_no_chip_ram
+du bør endre setpatch-kommandoen i startup-sequene til:\n\nSetPatch QUIET WAITFORVALIDATE ADDCHIPRAM=2\n
+;you should change setpatch command in startup sequene to:\n\nSetPatch QUIET WAITFORVALIDATE ADDCHIPRAM=2\n
+;
+str_warning
+advarsel
+;Warning
+;
+str_not_installed
+ikke installert
+;not installed
+;
+str_if_its_not_installed
+hvis den ikke er installert
+;if its not installed
+;
+str_following_programs_will_crash
+følgende programmer vil krasje
+;following programs will crash
+;
+str_following_programs_uses_this_library
+følgende programmer bruker dette biblioteket
+;following programs uses this library
+;
+str_download_from
+Last ned fra
+;Download from
+;
 req_ok
 _Ok
 ; _Ok
