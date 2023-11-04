@@ -16,7 +16,7 @@
 
 (set POptions "What do you want to install?")
 (set HOptions
-  (cat  "Lots of text about what to installl\n\n"
+  (cat  "Lots of text about what to install\n\n"
   )
 )
 
