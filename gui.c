@@ -231,7 +231,6 @@ void update_gui( int win_nr, struct rc *rc )
 					{
 						GAD_SELECT_MODE,
 						GAD_ACTIVATE,
-						LIST_Frequency,
 						~0
 					};
 
@@ -239,6 +238,10 @@ void update_gui( int win_nr, struct rc *rc )
 					{
 						GAD_TEST,
 						GAD_DEACTIVATE,
+						GAD_JOY1_BUTTON1,
+						GAD_JOY1_BUTTON2,
+						GAD_JOY2_BUTTON1,
+						GAD_JOY2_BUTTON2,
 						~0
 					};
 
@@ -371,8 +374,8 @@ BOOL open_window(ULONG win_id, struct rc *rc )
 	switch ( win_id )
 	{
 		case win_prefs:
-			RSetAttrO( win_prefs, GAD_MODE_ID, GA_Disabled, TRUE);
-			RSetAttrO( win_prefs, GAD_MODE_INFO, GA_Disabled, TRUE);
+			RSetAttrO( win_prefs, GAD_MODE_ID, GA_ReadOnly, TRUE);
+			RSetAttrO( win_prefs, GAD_MODE_INFO, GA_ReadOnly, TRUE);
 			RSetAttrO( win_prefs, LIST_Frequency, CHOOSER_Selected , cia_frequency_select);
 			break;
 	}
@@ -510,8 +513,6 @@ void nallepuh_test()
 
 void init_rc(struct rc *rc, struct PUHData* pd)
 {
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 	rc -> rc = FALSE;
 	rc -> quit = FALSE;
 	rc -> messed_with_registers = FALSE;
@@ -560,20 +561,13 @@ void IO_BUTTONS_DOWN(ULONG ID);
 
 void activate( struct rc *rc )
 {
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 	if ( ! InstallPUH( 0, rc -> audio_mode, rc -> frequency ) )
 	{
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 		req(_L(win_sorry_title),_L(str_cant_open_ahi),_L(req_ok), 3);
 	}
 	else
 	{
 		options.installed = TRUE;
-
-	printf("%s:%d\n",__FUNCTION__,__LINE__);
-
 
 		if (  ActivatePUH( rc -> pd ) )
 		{

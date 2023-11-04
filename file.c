@@ -17,6 +17,7 @@ extern void update_hz();
 void load(const char *name, struct rc *rc)
 {
 	FILE *fd;
+
 	fd = fopen( name, "r" );
 	if (fd)
 	{
@@ -35,6 +36,7 @@ void load(const char *name, struct rc *rc)
 void save(const char *name, struct rc *rc)
 {
 	FILE *fd;
+
 	fd = fopen( name, "w" );
 	if (fd)
 	{
