@@ -36,7 +36,7 @@ bool wbStartup(struct WBStartup *wbmsg)
 	{
 		sprintf(tmp,"%s%s",str_progdir,name);
 
-		dobj = GetDiskObject(name);
+		dobj = GetDiskObject(tmp);
 		if (dobj)
 		{
 			if (FindToolType( dobj -> do_ToolTypes, "iconify")) arg_iconify = true;
