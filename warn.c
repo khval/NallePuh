@@ -27,7 +27,6 @@ const struct file files[]=
 		{"libs:libblitter.library","os4depot.net",NULL, "NallePuh",0 },
 		{"libs:ptplay.library","os4depot.net",NULL, NULL, str_demos_and_players },
 		{"libs:ptreplay.library","os4depot.net",NULL, NULL, str_demos_and_players },
-		{"libs:dogshit.library","os4depot.net",NULL, NULL, str_demos_and_players },
 		{NULL,NULL,NULL,NULL,0}
 	};
 

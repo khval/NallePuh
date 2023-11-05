@@ -149,6 +149,8 @@ void cia_fn ()
 {
 	ULONG mask;
 
+	SetTaskPri(FindTask(NULL),2);
+
 	ciaa_signal = AllocSignal(-1);
 	ciab_signal = AllocSignal(-1);
 
@@ -254,7 +256,8 @@ int main( int argc,char* argv[] )
 	}
 	#endif
 
-	cia_out = Open("CON:Debug",MODE_NEWFILE);
+	cia_out = 0;
+//	cia_out = Open("CON:Debug",MODE_NEWFILE);
 
 	cia_process = spawn( cia_fn, "NallePuh cia process", cia_out );
 
