@@ -48,21 +48,6 @@ bool wbStartup(struct WBStartup *wbmsg)
 		free(tmp);
 	}
 
-
-	printf("%s, %s\n", 
-		arg_iconify ? "Iconify" : "",
-		arg_activate ? "activate" : "" );
-
-//	args	= wbmsg->sm_ArgList;
-//	if (args==NULL) return false;
-
-/*
-	for (n=1;n<wbmsg->sm_NumArgs;n++)
-	{
-		printf("wbarg: %s\n",args[n].wa_Name);
-	}
-*/
-
 	return true;
 }
 
