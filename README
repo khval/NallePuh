@@ -49,6 +49,18 @@ List of tested - unsupported is here:
 	If you find more thats not working, please report, 
 	it saves people from wasting time on things that’s not working.
 
+Changes in 5 November 2023 Version 1.6
+
+	* GUI now uses ReadOnly more places, instead of disable.
+	* A few more text strings can now be translated.
+	* Tools type support was added, (was requested, by tekmage)
+	* Lots of typos corrected.
+	* Makefile was updated.
+	* Some code was not the same for CIAA as CIAB (merge).
+	* Set priority 2 on CIA process.
+	* Created process CIA for timers, so it’s not handled by GUI
+	* ReplyMsg was added to TimerRequest.
+
 Changes in 29 October 2023 Version 1.5
 
 	* GUI now uses "Read Only" instead of disabled.
