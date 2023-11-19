@@ -74,6 +74,10 @@ LIST_Frequency
 
 ; Frequency
 ;
+LIST_BLITTER
+
+; Blitter
+;
 GAD_JOY1_BUTTON1
 
 ; Button1
@@ -126,6 +130,10 @@ frame_port2
 
 ; Port2: Joystick 1
 ;
+frame_blitter
+
+; blitter
+;
 str_copyright_by
 
 ; (c)2001 Martin Blom <martin@blom.org>
@@ -170,17 +178,21 @@ str_if_its_not_installed
 
 ; if its not installed
 ;
-str_following_porgrams_will_crash
+str_following_programs_will_crash
 
-; following porgrams will crash
+; following programs will crash
 ;
-str_following_porgrams_uses_this_library
+str_following_programs_uses_this_library
 
-; following porgrams uses this library
+; following programs uses this library
 ;
 str_download_from
 
 ; Download from
+;
+str_demos_and_players
+
+; demos and music players
 ;
 req_ok
 

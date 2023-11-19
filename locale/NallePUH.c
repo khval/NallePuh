@@ -59,19 +59,21 @@
 #define LIST_Chips_CIA 160
 #define LIST_Chips_Status 161
 #define LIST_Frequency 162
-#define GAD_JOY1_BUTTON1 163
-#define GAD_JOY1_BUTTON2 164
-#define GAD_JOY2_BUTTON1 165
-#define GAD_JOY2_BUTTON2 166
-#define GAD_CIAA_CR 167
-#define GAD_CIAA_TA 168
-#define GAD_CIAA_TB 169
-#define GAD_CIAB_CR 170
-#define GAD_CIAB_TA 171
-#define GAD_CIAB_TB 172
+#define LIST_BLITTER 163
+#define GAD_JOY1_BUTTON1 164
+#define GAD_JOY1_BUTTON2 165
+#define GAD_JOY2_BUTTON1 166
+#define GAD_JOY2_BUTTON2 167
+#define GAD_CIAA_CR 168
+#define GAD_CIAA_TA 169
+#define GAD_CIAA_TB 170
+#define GAD_CIAB_CR 171
+#define GAD_CIAB_TA 172
+#define GAD_CIAB_TB 173
 #define frame_audio 300
 #define frame_port1 301
 #define frame_port2 302
+#define frame_blitter 303
 #define str_copyright_by 350
 #define str_ported_by 351
 #define str_updated_by 352
@@ -83,9 +85,10 @@
 #define str_warning 358
 #define str_not_installed 359
 #define str_if_its_not_installed 360
-#define str_following_porgrams_will_crash 361
-#define str_following_porgrams_uses_this_library 362
+#define str_following_programs_will_crash 361
+#define str_following_programs_uses_this_library 362
 #define str_download_from 363
+#define str_demos_and_players 364
 #define req_ok 400
 #define req_ignore 401
 #define req_cancel 402
@@ -117,6 +120,7 @@
 #define LIST_Chips_CIA_STR "CIA"
 #define LIST_Chips_Status_STR "Status"
 #define LIST_Frequency_STR "Frequency"
+#define LIST_BLITTER_STR "Blitter"
 #define GAD_JOY1_BUTTON1_STR "Button1"
 #define GAD_JOY1_BUTTON2_STR "Button2"
 #define GAD_JOY2_BUTTON1_STR "Button1"
@@ -130,6 +134,7 @@
 #define frame_audio_STR "Audio options"
 #define frame_port1_STR "Port1: Joystick 2 / Mouse"
 #define frame_port2_STR "Port2: Joystick 1"
+#define frame_blitter_STR "blitter"
 #define str_copyright_by_STR "(c)2001 Martin Blom <martin@blom.org>"
 #define str_ported_by_STR "Ported to AmigaOS4.0 by: Stephan Rupprecht (2004)"
 #define str_updated_by_STR "Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)"
@@ -141,9 +146,10 @@
 #define str_warning_STR "Warning"
 #define str_not_installed_STR "not installed"
 #define str_if_its_not_installed_STR "if its not installed"
-#define str_following_porgrams_will_crash_STR "following porgrams will crash"
-#define str_following_porgrams_uses_this_library_STR "following porgrams uses this library"
+#define str_following_programs_will_crash_STR "following programs will crash"
+#define str_following_programs_uses_this_library_STR "following programs uses this library"
 #define str_download_from_STR "Download from"
+#define str_demos_and_players_STR "demos and music players"
 #define req_ok_STR "_Ok"
 #define req_ignore_STR "_Ignore"
 #define req_cancel_STR "Cancel"
@@ -183,6 +189,7 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {LIST_Chips_CIA,(CONST_STRPTR)LIST_Chips_CIA_STR},
     {LIST_Chips_Status,(CONST_STRPTR)LIST_Chips_Status_STR},
     {LIST_Frequency,(CONST_STRPTR)LIST_Frequency_STR},
+    {LIST_BLITTER,(CONST_STRPTR)LIST_BLITTER_STR},
     {GAD_JOY1_BUTTON1,(CONST_STRPTR)GAD_JOY1_BUTTON1_STR},
     {GAD_JOY1_BUTTON2,(CONST_STRPTR)GAD_JOY1_BUTTON2_STR},
     {GAD_JOY2_BUTTON1,(CONST_STRPTR)GAD_JOY2_BUTTON1_STR},
@@ -196,6 +203,7 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {frame_audio,(CONST_STRPTR)frame_audio_STR},
     {frame_port1,(CONST_STRPTR)frame_port1_STR},
     {frame_port2,(CONST_STRPTR)frame_port2_STR},
+    {frame_blitter,(CONST_STRPTR)frame_blitter_STR},
     {str_copyright_by,(CONST_STRPTR)str_copyright_by_STR},
     {str_ported_by,(CONST_STRPTR)str_ported_by_STR},
     {str_updated_by,(CONST_STRPTR)str_updated_by_STR},
@@ -207,9 +215,10 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {str_warning,(CONST_STRPTR)str_warning_STR},
     {str_not_installed,(CONST_STRPTR)str_not_installed_STR},
     {str_if_its_not_installed,(CONST_STRPTR)str_if_its_not_installed_STR},
-    {str_following_porgrams_will_crash,(CONST_STRPTR)str_following_porgrams_will_crash_STR},
-    {str_following_porgrams_uses_this_library,(CONST_STRPTR)str_following_porgrams_uses_this_library_STR},
+    {str_following_programs_will_crash,(CONST_STRPTR)str_following_programs_will_crash_STR},
+    {str_following_programs_uses_this_library,(CONST_STRPTR)str_following_programs_uses_this_library_STR},
     {str_download_from,(CONST_STRPTR)str_download_from_STR},
+    {str_demos_and_players,(CONST_STRPTR)str_demos_and_players_STR},
     {req_ok,(CONST_STRPTR)req_ok_STR},
     {req_ignore,(CONST_STRPTR)req_ignore_STR},
     {req_cancel,(CONST_STRPTR)req_cancel_STR},
