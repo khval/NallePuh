@@ -51,10 +51,13 @@ CIA
 LIST_Chips_Status (//)
 Status
 ;
-LIST_Frequency (//250)
+LIST_Frequency (//220)
 Frequency
 ;
-GAD_JOY1_BUTTON1 (//)
+LIST_BLITTER (//)
+Blitter
+;
+GAD_JOY1_BUTTON1 (//250)
 Button1
 ;
 GAD_JOY1_BUTTON2 (//)
@@ -92,6 +95,9 @@ Port1: Joystick 2 / Mouse
 ;
 frame_port2 (//)
 Port2: Joystick 1
+;
+frame_blitter (//)
+blitter
 ;
 str_copyright_by (350//)
 (c)2001 Martin Blom <martin@blom.org>
@@ -134,6 +140,9 @@ following programs uses this library
 ;
 str_download_from (//)
 Download from
+;
+str_demos_and_players (//)
+demos and music players
 ;
 req_ok (400//)
 _Ok

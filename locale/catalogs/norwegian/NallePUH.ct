@@ -18,6 +18,10 @@ win_warning_title
 Advarsel
 ; Warning!!
 ;
+win_no_chip_ram
+Ingen chip ram
+; win_no_chip_ram
+;
 GAD_ACTIVATE
 _Aktiver
 ; _Activate
@@ -62,9 +66,17 @@ LIST_Chips_CIA
 CIA
 ; CIA
 ;
+LIST_Chips_Status
+Chips status
+; Chips Status
+;
 LIST_Frequency
 Frekvens
 ; Frequency
+;
+LIST_BLITTER
+Blitter
+; Blitter
 ;
 GAD_JOY1_BUTTON1
 Knapp 1
@@ -118,6 +130,10 @@ frame_port2
 Port2: Spillekontroller 1
 ; Port2: Joystick 1
 ;
+frame_blitter
+blitter
+; blitter
+;
 str_copyright_by
 (c)2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>
@@ -137,10 +153,6 @@ CIAA/CIAB støtte lagt til (2023)
 str_contributers
 Bidragsytere: Damien Stewart, Samir Hawamdeh, Javier de las Rivas
 ; Contributers: Damien Stewart, Samir Hawamdeh, Javier de las Rivas
-;
-str_warn_close
-Flere "timer interrupts" er reservert, vennligst sørg for at alle programmer er ordentlig lukket før du fortsetter, unnlatelse av å gjøre det, kan føre til hengende programmer, eller i verste fall krasjer, velger du å ignorere?
-; Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?
 ;
 str_cant_open_ahi
 Kan ikke åpne ahi samt, sette minneunntaks håndterer
@@ -177,6 +189,10 @@ følgende programmer bruker dette biblioteket
 str_download_from
 Last ned fra
 ;Download from
+;
+str_demos_and_players
+Demos og musikk programmer
+; Demos and music programs
 ;
 req_ok
 _Ok
