@@ -24,6 +24,8 @@
 #include <proto/icon.h>
 #include <proto/wb.h>
 #include <proto/application.h>
+#include <proto/uaeblit.h>
+
 #include <diskfont/diskfonttag.h>
 
 #include <gadgets/integer.h>
@@ -40,6 +42,7 @@
 
 #include "emu_cia.h"
 #include "spawn.h"
+#include "init.h"
 
 struct Library * AHIBase = NULL;
 struct IntuitionBase* IntuitionBase = NULL;
@@ -51,6 +54,7 @@ struct Library *DiskfontBase = NULL;
 struct Library *IconBase = NULL;
 struct Library *WorkbenchBase = NULL;
 struct Library *ApplicationBase = NULL;
+struct Library *uaeblitBase = NULL;
 
 struct DebugIFace *IDebug = NULL;
 struct LibBlitterIFace *ILibBlitter = NULL;
@@ -71,6 +75,8 @@ struct Library *ciabBase = NULL;
 
 struct ciaaIFace *Iciaa = NULL;
 struct ciabIFace *Iciab = NULL;
+
+struct uaeblitIFace *Iuaeblit = NULL;
 
 struct StringIFace *IString = NULL;
 struct LayoutIFace *ILayout = NULL;
@@ -127,6 +133,13 @@ extern uint32 appID;
 
 #endif
 
+extern ULONG blitter_lib_id[4];
+extern CONST_STRPTR blitter_names[4]; 
+
+const char *str_off = "Off";
+const char * libblitter_name = "libblitter.library";
+const char * uaeblit_name = "uaeblit.library";
+
 void CloseLibs( void );
 
 /******************************************************************************
@@ -154,17 +167,37 @@ extern void warn();
 
 BOOL OpenLibs( void )
 {
+	int blibs = 0;
 	IDebug = (struct DebugIFace *) GetInterface((struct Library *) SysBase, "debug", 1L, NULL);
 
-	// optonal
-
-	LibBlitterBase = (struct Library *) OpenLibrary( "libblitter.library", 1 );
+	// optonal resource
 	ciaaBase = (struct Library *) OpenLibrary( "ciaa.resource", 1 );
 	ciabBase = (struct Library *) OpenLibrary( "ciab.resource", 1 );
+
+	// optonal library
+	LibBlitterBase = (struct Library *) OpenLibrary( "libblitter.library", 1 );
+	uaeblitBase = (struct Library *) OpenLibrary( "uaeblit.library", 1 );
 
 	GETIFACE(ciaa);
 	GETIFACE(ciab);
 	GETIFACE(LibBlitter);
+	GETIFACE(uaeblit);
+
+	blitter_names[0] = str_off;
+
+	if (ILibBlitter)
+	{
+		blitter_names[++blibs] = libblitter_name;
+		blitter_lib_id[blibs] = use_blitzen;
+	}
+
+	if (Iuaeblit)
+	{
+		blitter_names[++blibs] = uaeblit_name;
+		blitter_lib_id[blibs] = use_uaeblit;
+	}
+
+	blitter_names[++blibs] = NULL;
 
 	// Needed libs
 
@@ -273,8 +306,11 @@ void CloseLibs( void )
 
 	DROPIFACE(Debug); 
 
+	CloseLib(LibBlitter);
+	CloseLib(uaeblit);
 	CloseLib(ciaa);
 	CloseLib(ciab);
+
 	CloseLib(Application);
 	CloseLib(Intuition);
 	CloseLib(Utility);

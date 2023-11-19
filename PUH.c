@@ -39,9 +39,11 @@
 #include <proto/utility.h>
 #include <proto/dos.h>
 #include <proto/libblitter.h>
+#include <proto/uaeblit.h>
 
 #include <stdio.h>
 
+#include "init.h"
 #include "PUH.h"
 #include "debug.h"
 #include "emu_cia.h"
@@ -63,6 +65,8 @@ struct PUHData* pd = NULL;
 
 uint32 HIT_Flags = 0;
 uint32 HIT_Last_Flags = 0;
+
+extern int blitter_selected;
 
  SAVEDS static void PUHSoftInt( struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd );
 ULONG DataFaultHandler(struct ExceptionContext *pContext, struct ExecBase *pSysBase, struct PUHData *pd);
@@ -124,8 +128,32 @@ ULONG potgor =			// pull up on bit 14,12,10, 8
 #define AUD3VOL 0x0d8
 #define AUD3DAT 0x0da
 
-#define BLTSIZE 0x058
+#define _BLTCPTH 0x048
+#define _BLTCPTL 0x04A
+#define _BLTBPTH 0x04C
+#define _BLTBPTL 0x04E
+#define _BLTAPTH 0x050
+#define _BLTAPTL 0x052
+#define _BLTDPTH 0x054
+#define _BLTDPTL 0x056
 
+#define _BLTSIZE 0x058
+
+#define _BLTCON0 0x040
+#define _BLTCON1 0x042
+#define _BLTCON0L 0x05A
+
+#define _BLTSIZV 0x05C
+#define _BLTSIZH 0x05E
+
+#define _BLTAMOD 0x060
+#define _BLTBMOD 0x062
+#define _BLTCMOD 0x064
+#define _BLTDMOD 0x066
+
+#define _BLTADAT 0x070
+#define _BLTBDAT 0x072
+#define _BLTCDAT 0x074
 
 #define BBUSY (1<<14)
 
@@ -1042,6 +1070,63 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 	}
 }
 
+void blitzen(ULONG reg)
+{
+	switch ( reg )
+	{
+		case _BLTSIZE:
+			CustomData.dmaconr |= BBUSY;	// blitter is busy.
+			doBlitter(&CustomData);
+			CustomData.dmaconr &= ~BBUSY;		// blitter is done.
+			break;
+	}
+}
+
+void uaeblit(ULONG reg)
+{
+	// CustomData
+
+	switch (reg)
+	{
+		case _BLTCPTL: BLTCPTL(&CustomData); break;   //---
+		case _BLTCPTH: BLTCPTH(&CustomData); break;
+
+		case _BLTBPTL: BLTBPTL(&CustomData); break;
+		case _BLTBPTH: BLTBPTH(&CustomData); break;
+
+		case _BLTAPTL: BLTAPTL(&CustomData); break;
+		case _BLTAPTH: BLTAPTH(&CustomData); break;  //---
+
+		case _BLTDPTL: BLTDPTL(&CustomData); break;
+		case _BLTDPTH: BLTDPTH(&CustomData); break;
+
+		case _BLTSIZE: BLTSIZE(&CustomData); break;
+
+		case _BLTCON0: BLTCON0(&CustomData);	break;
+		case _BLTCON1: BLTCON1(&CustomData);	break;
+		case _BLTCON0L: BLTCON0L(&CustomData);	break;
+
+		case _BLTSIZV: BLTSIZV(&CustomData);	break;
+
+		case _BLTSIZH: BLTSIZH(&CustomData);	break;
+
+		case _BLTAMOD: BLTAMOD(&CustomData);	break;
+
+		case _BLTBMOD: BLTBMOD(&CustomData);	break;
+
+		case _BLTCMOD: BLTCMOD(&CustomData);	break;
+
+		case _BLTDMOD: BLTDMOD(&CustomData);	break;
+
+		case _BLTADAT: BLTADAT(&CustomData);	break;
+
+		case _BLTBDAT: BLTBDAT(&CustomData);	break;
+
+		case _BLTCDAT: BLTCDAT(&CustomData);	break;
+	}
+
+}
+
 static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase )
 {
 	UWORD* address = (UWORD*) ( (ULONG) pd->m_CustomDirect + reg );
@@ -1136,7 +1221,7 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 					if( pd->m_SoundOn[ channel ] )
 					{
 						// Queue it
-						if( pd->m_SoundLength[ channel ] == 2 )
+						if ( pd->m_SoundLength[ channel ] == 2 ) 
 						{
 							// SoundTracker-style silece
 							AHI_SetSound( channel, AHI_NOSOUND,
@@ -1364,24 +1449,24 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 			*handled = TRUE;
 			break;
 
-
-		case BLTSIZE:
-			
-			CustomData.bltsize = value;
-			if (ILibBlitter)	
-			{
-				CustomData.dmaconr |= BBUSY;	// blitter is busy.
-				doBlitter(&CustomData);
-				CustomData.dmaconr &= ~BBUSY;		// blitter is done.
-
-				*handled = TRUE;
-			}
-			break;
-
 		default:
 
 			cd_WriteWord( address, value );
 			*handled = TRUE;
+
+			switch (blitter_selected)
+			{
+				case use_uaeblit:	
+						if (Iuaeblit) uaeblit( reg );
+						break;
+
+				case use_blitzen:
+						if (ILibBlitter) blitzen( reg );
+						break;
+
+				default: 	*handled = FALSE;
+						break;
+			}
 			break;
 	}
 }

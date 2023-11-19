@@ -15,4 +15,14 @@ PAGE_Add,  VGroupObject,
 	LayoutEnd,
 	CHILD_WeightedHeight, 0,
 
+	LAYOUT_AddChild, VGroupObject,
+		GFrame(_L(frame_blitter)),
+
+		LAYOUT_AddChild, MakeCycle(LIST_BLITTER, blitter_names),
+			CHILD_MinWidth, 200,
+			CHILD_Label, MakeLabel(LIST_BLITTER),
+
+	LayoutEnd,
+	CHILD_WeightedHeight, 0,
+
 LayoutEnd,

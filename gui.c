@@ -96,6 +96,8 @@ extern struct Catalog *catalog;
 
 extern int cia_frequency_select;
 
+int blitter_selected = 0;
+
 struct kIcon
 {
 	struct Gadeget *gadget ;
@@ -171,6 +173,9 @@ CONST_STRPTR frequency_names[] =
 			"60Hz (NTSC)",
 			NULL
 		};
+
+ULONG blitter_lib_id[4];
+char *blitter_names[4];
 
 void handel_iconify()
 {
@@ -637,6 +642,10 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 			cia_frequency_select = getv( LIST_Frequency, CHOOSER_Selected );
 			break;
 
+		case LIST_BLITTER:
+			blitter_selected = blitter_lib_id[getv( LIST_BLITTER, CHOOSER_Selected )];
+			printf("blitter_selected: %d\n", blitter_selected );
+			break;
 
 		case GAD_SELECT_MODE:
 			{
