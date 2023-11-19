@@ -34,7 +34,12 @@ OBJECTS	= \
 
 all:	$(TARGET) 
 
-gui.o:	gui.c    gui_cia.c   gui_paula.c  gui_status.c
+$(obj_dir)/Nalle.o:	Nalle.c locale/NallePUH.h NallePuh_rev.h
+
+$(obj_dir)/gui.o:	gui.c    gui_cia.c   gui_paula.c  gui_status.c locale/NallePUH.h NallePuh_rev.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
+
+$(obj_dir)/worn.o:	worn.c  locale/NallePUH.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $(OUTPUT_OPTION) $<
 
 $(obj_dir)/%.o:	%.c
