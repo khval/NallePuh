@@ -1079,6 +1079,16 @@ void blitzen(ULONG reg)
 			doBlitter(&CustomData);
 			CustomData.dmaconr &= ~BBUSY;		// blitter is done.
 			break;
+
+		case _BLTSIZH:
+			CustomData.dmaconr |= BBUSY;	// blitter is busy.
+
+			// convert it, and hope for the best...
+			CustomData.bltsize = CustomData.bltsizh << 6 | CustomData.bltsizv;
+
+			doBlitter(&CustomData);
+			CustomData.dmaconr &= ~BBUSY;		// blitter is done.
+			break;
 	}
 }
 
