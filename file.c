@@ -25,6 +25,7 @@ void load(const char *name, struct rc *rc)
 		fscanf(fd,"%*s %ld", &rc -> frequency );
 		fscanf(fd,"%*s %255[^\n]", rc -> AHI_name );
 		fscanf(fd,"%*s %d", &cia_frequency_select);
+		fscanf(fd,"%*s %ld", &blitter_selected);
 		fclose(fd);
 
 		cia_frequency_select = 1;
@@ -46,6 +47,7 @@ void save(const char *name, struct rc *rc)
 			rc -> AHI_name);
 
 		fprintf(fd,"cia-frequency: %d\n",cia_frequency_select);
+		fprintf(fd,"blitterlib: %d\n", (int) blitter_selected);
 
 		fclose(fd);
 	}

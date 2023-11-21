@@ -35,6 +35,7 @@
 #include "PUH.h"
 #include "gui.h"
 #include "file.h"
+#include "init.h"
 
 #define ALL_REACTION_CLASSES
 #include <reaction/reaction.h>
@@ -96,7 +97,7 @@ extern struct Catalog *catalog;
 
 extern int cia_frequency_select;
 
-int blitter_selected = 0;
+ULONG blitter_selected = 0;
 
 struct kIcon
 {
@@ -174,8 +175,8 @@ CONST_STRPTR frequency_names[] =
 			NULL
 		};
 
-ULONG blitter_lib_id[4];
-char *blitter_names[4];
+ULONG blitter_lib_id[max_blitter_libs];
+char *blitter_names[max_blitter_libs];
 
 void handel_iconify()
 {
@@ -283,6 +284,21 @@ void update_gui( int win_nr, struct rc *rc )
 				{
 					RefreshSetGadgetAttrs( obj[ *i ], win[ win_nr ], NULL,
 						GA_ReadOnly, TRUE, TAG_DONE );
+				}
+
+				{
+					char **name;
+					int i = 0;
+
+					for (name = blitter_names; (*name) && (i<4) ; name ++, i++)
+					{
+						if (blitter_lib_id[i] == blitter_selected)
+						{
+							RefreshSetGadgetAttrs( obj[ LIST_BLITTER ], win[ win_nr ], NULL,
+								CHOOSER_Selected , i, TAG_DONE);
+							break;	/// found exit for...
+						}
+					}
 				}
 			}
 			break;
@@ -644,7 +660,6 @@ void HandleGadgetsUp(ULONG input_flags , struct rc *rc)
 
 		case LIST_BLITTER:
 			blitter_selected = blitter_lib_id[getv( LIST_BLITTER, CHOOSER_Selected )];
-			printf("blitter_selected: %d\n", blitter_selected );
 			break;
 
 		case GAD_SELECT_MODE:
