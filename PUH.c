@@ -38,8 +38,6 @@
 #include <proto/exec.h>
 #include <proto/utility.h>
 #include <proto/dos.h>
-#include <proto/libblitter.h>
-#include <proto/uaeblit.h>
 
 #include <stdio.h>
 
@@ -50,6 +48,8 @@
 
 #undef __USE_INLINE__
 
+#include <proto/libblitter.h>
+#include <proto/uaeblit.h>
 #include <proto/ciaa.h>
 #include <proto/ciab.h>
 
@@ -1076,7 +1076,7 @@ void blitzen(ULONG reg)
 	{
 		case _BLTSIZE:
 			CustomData.dmaconr |= BBUSY;	// blitter is busy.
-			doBlitter(&CustomData);
+			ILibBlitter -> BLTSIZE(&CustomData);
 			CustomData.dmaconr &= ~BBUSY;		// blitter is done.
 			break;
 
@@ -1086,7 +1086,7 @@ void blitzen(ULONG reg)
 			// convert it, and hope for the best...
 			CustomData.bltsize = CustomData.bltsizh << 6 | CustomData.bltsizv;
 
-			doBlitter(&CustomData);
+			ILibBlitter -> BLTSIZH(&CustomData);
 			CustomData.dmaconr &= ~BBUSY;		// blitter is done.
 			break;
 	}
@@ -1098,41 +1098,43 @@ void uaeblit(ULONG reg)
 
 	switch (reg)
 	{
-		case _BLTCPTL: BLTCPTL(&CustomData); break;   //---
-		case _BLTCPTH: BLTCPTH(&CustomData); break;
+		case _BLTCPTL: Iuaeblit -> BLTCPTL(&CustomData); break;   //---
+		case _BLTCPTH: Iuaeblit -> BLTCPTH(&CustomData); break;
 
-		case _BLTBPTL: BLTBPTL(&CustomData); break;
-		case _BLTBPTH: BLTBPTH(&CustomData); break;
+		case _BLTBPTL: Iuaeblit -> BLTBPTL(&CustomData); break;
+		case _BLTBPTH: Iuaeblit -> BLTBPTH(&CustomData); break;
 
-		case _BLTAPTL: BLTAPTL(&CustomData); break;
-		case _BLTAPTH: BLTAPTH(&CustomData); break;  //---
+		case _BLTAPTL: Iuaeblit -> BLTAPTL(&CustomData); break;
+		case _BLTAPTH: Iuaeblit -> BLTAPTH(&CustomData); break;  //---
 
-		case _BLTDPTL: BLTDPTL(&CustomData); break;
-		case _BLTDPTH: BLTDPTH(&CustomData); break;
+		case _BLTDPTL: Iuaeblit -> BLTDPTL(&CustomData); break;
+		case _BLTDPTH: Iuaeblit -> BLTDPTH(&CustomData); break;
 
-		case _BLTSIZE: BLTSIZE(&CustomData); break;
+		case _BLTSIZE: 
+				CustomData.dmaconr |= BBUSY;	// blitter is busy.
+				Iuaeblit -> BLTSIZE(&CustomData); 
+				CustomData.dmaconr &= ~BBUSY;		// blitter is done.
+				break;
 
-		case _BLTCON0: BLTCON0(&CustomData);	break;
-		case _BLTCON1: BLTCON1(&CustomData);	break;
-		case _BLTCON0L: BLTCON0L(&CustomData);	break;
+		case _BLTCON0: Iuaeblit -> BLTCON0(&CustomData);	break;
+		case _BLTCON1: Iuaeblit -> BLTCON1(&CustomData);	break;
+		case _BLTCON0L: Iuaeblit -> BLTCON0L(&CustomData);	break;
 
-		case _BLTSIZV: BLTSIZV(&CustomData);	break;
+		case _BLTSIZV: Iuaeblit -> BLTSIZV(&CustomData);	break;
 
-		case _BLTSIZH: BLTSIZH(&CustomData);	break;
+		case _BLTSIZH: 
+				CustomData.dmaconr |= BBUSY;	// blitter is busy.
+				Iuaeblit -> BLTSIZH(&CustomData);
+				CustomData.dmaconr &= ~BBUSY;	// blitter is done.
+				break;
 
-		case _BLTAMOD: BLTAMOD(&CustomData);	break;
-
-		case _BLTBMOD: BLTBMOD(&CustomData);	break;
-
-		case _BLTCMOD: BLTCMOD(&CustomData);	break;
-
-		case _BLTDMOD: BLTDMOD(&CustomData);	break;
-
-		case _BLTADAT: BLTADAT(&CustomData);	break;
-
-		case _BLTBDAT: BLTBDAT(&CustomData);	break;
-
-		case _BLTCDAT: BLTCDAT(&CustomData);	break;
+		case _BLTAMOD: Iuaeblit -> BLTAMOD(&CustomData);	break;
+		case _BLTBMOD: Iuaeblit -> BLTBMOD(&CustomData);	break;
+		case _BLTCMOD: Iuaeblit -> BLTCMOD(&CustomData);	break;
+		case _BLTDMOD: Iuaeblit -> BLTDMOD(&CustomData);	break;
+		case _BLTADAT: Iuaeblit -> BLTADAT(&CustomData);	break;
+		case _BLTBDAT: Iuaeblit -> BLTBDAT(&CustomData);	break;
+		case _BLTCDAT: Iuaeblit -> BLTCDAT(&CustomData);	break;
 	}
 
 }
