@@ -144,6 +144,30 @@ Download from
 str_demos_and_players (//)
 demos and music players
 ;
+str_Invalid_level (//)
+Invalid value for Level.
+;
+str_unable_to_open_ahi (//)
+Unable to open ahi.device version 4.
+;
+str_arguments_is_not_numbers (//)
+All arguments must be numbers.
+;
+str_waiting_for_ctrl_c (//)
+Waiting for CTRL-C...
+;
+str_gui_failed (//)
+Failed to create GUI.
+;
+str_unable_to_allocate_audio_mode (//)
+Unable to allocate audio mode
+;
+str_unable_to_load_dynamic_sample (//)
+Unable to load dynamic sample.
+;
+str_unable_to_start_playback (//)
+Unable to start playback.
+;
 req_ok (400//)
 _Ok
 ;

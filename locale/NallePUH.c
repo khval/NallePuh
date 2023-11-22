@@ -89,6 +89,14 @@
 #define str_following_programs_uses_this_library 362
 #define str_download_from 363
 #define str_demos_and_players 364
+#define str_Invalid_level 365
+#define str_unable_to_open_ahi 366
+#define str_arguments_is_not_numbers 367
+#define str_waiting_for_ctrl_c 368
+#define str_gui_failed 369
+#define str_unable_to_allocate_audio_mode 370
+#define str_unable_to_load_dynamic_sample 371
+#define str_unable_to_start_playback 372
 #define req_ok 400
 #define req_ignore 401
 #define req_cancel 402
@@ -150,6 +158,14 @@
 #define str_following_programs_uses_this_library_STR "following programs uses this library"
 #define str_download_from_STR "Download from"
 #define str_demos_and_players_STR "demos and music players"
+#define str_Invalid_level_STR "Invalid value for Level."
+#define str_unable_to_open_ahi_STR "Unable to open ahi.device version 4."
+#define str_arguments_is_not_numbers_STR "All arguments must be numbers."
+#define str_waiting_for_ctrl_c_STR "Waiting for CTRL-C..."
+#define str_gui_failed_STR "Failed to create GUI."
+#define str_unable_to_allocate_audio_mode_STR "Unable to allocate audio mode"
+#define str_unable_to_load_dynamic_sample_STR "Unable to load dynamic sample."
+#define str_unable_to_start_playback_STR "Unable to start playback."
 #define req_ok_STR "_Ok"
 #define req_ignore_STR "_Ignore"
 #define req_cancel_STR "Cancel"
@@ -219,6 +235,14 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {str_following_programs_uses_this_library,(CONST_STRPTR)str_following_programs_uses_this_library_STR},
     {str_download_from,(CONST_STRPTR)str_download_from_STR},
     {str_demos_and_players,(CONST_STRPTR)str_demos_and_players_STR},
+    {str_Invalid_level,(CONST_STRPTR)str_Invalid_level_STR},
+    {str_unable_to_open_ahi,(CONST_STRPTR)str_unable_to_open_ahi_STR},
+    {str_arguments_is_not_numbers,(CONST_STRPTR)str_arguments_is_not_numbers_STR},
+    {str_waiting_for_ctrl_c,(CONST_STRPTR)str_waiting_for_ctrl_c_STR},
+    {str_gui_failed,(CONST_STRPTR)str_gui_failed_STR},
+    {str_unable_to_allocate_audio_mode,(CONST_STRPTR)str_unable_to_allocate_audio_mode_STR},
+    {str_unable_to_load_dynamic_sample,(CONST_STRPTR)str_unable_to_load_dynamic_sample_STR},
+    {str_unable_to_start_playback,(CONST_STRPTR)str_unable_to_start_playback_STR},
     {req_ok,(CONST_STRPTR)req_ok_STR},
     {req_ignore,(CONST_STRPTR)req_ignore_STR},
     {req_cancel,(CONST_STRPTR)req_cancel_STR},

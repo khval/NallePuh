@@ -22,6 +22,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <time.h>
+#include <stdio.h>
 
 #include <dos/dos.h>
 #include <exec/execbase.h>
@@ -39,7 +40,11 @@
 #include <proto/utility.h>
 #include <proto/dos.h>
 
-#include <stdio.h>
+#define CATCOMP_NUMBERS
+#define CATCOMP_STRINGS
+#define CATCOMP_ARRAY
+
+#include "locale/NallePUH.h"
 
 #include "init.h"
 #include "PUH.h"
@@ -364,7 +369,7 @@ BOOL InstallPUH( ULONG flags, ULONG	audio_mode, ULONG frequency )
 
 	if( pd->m_AudioCtrl == NULL )
 	{
-		LogPUH( pd, "Unable to allocate audio mode $%08lx.", audio_mode );
+		LogPUH( pd, "%s $%08lx.", _L(str_unable_to_allocate_audio_mode), audio_mode );
 	}
 	else
 	{
@@ -377,7 +382,7 @@ BOOL InstallPUH( ULONG flags, ULONG	audio_mode, ULONG frequency )
 
 		if( AHI_LoadSound( 0, AHIST_DYNAMICSAMPLE, &si, pd->m_AudioCtrl ) != AHIE_OK )
 		{
-			LogPUH( pd, "Unable to load dynamic sample." );
+			LogPUH( pd, _L(str_unable_to_load_dynamic_sample) );
 		}
 		else
 		{
@@ -385,7 +390,7 @@ BOOL InstallPUH( ULONG flags, ULONG	audio_mode, ULONG frequency )
 					AHIC_Play, TRUE,
 					TAG_DONE ) != AHIE_OK )
 			{
-				LogPUH( pd, "Unable to start playback." );
+				LogPUH( pd, _L(str_unable_to_start_playback) );
 			}
 			else
 			{

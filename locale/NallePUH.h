@@ -89,6 +89,14 @@
 #define str_following_programs_uses_this_library 362
 #define str_download_from 363
 #define str_demos_and_players 364
+#define str_Invalid_level 365
+#define str_unable_to_open_ahi 366
+#define str_arguments_is_not_numbers 367
+#define str_waiting_for_ctrl_c 368
+#define str_gui_failed 369
+#define str_unable_to_allocate_audio_mode 370
+#define str_unable_to_load_dynamic_sample 371
+#define str_unable_to_start_playback 372
 #define req_ok 400
 #define req_ignore 401
 #define req_cancel 402

@@ -273,14 +273,14 @@ int main( int argc,char* argv[] )
 	
 		if ( *mode_ptr != 0 || *freq_ptr != 0 || *levl_ptr != 0 )
 		{
-			Printf( "All arguments must be numbers.\n" );
+			Printf( "%s\n", _L(str_arguments_is_not_numbers) );
 			CloseLibs();
 			return 10;
 		}
 
 		if ( level > 2 )
 		{
-			Printf( "Invalid value for Level.\n" );
+			Printf( "%s\n", _L(str_Invalid_level)  );
 			CloseLibs();
 			return 10;
 		}
@@ -288,7 +288,7 @@ int main( int argc,char* argv[] )
 
 	if ( ! OpenAHI() )
 	{
-		Printf( "Unable to open ahi.device version 4.\n" );
+		Printf( "%s\n", _L(str_unable_to_open_ahi) );
 		rc = 20;
 	}
 
@@ -320,7 +320,7 @@ int main( int argc,char* argv[] )
 
 				if ( ! rcode.rc )
 				{
-					Printf( "Failed to create GUI.\n" );
+					Printf( "%s", _L(str_gui_failed) );
 					rc = 20;
 				}
 				else
@@ -368,7 +368,7 @@ int main( int argc,char* argv[] )
 					}
 					else
 					{
-						LogPUH( pd, "Waiting for CTRL-C..." );
+						LogPUH( pd, _L(str_waiting_for_ctrl_c) );
 						Wait( SIGBREAKF_CTRL_C );
 						LogPUH( pd, "Got it." );
 				
