@@ -1,4 +1,4 @@
-## version $VER: NallePUH.catalog 1.6 (4.11.2023)
+## version $VER: NallePUH.catalog 1.6 (20.11.2023)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Translated by Samir Hawamdeh (http://www.betatesting.it/backforthefuture)
@@ -83,6 +83,10 @@ LIST_Frequency
 Frequenza
 ; Frequency
 ;
+LIST_BLITTER
+Blitter
+; Blitter
+;
 GAD_JOY1_BUTTON1
 Pulsante 1
 ; Button1
@@ -135,8 +139,12 @@ frame_port2
 Porta 2: Joystick 1
 ; Port2: Joystick 1
 ;
+frame_blitter
+blitter
+; blitter
+;
 str_copyright_by
-NallePUH 1.6 (c) - 2001 Martin Blom <martin@blom.org>
+NallePUH 1.6 - (c) 2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>
 ;
 str_ported_by
@@ -190,6 +198,10 @@ i seguenti programmi useranno questa libreria
 str_download_from
 Scarica da
 ; Download from
+;
+str_demos_and_players
+demo e lettori musicali
+; demos and music players
 ;
 req_ok
 _Ok
