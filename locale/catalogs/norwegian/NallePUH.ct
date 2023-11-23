@@ -191,8 +191,40 @@ Last ned fra
 ;Download from
 ;
 str_demos_and_players
-Demos og musikk programmer
+Demoer og musikk programmer
 ; Demos and music programs
+;
+str_Invalid_level
+Ugyldig verdi for nivå.
+; Invalid value for Level.
+;
+str_unable_to_open_ahi
+Kan ikke åpne ahi.device versjon 4.
+; Unable to open ahi.device version 4.
+;
+str_arguments_is_not_numbers
+Alle argumenter må være tall.
+; All arguments must be numbers.
+;
+str_waiting_for_ctrl_c
+Venter på CTRL-C...
+; Waiting for CTRL-C...
+;
+str_gui_failed
+Kunne ikke lage GUI.
+; Failed to create GUI.
+;
+str_unable_to_allocate_audio_mode
+Kan ikke reservere lydmodus
+; Unable to allocate audio mode
+;
+str_unable_to_load_dynamic_sample
+Kan ikke laste inn dynamisk lyd.
+; Unable to load dynamic sample.
+;
+str_unable_to_start_playback
+Kan ikke starte avspilling.
+; Unable to start playback.
 ;
 req_ok
 _Ok
