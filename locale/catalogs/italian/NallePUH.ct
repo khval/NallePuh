@@ -1,4 +1,4 @@
-## version $VER: NallePUH.catalog 1.6 (20.11.2023)
+## version $VER: NallePUH.catalog 1.7 (24.11.2023)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Translated by Samir Hawamdeh (http://www.betatesting.it/backforthefuture)
@@ -144,7 +144,7 @@ blitter
 ; blitter
 ;
 str_copyright_by
-NallePUH 1.6 - (c) 2001 Martin Blom <martin@blom.org>
+NallePUH 1.7 - (c) 2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>
 ;
 str_ported_by
@@ -202,6 +202,38 @@ Scarica da
 str_demos_and_players
 demo e lettori musicali
 ; demos and music players
+;
+str_Invalid_level
+Valore non valido per il Livello
+; Invalid value for Level.
+;
+str_unable_to_open_ahi
+Impossibile aprire ahi.device versione 4
+; Unable to open ahi.device version 4.
+;
+str_arguments_is_not_numbers
+Tutti gli argomenti devono essere numerici
+; All arguments must be numbers.
+;
+str_waiting_for_ctrl_c
+In attesa di CTRL-C...
+; Waiting for CTRL-C...
+;
+str_gui_failed
+Impossibile creare la GUI
+; Failed to create GUI.
+;
+str_unable_to_allocate_audio_mode
+Impossibile allocare la modalità audio
+; Unable to allocate audio mode
+;
+str_unable_to_load_dynamic_sample
+Impossibile caricare il campione dinamico
+; Unable to load dynamic sample.
+;
+str_unable_to_start_playback
+Impossibile avviare la riproduzione
+; Unable to start playback.
 ;
 req_ok
 _Ok
