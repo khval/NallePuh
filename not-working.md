@@ -111,7 +111,8 @@ The games that are tested are HD installable games, and workbench games.
 	Octamed Soundstudio 1.03c does not work, (interrupt routine is not working)  (use Matrix insted.)
 	(Needs investigation, can be working in the future.)
 
- 	Aegis Sonix - does not start, probely can't find chipmem in execbase.
+ 	Aegis Sonix - does not start, probably is not using AvailMem, 
+		and can't find chipmem in execbase.
 
 ## Demos
 
