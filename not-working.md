@@ -52,6 +52,7 @@ Terminology for newbies
 ## Games
 
 The games that are tested are HD installable games, and workbench games.
+(I’m just testing random program and games I know has a HD installable.)
 
 	BloodNet AGA - crashes after a window is displayed. 
 		they have some kind antipiracy code in there, that might cause problems.
@@ -79,6 +80,12 @@ The games that are tested are HD installable games, and workbench games.
 	The Settlers - Intro crashes, and the games crashes, 
 
 	T-zerO-Demo - black screen.
+
+	Mega Lo Mania - is not a dos disk, only works in UAE.
+
+	Monkey Island 2 - LeChuck's Revange 
+		Game crashes as soon as click on the program file.
+		(use ScummVm instead), 
 
 ## Music players and editors
 
