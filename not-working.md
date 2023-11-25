@@ -75,6 +75,9 @@ The games that are tested are HD installable games, and workbench games.
 
 	Simon the Sorcerer - starts DSI error, and ends up at a back screen.
 
+	Beneath a Steel Sky - DSI error, zero pointer bug.
+ 		Use ScummVM insted or DOSBox.
+
 	The Shadow of time - starts and ends up on a black screen.
 
 	The Settlers - Intro crashes, and the games crashes, 
