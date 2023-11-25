@@ -84,7 +84,7 @@ The games that are tested are HD installable games, and workbench games.
 	Mega Lo Mania - is not a dos disk, only works in UAE.
 
 	Monkey Island 2 - LeChuck's Revange 
-		Game crashes as soon as click on the program file.
+		Game crashes as soon as you click on the program file.
 		(use ScummVm instead), 
 
 ## Music players and editors
