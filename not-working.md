@@ -108,8 +108,8 @@ The games that are tested are HD installable games, and workbench games.
 
  	SuperJam (plays notes, but crashes badly)
 
-	Octamed Soundstudio 1.03c does not work, (interrupt routine is not working)  (use Matrix instead.)
-	(Needs investigation, can be working in the future.)
+	Octamed Soundstudio 1.03c - DSI error in the playback timer interrupt routine, 
+		bad pointer value, is sent to NallePuh (use Matrix instead.)
 
  	Aegis Sonix - does not start, probably is not using AvailMem, 
 		and can't find chipmem in execbase.
