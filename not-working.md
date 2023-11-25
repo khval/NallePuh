@@ -23,7 +23,7 @@ Terminology for newbies
 		* Reads outside of allocated memory
 			(Try press ignore DSI, and cross your fingers.)
     
-		* Accessing part of OS that’s not allowed.
+		* Accessing part of the OS that’s not allowed.
    			(Sorry nothing can be done, use EUAE)
 
 		(If possible report problem to game or tool developer, if they are around.)
