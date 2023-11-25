@@ -4,7 +4,7 @@ Terminology for newbies
 
 	DSI - Data storage Interrupt (software bugs)
 
-		Most commone couses.
+		Most common causes.
 
 		* NewMode is not running!!
 			AmigaOS3.1 will try to open screens without modeid into hires mode.
@@ -26,21 +26,21 @@ Terminology for newbies
 		* Accessing part of OS that’s not allowed.
    			(Sorry nothing can be done, use EUAE)
 
-		(If possible repport problem to game or tool developer, if they are around.)
+		(If possible report problem to game or tool developer, if they are around.)
 
 	ISI - Instruction interrrupt
 
-		Most commone couses.
+		Most common causes.
  
  		* Missing JMP tables or trying to access code, that is not there.
    
    		* Broken function pointers, not set or overwritten with bad value.
 
-     		(If possible repport problem to game or tool developer, if they are around.)
+     		(If possible report problem to game or tool developer, if they are around.)
      
 	Black or gray Screen
 
-		Most commone couses.
+		Most common causes.
 
 		* Uses copper to setup screen, can't be displayed in RTG modes.
   
@@ -72,7 +72,7 @@ The games that are tested are HD installable games, and workbench games.
 	SimCity 2000 – it does start it has sound, make sure to read install script,
 		or install under EUAE first, problems: no font and game crashes.
 
-	Simon the Scorcerer - starts DSI error, and ends up at a back screen.
+	Simon the Sorcerer - starts DSI error, and ends up at a back screen.
 
 	The Shadow of time - starts and ends up on a black screen.
 
@@ -96,7 +96,7 @@ The games that are tested are HD installable games, and workbench games.
     
 	FutureComposer - DSI error crashes.
 
-	MusicBugs - System freeze (cooper screen i think.)
+	MusicBugs - System freeze (copper screen i think.)
 
 	Music-X - System freeze.
 
@@ -108,7 +108,7 @@ The games that are tested are HD installable games, and workbench games.
 
  	SuperJam (plays notes, but crashes badly)
 
-	Octamed Soundstudio 1.03c does not work, (interrupt routine is not working)  (use Matrix insted.)
+	Octamed Soundstudio 1.03c does not work, (interrupt routine is not working)  (use Matrix instead.)
 	(Needs investigation, can be working in the future.)
 
  	Aegis Sonix - does not start, probably is not using AvailMem, 
@@ -116,12 +116,12 @@ The games that are tested are HD installable games, and workbench games.
 
 ## Demos
 
-	Boogietown - locksup at "Titanics-Cruncher decrunches while loading..." message.
+	Boogietown - locks up at "Titanics-Cruncher decrunches while loading..." message.
  		(not possible to get into shell using AUX:)
 
  	RNO - Fourskin - locksup quicky. (NOT TESTED WITH NEWMODE)
 
-	RNO - 4tft - locksup qucikly, even when using newmode.
+	RNO - 4tft - locksup quickly, even when using newmode.
 
  	RNO - Boozembly08 - locksup at "Titanics-Cruncher decrunches while loading..." message.
 
