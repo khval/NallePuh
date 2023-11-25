@@ -1,4 +1,4 @@
-List of unsupported games and programs, just because they are in this list does not mean you can’t use these programs, it just means you need to use EUAE instead.
+List of unsupported games and programs, just because they are in this list does not mean you can’t use these programs, it just means you need to use EUAE instead, ScummVM, DosBOX, BasiliskII or some other emulator, several games also has a recreations like UFOAI.
 
 Terminology for newbies
 
