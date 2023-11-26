@@ -1,4 +1,5 @@
-List of unsupported games and programs, just because they are in this list does not mean you can’t use these programs, it just means you need to use EUAE instead, ScummVM, DosBOX, BasiliskII or some other emulator, several games also has a recreations like UFOAI.
+List of unsupported games and programs, just because they are in this list does not mean you can’t use these games or programs, 
+it just means you need to use EUAE instead, ScummVM, DosBOX, BasiliskII or some other emulator, several games also has a recreation like UFOAI.
 
 Terminology for newbies
 
@@ -52,7 +53,7 @@ Terminology for newbies
 ## Games
 
 The games that are tested are HD installable games, and workbench games.
-(I’m just testing random program and games I know has a HD installable.)
+(I’m just testing random program and games I know has an HD installable.)
 
 	BloodNet AGA - crashes after a window is displayed. 
 		they have some kind antipiracy code in there, that might cause problems.
@@ -86,7 +87,7 @@ The games that are tested are HD installable games, and workbench games.
 
 	Mega Lo Mania - is not a dos disk, only works in UAE.
 
-	Monkey Island 2 - LeChuck's Revange 
+	Monkey Island 2 - LeChuck's Revenge 
 		Game crashes as soon as you click on the program file.
 		(use ScummVm instead), 
 
@@ -129,16 +130,16 @@ The games that are tested are HD installable games, and workbench games.
 	Boogietown - locks up at "Titanics-Cruncher decrunches while loading..." message.
  		(not possible to get into shell using AUX:)
 
- 	RNO - Fourskin - locksup quicky. (NOT TESTED WITH NEWMODE)
+ 	RNO - Fourskin - locks up quicky. (NOT TESTED WITH NEWMODE)
 
-	RNO - 4tft - locksup quickly, even when using newmode.
+	RNO - 4tft - locks up quickly, even when using newmode.
 
- 	RNO - Boozembly08 - locksup at "Titanics-Cruncher decrunches while loading..." message.
+ 	RNO - Boozembly08 - locks up at "Titanics-Cruncher decrunches while loading..." message.
 
   	DW-RPH-KVG-RNO - loads, but get stuck on gray screen, no music.
-   		Intuition is probably locked up / maybe a cooper screen.
+   		Intuition is probably locked up / maybe a copper screen.
 		(multitasking is working, you can get into shell over AUX:)
   
-	RNO - Experiment2007 - locksup at "Titanics-Cruncher decrunches while loading..." message.
+	RNO - Experiment2007 - locks up at "Titanics-Cruncher decrunches while loading..." message.
 
  
