@@ -143,13 +143,13 @@ Changes in Nov. 2022
 Disclaimer:
 
 	NallePuh for AmigaOS4.1 is not an Amiga hardware replacement project in
-	software, it can never do what hardware does, because it depends on multitasking
-	for time keeping, if multitasking is disabled, it will try its best to get out
-	of nano/micro waits in forbid states, but can't do any real time keeping if that
-	happens.
+	software, it can never do what hardware does, because it depends on
+	multitasking for time keeping, if multitasking is disabled, it will try
+	its best to get out of nano/micro waits in forbid states, but can't do
+	any real time keeping if that happens.
 
-	NallePuh for AmigaOS4.1 is an exception handle, it does not hack function calls, 
-	it does not depend on external MMU libs, I wont call it a hack exactly.
+	NallePuh for AmigaOS4.1 is an exception handle, it does not hack function
+	calls, it does not depend on external MMU libs, I wont call it a hack exactly.
 
 	NallePuh does not fix broken software, if the mc680x0 game/application/demo,
 	has bugs, there is nothing NallePuh can do to solve this issues.
@@ -159,8 +159,8 @@ Disclaimer:
 	that can be done about it.
 
 	Programs that crash with DSI or ISI error, are unlikely to work, but plase
-	check snoopy log, and make sure programs / demos / games are correctly installed.
-	some programs has poor sanity checks when opening libraries.
+	check snoopy log, and make sure programs / demos / games are correctly
+	installed. Some programs has poor sanity checks when opening libraries.
 
 	Please install this libs from os4depot.net
 
