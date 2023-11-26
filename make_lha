@@ -20,11 +20,16 @@ echo "**** CREATING PACKAGE ****"
 makedir ram:NallePuh
 makedir ram:NallePuh/libs
 makedir ram:NallePuh/locale
+makedir ram:NallePuh/docs
 makedir ram:NallePuh/locale/catalogs
+
 
 copy package ram:NallePuh all
 tools/utf8-to-ascii readme > ram:NallePuh/readme.txt
 tools/utf8-to-ascii COPYING > ram:NallePuh/LICENCE.txt
+tools/utf8-to-ascii docs/not-working.md > ram:NallePuh/docs/not-working.txt
+tools/utf8-to-ascii docs/does-not-need-nallepuh.md > ram:NallePuh/docs/does-not-need-nallepuh.txt
+
 copy nallepuh ram:NallePuh
 copy nallepuh.debug ram:NallePuh
 copy nallepuh.info ram:nallepuh
