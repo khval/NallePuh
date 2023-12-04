@@ -132,7 +132,7 @@ frame_port2
 ;
 frame_blitter
 
-; blitter
+; Blitter options
 ;
 str_copyright_by
 

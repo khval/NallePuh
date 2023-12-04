@@ -131,7 +131,7 @@ Port2: Spillekontroller 1
 ; Port2: Joystick 1
 ;
 frame_blitter
-blitter
+Blitter oppsett
 ; blitter
 ;
 str_copyright_by

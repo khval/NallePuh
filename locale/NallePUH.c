@@ -142,7 +142,7 @@
 #define frame_audio_STR "Audio options"
 #define frame_port1_STR "Port1: Joystick 2 / Mouse"
 #define frame_port2_STR "Port2: Joystick 1"
-#define frame_blitter_STR "blitter"
+#define frame_blitter_STR "Blitter options"
 #define str_copyright_by_STR "(c)2001 Martin Blom <martin@blom.org>"
 #define str_ported_by_STR "Ported to AmigaOS4.0 by: Stephan Rupprecht (2004)"
 #define str_updated_by_STR "Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)"

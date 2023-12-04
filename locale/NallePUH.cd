@@ -97,7 +97,7 @@ frame_port2 (//)
 Port2: Joystick 1
 ;
 frame_blitter (//)
-blitter
+Blitter options
 ;
 str_copyright_by (350//)
 (c)2001 Martin Blom <martin@blom.org>
