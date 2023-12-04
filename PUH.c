@@ -352,7 +352,7 @@ void VARARGS68K LogPUH( struct PUHData* pd,CONST_STRPTR fmt, ... )
 		// we need to know what we can, and can't do!
 		GetSystemInfo(SchedulerState_tags);
 
-		if (SchedulerState != GSISTATE_DISABLE)	// multitasking endabled we can't keep time, this sucks!!
+		if (SchedulerState != GSISTATE_DISABLE)	// only when multitasking endabled
 		{
 			if ( gui_mode )	
 			{
