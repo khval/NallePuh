@@ -142,7 +142,7 @@ struct options
 struct PUHData *AllocPUH( void );
 void FreePUH( struct PUHData* pd );
 void SetPUHLogger( struct Hook*    hook,    struct PUHData* pd );
-void VARARGS68K LogPUH( struct PUHData* pd, STRPTR fmt,   ... );
+void VARARGS68K LogPUH( struct PUHData* pd, CONST_STRPTR fmt,   ... );
 BOOL InstallPUH( ULONG  flags, ULONG audio_mode, ULONG frequency );
 void UninstallPUH( struct PUHData* pd );
 BOOL ActivatePUH( struct PUHData* pd );

@@ -62,6 +62,8 @@
 
 #define TDEBUG(...) DebugPrintF(__VA_ARGS__)
 
+extern const char *(*_L)(unsigned int num)  ;
+
 static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase );
 static void PUHWrite( UWORD reg, UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* SysBase );
 SAVEDS static void PUHSoundFunc( REG( a0, struct Hook *hook ), REG( a2, struct AHIAudioCtrl *actrl ), REG( a1, struct AHISoundMessage* msg ) );
@@ -316,7 +318,17 @@ void SetPUHLogger( struct Hook *hook, struct PUHData* pd )
 ** Send a message to the log function *****************************************
 ******************************************************************************/
 
-void VARARGS68K LogPUH( struct PUHData* pd,STRPTR fmt, ... )
+extern BOOL cli_start ;
+extern BOOL gui_mode ;
+
+uint32 SchedulerState = 0;
+
+struct TagItem SchedulerState_tags[] = {
+	{GSITAG_SchedulerState, (ULONG) &SchedulerState},
+ 	{TAG_END,0L}};
+
+
+void VARARGS68K LogPUH( struct PUHData* pd,CONST_STRPTR fmt, ... )
 {
 	va_list ap;
 
@@ -326,21 +338,31 @@ void VARARGS68K LogPUH( struct PUHData* pd,STRPTR fmt, ... )
 	va_start( ap, fmt );
 	#endif
 
-	if( pd->m_LogHook == NULL )
 	{
-		VPrintf( fmt, va_getlinearva(ap,void *) );
-		Printf( "\n" );
-	}
-	else
-	{
-		char		buffer[ 256 ];
-	#ifdef __amigaos4__
-	VSNPrintf( buffer, sizeof( buffer ), fmt, va_getlinearva(ap, void *) );
-	#else
-		vsnprintf( buffer, sizeof( buffer ), fmt, ap );
-	#endif
+		char		buffer[ 1024 ];
 
-		CallHookPkt( pd->m_LogHook, pd, buffer );
+#ifdef __amigaos4__
+		VSNPrintf( buffer, sizeof( buffer ), fmt, va_getlinearva(ap, void *) );
+#else
+		vsnprintf( buffer, sizeof( buffer ), fmt, ap );
+#endif
+
+		DebugPrintF("%s",buffer);
+
+		// we need to know what we can, and can't do!
+		GetSystemInfo(SchedulerState_tags);
+
+		if (SchedulerState != GSISTATE_DISABLE)	// multitasking endabled we can't keep time, this sucks!!
+		{
+			if ( gui_mode )	
+			{
+				req( "quack!!", buffer , _L(req_ok));
+			}
+			else
+			{
+				printf("%s",buffer);
+			}
+		}
 	}
 
 	va_end( ap );
@@ -528,9 +550,6 @@ static BOOL RestoreMemory( struct PUHData* pd )
 ** MMU exception handler ******************************************************
 ******************************************************************************/
 
-struct TagItem SchedulerState_tags[] = {
-	{GSITAG_SchedulerState, (ULONG) &SchedulerState},
- 	{TAG_END,0L}};
 
 #define pFaultInst ((APTR)pContext->ip)
 
