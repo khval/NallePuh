@@ -12,6 +12,9 @@ Sorry!!
 win_warning_title (//)
 Warning!!
 ;
+win_Info_title (//)
+Warning!!
+;
 win_no_chip_ram (//)
 No chipram
 ;

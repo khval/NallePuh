@@ -18,6 +18,10 @@ win_warning_title
 Advarsel
 ; Warning!!
 ;
+win_Info_title
+Informasjon
+; info
+;
 win_no_chip_ram
 Ingen chip ram
 ; win_no_chip_ram

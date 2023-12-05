@@ -45,7 +45,8 @@
 #define win_about_title 51
 #define win_sorry_title 52
 #define win_warning_title 53
-#define win_no_chip_ram 54
+#define win_Info_title 54
+#define win_no_chip_ram 55
 #define GAD_ACTIVATE 150
 #define GAD_DEACTIVATE 151
 #define GAD_MESSAGES 152
@@ -114,6 +115,7 @@
 #define win_about_title_STR "About Nalle Puh"
 #define win_sorry_title_STR "Sorry!!"
 #define win_warning_title_STR "Warning!!"
+#define win_Info_title_STR "Warning!!"
 #define win_no_chip_ram_STR "No chipram"
 #define GAD_ACTIVATE_STR "_Activate"
 #define GAD_DEACTIVATE_STR "_Deactivate"
@@ -191,6 +193,7 @@ STATIC CONST struct CatCompArrayType CatCompArray[] =
     {win_about_title,(CONST_STRPTR)win_about_title_STR},
     {win_sorry_title,(CONST_STRPTR)win_sorry_title_STR},
     {win_warning_title,(CONST_STRPTR)win_warning_title_STR},
+    {win_Info_title,(CONST_STRPTR)win_Info_title_STR},
     {win_no_chip_ram,(CONST_STRPTR)win_no_chip_ram_STR},
     {GAD_ACTIVATE,(CONST_STRPTR)GAD_ACTIVATE_STR},
     {GAD_DEACTIVATE,(CONST_STRPTR)GAD_DEACTIVATE_STR},

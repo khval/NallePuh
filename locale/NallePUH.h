@@ -45,7 +45,8 @@
 #define win_about_title 51
 #define win_sorry_title 52
 #define win_warning_title 53
-#define win_no_chip_ram 54
+#define win_Info_title 54
+#define win_no_chip_ram 55
 #define GAD_ACTIVATE 150
 #define GAD_DEACTIVATE 151
 #define GAD_MESSAGES 152
