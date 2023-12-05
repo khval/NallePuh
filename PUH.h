@@ -117,11 +117,12 @@ struct PUHData
 
   BOOL                  m_SoundOn[ 4 ];
 
-  BOOL					m_GotDatLo[4];
-  BOOL					m_GotDatHi[4];
+  BOOL			m_GotDatLo[4];
+  BOOL			m_GotDatHi[4];
 
-  ULONG                 m_SoundLocation[ 4 ];
-  ULONG                 m_SoundLength[ 4 ];
+  ULONG			m_SoundLocationLoad[ 4 ];			// parts are latched in...
+  ULONG			m_SoundLocationCurrent[ 4 ];		// played off this...
+  ULONG			m_SoundLength[ 4 ];
 
   void*                 m_Intercepted;
   void*                 m_CustomDirect;

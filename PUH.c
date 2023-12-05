@@ -352,11 +352,11 @@ void VARARGS68K LogPUH( struct PUHData* pd,CONST_STRPTR fmt, ... )
 		// we need to know what we can, and can't do!
 		GetSystemInfo(SchedulerState_tags);
 
-		if (SchedulerState != GSISTATE_DISABLE)	// only when multitasking endabled
+		if (SchedulerState != GSISTATE_DISABLE)	// only when multitasking is endabled
 		{
 			if ( gui_mode )	
 			{
-				req( "quack!!", buffer , _L(req_ok));
+				req( _L(win_Info_title), buffer , _L(req_ok));
 			}
 			else
 			{
@@ -942,9 +942,48 @@ static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecB
 }
 
 
+inline bool valid_channel_data( ULONG channel )
+{
+	// If length is 2, then no sound should be played.
+	if (pd->m_SoundLength[ channel ] == 2 ) return false;
+
+	// Make sure its not a NULL pointer.
+	if (pd->m_SoundLocationCurrent[ channel ] == 0) return false;
+
+	// Check if value is fully loaded.
+	if (pd->m_SoundLocationCurrent[ channel ] != pd -> m_SoundLocationLoad[ channel ]) return false;
+
+	return true;
+}
+
+void SetSoundChannel( ULONG channel, ULONG flags )
+{
+	if( pd->m_SoundOn[ channel ] )
+	{
+		// Queue it
+
+		if ( valid_channel_data( channel ) == false )
+		{
+			// SoundTracker-style silece
+			AHI_SetSound( channel, AHI_NOSOUND,
+				0, 0, pd->m_AudioCtrl, flags );
+		}
+		else
+		{
+			AHI_SetSound( channel, 0,
+				pd->m_SoundLocationCurrent[ channel ],
+				pd->m_SoundLength[ channel ],
+				pd->m_AudioCtrl,
+				flags );
+		}
+	}
+}
+
+
 /******************************************************************************
 ** Handle writes **************************************************************
 ******************************************************************************/
+
 
 void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* SysBase)
 {
@@ -987,19 +1026,7 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 		{
 			pd->m_SoundOn[ 0 ] = TRUE;
 
-			if ( pd->m_SoundLength[ 0 ] == 2 )
-			{
-				// SoundTracker-style silece, or bad input
-				AHI_SetSound( 0, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
-			}
-			else
-			{
-				AHI_SetSound( 0, 0,
-					pd->m_SoundLocation[ 0 ],
-					pd->m_SoundLength[ 0 ],
-					pd->m_AudioCtrl,
-					AHISF_IMM );
-			}
+			SetSoundChannel( 0, AHISF_IMM );
 		}
 		else
 		{
@@ -1015,19 +1042,7 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 		{
 			pd->m_SoundOn[ 1 ] = TRUE;
 
-			if ( pd->m_SoundLength[ 1 ] == 2 )
-			{
-				// SoundTracker-style silece, or bad input
-				AHI_SetSound( 1, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
-			}
-			else
-			{
-				AHI_SetSound( 1, 0,
-					pd->m_SoundLocation[ 1 ],
-					pd->m_SoundLength[ 1 ],
-					pd->m_AudioCtrl,
-					AHISF_IMM );
-			}
+			SetSoundChannel( 1, AHISF_IMM );
 		}
 		else
 		{
@@ -1043,19 +1058,7 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 		{
 			pd->m_SoundOn[ 2 ] = TRUE;
 
-			if ( pd->m_SoundLength[ 2 ] == 2 )
-			{
-				// SoundTracker-style silece, or bad input
-				AHI_SetSound( 2, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
-			}
-			else
-			{
-				AHI_SetSound( 2, 0,
-					pd->m_SoundLocation[ 2 ],
-					pd->m_SoundLength[ 2 ],
-					pd->m_AudioCtrl,
-					AHISF_IMM );
-			}
+			SetSoundChannel( 2, AHISF_IMM );
 		}
 		else
 		{
@@ -1071,19 +1074,7 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 		{
 			pd->m_SoundOn[ 3 ] = TRUE;
 
-			if ( pd->m_SoundLength[ 3 ] == 2 )
-			{
-				// SoundTracker-style silece, or bad input
-				AHI_SetSound( 3, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
-			}
-			else
-			{
-				AHI_SetSound( 3, 0,
-					pd->m_SoundLocation[ 3 ],
-					pd->m_SoundLength[ 3 ],
-					pd->m_AudioCtrl,
-					AHISF_IMM );
-			}
+			SetSoundChannel( 3, AHISF_IMM );
 		}
 		else
 		{
@@ -1242,8 +1233,8 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 			{
 				int channel = ( reg - AUD0LCH ) >> 4;
 
-				pd->m_SoundLocation[ channel ] &= 0x0000ffff;
-				pd->m_SoundLocation[ channel ] |= value << 16;
+				pd->m_SoundLocationLoad[ channel ] &= 0x0000ffff;
+				pd->m_SoundLocationLoad[ channel ] |= value << 16;
 
 				*handled = TRUE;
 
@@ -1254,24 +1245,9 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 					pd->m_GotDatHi[channel] =
 					pd->m_GotDatLo[channel] = FALSE;
 
-					if( pd->m_SoundOn[ channel ] )
-					{
-						// Queue it
-						if ( pd->m_SoundLength[ channel ] == 2 ) 
-						{
-							// SoundTracker-style silece
-							AHI_SetSound( channel, AHI_NOSOUND,
-									0, 0, pd->m_AudioCtrl, AHISF_NONE );
-						}
-						else
-						{
-							AHI_SetSound( channel, 0,
-								pd->m_SoundLocation[ channel ],
-								pd->m_SoundLength[ channel ],
-								pd->m_AudioCtrl,
-								AHISF_NONE );
-						}
-					}
+					pd->m_SoundLocationCurrent[ channel ] = pd -> m_SoundLocationLoad[ channel ];
+
+					SetSoundChannel( channel, AHISF_NONE );
 				}
 			}
 			break;
@@ -1283,8 +1259,8 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 		{
 			int channel = ( reg - AUD0LCL ) >> 4;
 
-			pd->m_SoundLocation[ channel ] &= 0xffff0000;
-			pd->m_SoundLocation[ channel ] |= value;
+			pd->m_SoundLocationLoad[ channel ] &= 0xffff0000;
+			pd->m_SoundLocationLoad[ channel ] |= value;
 
 			pd->m_GotDatLo[channel] = TRUE;
 
@@ -1293,24 +1269,9 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 				pd->m_GotDatHi[channel] =
 				pd->m_GotDatLo[channel] = FALSE;
 
-				if( pd->m_SoundOn[ channel ] )
-				{
-					// Queue it
-					if ( pd->m_SoundLength[ channel ] == 2 )
-					{
-						// SoundTracker-style silece
-						AHI_SetSound( channel, AHI_NOSOUND,
-							0, 0, pd->m_AudioCtrl, AHISF_NONE );
-					}
-					else
-					{
-						AHI_SetSound( channel, 0,
-							pd->m_SoundLocation[ channel ],
-							pd->m_SoundLength[ channel ],
-							pd->m_AudioCtrl,
-							AHISF_NONE );
-					}
-				}
+				pd->m_SoundLocationCurrent[ channel ] = pd -> m_SoundLocationLoad[ channel ];
+
+				SetSoundChannel( channel, AHISF_NONE );
 			}
 
 			*handled = TRUE;
@@ -1328,25 +1289,7 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 
 			if( pd->m_SoundOn[ channel ] )
 			{
-				// Queue it
-				if ( pd->m_SoundLength[ channel ] == 2 )
-				{
-					// SoundTracker-style silece
-					AHI_SetSound( channel, 
-								AHI_NOSOUND, 
-								0, 
-								0, 
-								pd->m_AudioCtrl, 
-								AHISF_NONE );
-				}
-				else
-				{
-						AHI_SetSound( channel, 0,
-								pd->m_SoundLocation[ channel ],
-								pd->m_SoundLength[ channel ],
-								pd->m_AudioCtrl,
-								AHISF_NONE );
-				}
+				SetSoundChannel( channel, AHISF_NONE );
 			}
 
 			*handled = TRUE;
