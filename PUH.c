@@ -1087,17 +1087,15 @@ void blitzen(ULONG reg)
 	switch ( reg )
 	{
 		case _BLTSIZE:
+
 			CustomData.dmaconr |= BBUSY;	// blitter is busy.
 			ILibBlitter -> BLTSIZE(&CustomData);
 			CustomData.dmaconr &= ~BBUSY;		// blitter is done.
 			break;
 
 		case _BLTSIZH:
+
 			CustomData.dmaconr |= BBUSY;	// blitter is busy.
-
-			// convert it, and hope for the best...
-			CustomData.bltsize = CustomData.bltsizh << 6 | CustomData.bltsizv;
-
 			ILibBlitter -> BLTSIZH(&CustomData);
 			CustomData.dmaconr &= ~BBUSY;		// blitter is done.
 			break;
