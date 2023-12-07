@@ -229,6 +229,10 @@ int main( int argc,char* argv[] )
 
 	}
 
+	printf("%s, %s\n",
+		gui_mode ? "GUI" : "",
+		cli_start ? "CLI" : "");
+
 	#ifdef __amigaos4__
 	{
 		struct Library	*ExpansionBase;
