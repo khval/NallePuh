@@ -945,7 +945,10 @@ static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecB
 
 inline bool valid_channel_data( ULONG channel )
 {
-	// If length is 2, then no sound should be played.
+	// no sound
+	if( pd->m_SoundOn[ channel ]  == false )  return false;
+
+	// If length is 2, then no sound should be played, (sound tracker-style silece)
 	if (pd->m_SoundLength[ channel ] == 2 ) return false;
 
 	// Make sure its not a NULL pointer.
@@ -959,24 +962,17 @@ inline bool valid_channel_data( ULONG channel )
 
 void SetSoundChannel( ULONG channel, ULONG flags )
 {
-	if( pd->m_SoundOn[ channel ] )
+	if ( valid_channel_data( channel ) == false )
 	{
-		// Queue it
-
-		if ( valid_channel_data( channel ) == false )
-		{
-			// SoundTracker-style silece
-			AHI_SetSound( channel, AHI_NOSOUND,
-				0, 0, pd->m_AudioCtrl, flags );
-		}
-		else
-		{
-			AHI_SetSound( channel, 0,
-				pd->m_SoundLocationCurrent[ channel ],
-				pd->m_SoundLength[ channel ],
-				pd->m_AudioCtrl,
-				flags );
-		}
+		AHI_SetSound( channel, AHI_NOSOUND,0, 0, pd->m_AudioCtrl, flags );
+	}
+	else
+	{
+		AHI_SetSound( channel, 0,
+			pd->m_SoundLocationCurrent[ channel ],
+			pd->m_SoundLength[ channel ],
+			pd->m_AudioCtrl,
+			flags );
 	}
 }
 
@@ -1288,10 +1284,7 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 			
 			pd->m_SoundLength[ channel ] = value * 2;
 
-			if( pd->m_SoundOn[ channel ] )
-			{
-				SetSoundChannel( channel, AHISF_NONE );
-			}
+			SetSoundChannel( channel, AHISF_NONE );
 
 			*handled = TRUE;
 			break;
