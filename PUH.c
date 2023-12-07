@@ -62,6 +62,7 @@
 
 #define TDEBUG(...) DebugPrintF(__VA_ARGS__)
 
+extern int req(const char *title,const  char *body,const char *buttons, ULONG image);
 extern const char *(*_L)(unsigned int num)  ;
 
 static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecBase* SysBase );
@@ -356,7 +357,7 @@ void VARARGS68K LogPUH( struct PUHData* pd,CONST_STRPTR fmt, ... )
 		{
 			if ( gui_mode )	
 			{
-				req( _L(win_Info_title), buffer , _L(req_ok));
+				req( _L(win_Info_title), buffer , _L(req_ok), 0);
 			}
 			else
 			{
