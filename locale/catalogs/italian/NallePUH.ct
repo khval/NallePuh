@@ -1,4 +1,4 @@
-## version $VER: NallePUH.catalog 1.7 (24.11.2023)
+## version $VER: NallePUH.catalog 1.8 (8.12.2023)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Translated by Samir Hawamdeh (http://www.betatesting.it/backforthefuture)
@@ -24,6 +24,10 @@ Spiacente!
 ; Sorry!!
 ;
 win_warning_title
+Avviso!
+; Warning!!
+;
+win_Info_title
 Avviso!
 ; Warning!!
 ;
@@ -140,11 +144,11 @@ Porta 2: Joystick 1
 ; Port2: Joystick 1
 ;
 frame_blitter
-blitter
-; blitter
+Opzioni Blitter
+; Blitter options
 ;
 str_copyright_by
-NallePUH 1.7 - (c) 2001 Martin Blom <martin@blom.org>
+NallePUH 1.8 - (c) 2001 Martin Blom <martin@blom.org>
 ; (c)2001 Martin Blom <martin@blom.org>
 ;
 str_ported_by
@@ -152,7 +156,7 @@ Portato su AmigaOS 4.0 da Stephan Rupprecht (2004)
 ; Ported to AmigaOS4.0 by: Stephan Rupprecht (2004)
 ;
 str_updated_by
-Aggiornato per AmigaOS 4.1 FE da Kjetil Hvalstrand (2022)
+Aggiornato su AmigaOS 4.1 FE da Kjetil Hvalstrand (2022)
 ; Updated for AmigaOS4.1 FE by: Kjetil Hvalstrand (2022)
 ;
 str_ciaa_ciab
@@ -168,7 +172,7 @@ Impossibile aprire AHI & impostare un handler di memoria exception
 ; Can't open AHI & set memory exception handler
 ;
 str_warn_close
-Molti dei timer interrupts sono riservati, per favore assicurati che tutti i programmi siano chiusi in modo corretto prima di continuare, non farlo potrebbe portare a dei blocchi nei programmi o nel caso peggiore a dei crash improvvisi, si desidera ignorarli?
+Attenzione, molti dei timer interrupts sono riservati.\nPer favore, assicurati che tutti i programmi siano\nchiusi in modo corretto prima di continuare, non farlo\npotrebbe portare a dei blocchi nei programmi o nel\ncaso peggiore a dei crash inattesi ed improvvisi.\nSi desidera ignorarli?
 ; Several timer interrupts are reserved, please make sure all programs are properly closed before continuing, failure to do so, can result in hanging programs, or in the worst-case crashes, do you choose to ignore?
 ;
 str_no_chip_ram
@@ -180,23 +184,23 @@ Avviso
 ; Warning
 ;
 str_not_installed
-non installato
+non installato/a
 ; not installed
 ;
 str_if_its_not_installed
-se non installato
+se non installato/a
 ; if its not installed
 ;
 str_following_programs_will_crash
-i seguenti programmi andranno in crash
+Programmi che andranno in crash
 ; following programs will crash
 ;
 str_following_programs_uses_this_library
-i seguenti programmi useranno questa libreria
+Programmi che usano questa libreria
 ; following programs uses this library
 ;
 str_download_from
-Scarica da
+Scarica il file da
 ; Download from
 ;
 str_demos_and_players
