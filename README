@@ -56,7 +56,10 @@ Changes in 8 Desember 2023 Version 1.8
 
 	* Updated translation for Italian.
 	* Updated translation for Norwagine.
-	* logPUH() rewritten, maybe it can cousin ISI error.	
+	* Bug fixed: logPUH() maybe it can cause ISI error.
+	(So rewritten to make safer under forbid state and
+	now use DebugPrintF to log output instead, of ugly callback hook.
+	requester used if in GUI mode. text printed in console if not.)
 	* Puh.c: Improved audio validation, 
 	(to prevent playback of bad data.)
 	* Puh.c: clean code style.
