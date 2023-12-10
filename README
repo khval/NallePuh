@@ -63,6 +63,7 @@ Changes in 8 Desember 2023 Version 1.8
 	* Puh.c: Improved audio validation, 
 	(to prevent playback of bad data.)
 	* Puh.c: clean code style.
+	* package change, tooltype settings disabled as default.
 
 Changes in 26 November 2023 Version 1.7
 
