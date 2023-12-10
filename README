@@ -64,7 +64,7 @@ Changes in 10 Desember 2023 Version 1.8
 	(to prevent playback of bad data.)
 	* Puh.c: clean code style.
 	* package change, tooltype settings disabled as default.
-	* Recognized lots of arrays into one array. (to reduce indexing)
+	* Reorganized lots of arrays into one array. (to reduce indexing)
 
 Changes in 26 November 2023 Version 1.7
 
