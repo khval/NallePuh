@@ -9,15 +9,15 @@ About AmigaOS4.1 version
 	for blitter and the timer circuits CIAA / CIAB, the aim of the project
 	is to support system friendly software, that sometimes reserve hardware
 	using the API / resources that OS provides. It's not designed to handle
-	those programs that intent to take over the system, this application
+	those programs that intend to take over the system, this application
 	requires multitasking to work. The project does not guarantee that any
 	software is bug free or will work perfectly, for the last few commits
-	has been to improve timing and and provide better warnings, 
+	has been to improve timing and provide better warnings, 
 	user feedback has also been important as some people want to use 
 	this tool for debugging, This is why the program provides basic
 	monitoring features.
 
-Please repport bugs and problems here:
+Please report bugs and problems here:
 
 	https://github.com/khval/NallePuh/issues
 
@@ -55,7 +55,7 @@ List of tested - unsupported is here:
 Changes in 10 Desember 2023 Version 1.8
 
 	* Updated translation for Italian.
-	* Updated translation for Norwagine.
+	* Updated translation for Norwegian.
 	* Bug fixed: logPUH() maybe it can cause ISI error.
 	(So rewritten to make safer under forbid state and
 	now use DebugPrintF to log output instead, of ugly callback hook.
@@ -71,7 +71,7 @@ Changes in 26 November 2023 Version 1.7
 	* More text strings translated.
 	* BLTSIZEH is now handled correctly.
 	* Experimental uaeblit.library can be now used as alternative
-	* You now enable or disable blitter.
+	* You can now enabled or disabled blitter.
 	* Some work on the save/load routines.
 
 Changes in 5 November 2023 Version 1.6
