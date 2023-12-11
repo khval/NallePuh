@@ -64,7 +64,7 @@ The games that are tested are HD installable games, and workbench games.
 
 	Deluxe Galaga AGA – shows trainer, it asks for fire button on joystick to be pressed.
 		if press joystick with Nalle Puh 1.2, games continue and does something… 
-		you can't see anything on the screen, but after while there is some sound,
+		you can't see anything on the screen, but after a while there is some sound,
 		then it crashes. (so not really working)
     
 	SpaceQuest 1 – Not working, refuse to start (too old)
@@ -77,7 +77,7 @@ The games that are tested are HD installable games, and workbench games.
 	Simon the Sorcerer - starts DSI error, and ends up at a back screen.
 
 	Beneath a Steel Sky - DSI error, zero pointer bug.
- 		Use ScummVM insted or DOSBox.
+ 		Use ScummVM instead or DOSBox.
 
 	The Shadow of time - starts and ends up on a black screen.
 
