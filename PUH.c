@@ -249,12 +249,14 @@ struct PUHData *AllocPUH( void )
 		}
 		else
 		{
+			int id;
+
 			pd->m_Active = FALSE;
-
 			pd->m_AudioMode = AHI_INVALID_ID;
-
 			pd->m_SoundFunc.h_Entry = (ULONG(*)(void)) PUHSoundFunc;
 			pd->m_SoundFunc.h_Data = pd;
+
+			for (id=0;id<4;id++) pd->channels[id].id = id;
 
 			if ( gfxbase != NULL &&
 				( gfxbase->DisplayFlags & REALLY_PAL ) == 0 )
@@ -943,34 +945,34 @@ static UWORD PUHRead( UWORD reg, BOOL *handled, struct PUHData *pd, struct ExecB
 }
 
 
-inline bool valid_channel_data( ULONG channel )
+inline bool valid_channel_data( struct paula_channel *channel )
 {
 	// no sound
-	if( pd->m_SoundOn[ channel ]  == false )  return false;
+	if(channel -> SoundOn  == false )  return false;
 
 	// If length is 2, then no sound should be played, (sound tracker-style silece)
-	if (pd->m_SoundLength[ channel ] == 2 ) return false;
+	if (channel -> SoundLength == 2 ) return false;
 
 	// Make sure its not a NULL pointer.
-	if (pd->m_SoundLocationCurrent[ channel ] == 0) return false;
+	if (channel -> SoundLocationCurrent == 0) return false;
 
 	// Check if value is fully loaded.
-	if (pd->m_SoundLocationCurrent[ channel ] != pd -> m_SoundLocationLoad[ channel ]) return false;
+	if (channel -> SoundLocationCurrent != channel -> SoundLocationLoad) return false;
 
 	return true;
 }
 
-void SetSoundChannel( ULONG channel, ULONG flags )
+void SetSoundChannel( struct paula_channel *channel, ULONG flags )
 {
 	if ( valid_channel_data( channel ) == false )
 	{
-		AHI_SetSound( channel, AHI_NOSOUND,0, 0, pd->m_AudioCtrl, flags );
+		AHI_SetSound( channel->id, AHI_NOSOUND,0, 0, pd->m_AudioCtrl, flags );
 	}
 	else
 	{
-		AHI_SetSound( channel, 0,
-			pd->m_SoundLocationCurrent[ channel ],
-			pd->m_SoundLength[ channel ],
+		AHI_SetSound( channel->id, 0,
+			channel->SoundLocationCurrent,
+			channel->SoundLength,
 			pd->m_AudioCtrl,
 			flags );
 	}
@@ -1021,14 +1023,12 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 	{
 		if( new_dmacon & DMAF_AUD0 )
 		{
-			pd->m_SoundOn[ 0 ] = TRUE;
-
-			SetSoundChannel( 0, AHISF_IMM );
+			pd->channels[0].SoundOn = TRUE;
+			SetSoundChannel( pd->channels +0, AHISF_IMM );
 		}
 		else
 		{
-			pd->m_SoundOn[ 0 ] = FALSE;
-
+			pd->channels[0].SoundOn = FALSE;
 			AHI_SetSound( 0, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
 		}
 	}
@@ -1037,14 +1037,12 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 	{
 		if( new_dmacon & DMAF_AUD1 )
 		{
-			pd->m_SoundOn[ 1 ] = TRUE;
-
-			SetSoundChannel( 1, AHISF_IMM );
+			pd->channels[1].SoundOn = TRUE;
+			SetSoundChannel( pd->channels + 1, AHISF_IMM );
 		}
 		else
 		{
-			pd->m_SoundOn[ 1 ] = FALSE;
-
+			pd->channels[1].SoundOn = FALSE;
 			AHI_SetSound( 1, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
 		}
 	}
@@ -1053,14 +1051,12 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 	{
 		if( new_dmacon & DMAF_AUD2 )
 		{
-			pd->m_SoundOn[ 2 ] = TRUE;
-
-			SetSoundChannel( 2, AHISF_IMM );
+			pd->channels[2].SoundOn = TRUE;
+			SetSoundChannel( pd->channels +2, AHISF_IMM );
 		}
 		else
 		{
-			pd->m_SoundOn[ 2 ] = FALSE;
-
+			pd->channels[2].SoundOn = FALSE;
 			AHI_SetSound( 2, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
 		}
 	}
@@ -1069,14 +1065,12 @@ void do_DMACON( UWORD value, BOOL*handled, struct PUHData *pd, struct ExecBase* 
 	{
 		if( new_dmacon & DMAF_AUD3 )
 		{
-			pd->m_SoundOn[ 3 ] = TRUE;
-
-			SetSoundChannel( 3, AHISF_IMM );
+			pd->channels[3].SoundOn = TRUE;
+			SetSoundChannel( pd->channels + 3, AHISF_IMM );
 		}
 		else
 		{
-			pd->m_SoundOn[ 3 ] = FALSE;
-
+			pd->channels[3].SoundOn = FALSE;
 			AHI_SetSound( 3, AHI_NOSOUND, 0, 0, pd->m_AudioCtrl, AHISF_IMM );
 		}
 	}
@@ -1226,22 +1220,19 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 		case AUD2LCH:
 		case AUD3LCH:
 			{
-				int channel = ( reg - AUD0LCH ) >> 4;
+				struct paula_channel *channel = pd->channels + (( reg - AUD0LCH ) >> 4);
 
-				pd->m_SoundLocationLoad[ channel ] &= 0x0000ffff;
-				pd->m_SoundLocationLoad[ channel ] |= value << 16;
+				channel->SoundLocationLoad &= 0x0000ffff;
+				channel->SoundLocationLoad |= value << 16;
 
 				*handled = TRUE;
 
-				pd->m_GotDatHi[channel] = TRUE;
+				channel->GotDatHi = TRUE;
 
-				if (pd->m_GotDatLo[channel])
+				if (channel->GotDatLo)
 				{
-					pd->m_GotDatHi[channel] =
-					pd->m_GotDatLo[channel] = FALSE;
-
-					pd->m_SoundLocationCurrent[ channel ] = pd -> m_SoundLocationLoad[ channel ];
-
+					channel->GotDatHi = channel->GotDatLo = FALSE;
+					channel->SoundLocationCurrent = channel->SoundLocationLoad;
 					SetSoundChannel( channel, AHISF_NONE );
 				}
 			}
@@ -1252,20 +1243,17 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 		case AUD2LCL:
 		case AUD3LCL:
 		{
-			int channel = ( reg - AUD0LCL ) >> 4;
+			struct paula_channel *channel = pd->channels + (( reg - AUD0LCL ) >> 4);
 
-			pd->m_SoundLocationLoad[ channel ] &= 0xffff0000;
-			pd->m_SoundLocationLoad[ channel ] |= value;
+			channel->SoundLocationLoad &= 0xffff0000;
+			channel->SoundLocationLoad |= value;
 
-			pd->m_GotDatLo[channel] = TRUE;
+			channel->GotDatLo = TRUE;
 
-			if (pd->m_GotDatHi[channel])
+			if (channel->GotDatHi)
 			{
-				pd->m_GotDatHi[channel] =
-				pd->m_GotDatLo[channel] = FALSE;
-
-				pd->m_SoundLocationCurrent[ channel ] = pd -> m_SoundLocationLoad[ channel ];
-
+				channel->GotDatHi = channel->GotDatLo = FALSE;
+				channel->SoundLocationCurrent = channel->SoundLocationLoad;
 				SetSoundChannel( channel, AHISF_NONE );
 			}
 
@@ -1278,12 +1266,9 @@ static void PUHWrite( UWORD reg, UWORD value, BOOL *handled, struct PUHData *pd,
 		case AUD2LEN:
 		case AUD3LEN:
 		{
-			int channel = ( reg - AUD0LEN ) >> 4;
-			
-			pd->m_SoundLength[ channel ] = value * 2;
-
+			struct paula_channel *channel = pd->channels + (( reg - AUD0LEN ) >> 4);
+			channel->SoundLength = value * 2;
 			SetSoundChannel( channel, AHISF_NONE );
-
 			*handled = TRUE;
 			break;
 		}

@@ -94,43 +94,47 @@ enum
 
 extern uint32 HIT_Flags, HIT_Last_Flags;
 
+struct paula_channel
+{
+	ULONG		id;
+	BOOL		SoundOn;
+	BOOL		GotDatLo;
+	BOOL		GotDatHi;
+	ULONG		SoundLocationLoad;			// parts are latched in...
+ 	ULONG		SoundLocationCurrent;		// played off this...
+	ULONG		SoundLength;
+};
+
 struct PUHData
 {
-  BOOL                  m_Active;
-  UWORD                 m_Pad;
+	BOOL                  m_Active;
+	UWORD                 m_Pad;
 
-  ULONG			m_Flags;
+	ULONG			m_Flags;
 
-  struct Hook*          m_LogHook;
+	struct Hook*          m_LogHook;
 
-  ULONG                 m_AudioMode;
-  struct AHIAudioCtrl*  m_AudioCtrl;
+	ULONG                 m_AudioMode;
+	struct AHIAudioCtrl*  m_AudioCtrl;
 
-  struct Hook           m_SoundFunc;
+	struct Hook           m_SoundFunc;
 
-  ULONG                 m_ChipFreq;
+	ULONG                 m_ChipFreq;
      
-  UWORD                 m_DMACON;
-  UWORD                 m_INTREQ;
-  UWORD                 m_INTENA;
-  BOOL                  m_CausePending;
+	UWORD                 m_DMACON;
+	UWORD                 m_INTREQ;
+	UWORD                 m_INTENA;
+	BOOL                  m_CausePending;
 
-  BOOL                  m_SoundOn[ 4 ];
+	struct paula_channel channels[4];
 
-  BOOL			m_GotDatLo[4];
-  BOOL			m_GotDatHi[4];
+	void*                 m_Intercepted;
+	void*                 m_CustomDirect;
+	ULONG	               m_CustomSize;
 
-  ULONG			m_SoundLocationLoad[ 4 ];			// parts are latched in...
-  ULONG			m_SoundLocationCurrent[ 4 ];		// played off this...
-  ULONG			m_SoundLength[ 4 ];
-
-  void*                 m_Intercepted;
-  void*                 m_CustomDirect;
-  ULONG	               m_CustomSize;
-
-  struct Interrupt     m_SoftInt;
-  struct Interrupt	  m_FaultInt;
-  struct Interrupt *	  m_OldFaultInt;
+	struct Interrupt     m_SoftInt;
+	struct Interrupt	  m_FaultInt;
+	struct Interrupt *	  m_OldFaultInt;
 
 };
 
